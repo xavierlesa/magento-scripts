@@ -38,6 +38,24 @@ class CommandUtilMagento
     var $_cached_attribute = []; // "attricube_code" => "attribute" => ID
 
 
+    var $row_sku = 'sku';
+    var $row_product_id = 'producto';
+    var $row_name = 'nobmre'; 
+    var $row_description = 'description'; 
+
+    var $row_attr_cod_color = 'cod_fam_col'; 
+    var $row_attr_color = 'fam_color'; 
+    var $row_attr_size = 'talle'; 
+    var $row_attr_manufacture = 'marca';
+    var $row_attr_source = 'origen'; 
+    var $row_attr_season = 'temporada';
+    var $row_attr_gender = 'genero'; 
+
+    var $row_category = 'linea';
+    var $row_subcategory = 'familia';
+    var $row_price = 'precio_vtas';
+
+
     function __construct()
     {
         boostrap();
@@ -62,12 +80,12 @@ class CommandUtilMagento
         // Sincroniza las categorías.
         echo "syncCategories\r\n";
 
-        $col_category = 'linea';
-        $col_subcategory = 'familia';
+        $col_category = $this->row_category;
+        $col_subcategory = $this->row_subcategory;
 
         if ( count($this->csv_array_header) === 2 or 
-            ( !array_key_exists('linea', $this->csv_array_header) and 
-            !array_key_exists('familia', $this->csv_array_header) ) 
+            ( !array_key_exists($this->row_category, $this->csv_array_header) and 
+            !array_key_exists($this->row_subcategory, $this->csv_array_header) ) 
         ) {
 
             $col_category = 0;
@@ -89,7 +107,13 @@ class CommandUtilMagento
 
         // Checkea que todas las key requeridas existan. (ref: http://stackoverflow.com/questions/13169588/how-to-check-if-multiple-array-keys-exists)
 
-        $required = array('sku', 'producto', 'descripcion', 'linea', 'familia', 'precio_vtas');
+        $required = array(
+            $this->row_sku, 
+            $this->row_product_id, 
+            $this->row_description, 
+            $this->row_category,
+            $this->row_subcategory,
+            $this->row_price);
 
         if (count(array_intersect($required, $this->csv_array_header)) !== count($required)) {
             _log("Error el archivo no corresponde al formato de columnas " . implode(', ', $required));
@@ -100,7 +124,7 @@ class CommandUtilMagento
             exit(0);
         }
 
-        $this->csv_grouped_array_data = $this->groupArray($this->csv_array_data, "producto");
+        $this->csv_grouped_array_data = $this->groupArray($this->csv_array_data, $this->row_product_id);
 
         _log("Hay " . count($this->csv_grouped_array_data) . " grupos de productos");
 
@@ -129,21 +153,21 @@ class CommandUtilMagento
                 _log("Preparando producto {sku} {descripcion}", $row);
 
                 $this->createProduct(
-                    $row['sku'], 
-                    $row['producto'], 
-                    ucfirst(strtolower($row['descripcion'])), 
-                    ucfirst(strtolower($row['descripcion'])), 
-                    $row['cod_color'], 
-                    $row['color'], 
-                    $row['talle'], 
-                    $row['marca'], 
-                    $row['origen'], 
-                    $row['temporada'], 
-                    $row['genero'], 
-                    $row['linea'],
-                    $row['familia'], 
-                    $row['precio_vtas'],
-                    ucfirst(strtolower($row['linea']))
+                    $row[$this->row_sku], 
+                    $row[$this->row_product_id], 
+                    ucfirst(strtolower($row[$this->row_name])), 
+                    ucfirst(strtolower($row[$this->row_description])), 
+                    $row[$this->row_attr_cod_color], 
+                    $row[$this->row_attr_color], 
+                    $row[$this->row_attr_size], 
+                    $row[$this->row_attr_manufacture], 
+                    $row[$this->row_attr_source], 
+                    $row[$this->row_attr_season], 
+                    $row[$this->row_attr_gender], 
+                    $row[$this->row_category],
+                    $row[$this->row_subcategory], 
+                    $row[$this->row_price],
+                    ucfirst(strtolower($row[$this->row_category]))
                 );
             }
         }
@@ -173,24 +197,24 @@ class CommandUtilMagento
                 // crea el primer producto como configurable
                 _log("Crea el producto como configurable {producto} {talle} {color}", $row);
 
-                $sku = "CONFIG-" . $row['producto'];
+                $sku = "CONFIG-" . $row[$this->row_product_id];
 
                 $configProduct = $this->createProduct(
                     $sku, // crea un SKU propio
-                    $row['producto'], 
-                    ucfirst(strtolower($row['descripcion'])), 
-                    ucfirst(strtolower($row['descripcion'])), 
-                    $row['cod_color'], 
-                    $row['color'], 
-                    $row['talle'], 
-                    $row['marca'], 
-                    $row['origen'], 
-                    $row['temporada'], 
-                    $row['genero'], 
-                    $row['linea'],
-                    $row['familia'], 
-                    $row['precio_vtas'],
-                    ucfirst(strtolower($row['linea'])),
+                    $row[$this->row_product_id], 
+                    ucfirst(strtolower($row[$this->row_name])), 
+                    ucfirst(strtolower($row[$this->row_description])), 
+                    $row[$this->row_attr_cod_color], 
+                    $row[$this->row_attr_color], 
+                    $row[$this->row_attr_size], 
+                    $row[$this->row_attr_manufacture], 
+                    $row[$this->row_attr_source], 
+                    $row[$this->row_attr_season], 
+                    $row[$this->row_attr_gender], 
+                    $row[$this->row_category],
+                    $row[$this->row_subcategory], 
+                    $row[$this->row_price],
+                    ucfirst(strtolower($row[$this->row_category])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
                     false); // NO COMMIT 
@@ -201,12 +225,12 @@ class CommandUtilMagento
                 // calzado -> set calzado (color, number)
 
 
-                if (strtolower($row['linea']) == 'indumentaria') {
+                if (strtolower($row[$this->row_category]) == 'indumentaria') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['size']->getId() => $array_attribues['size']
                     );
-                } elseif (strtolower($row['linea']) == 'calzado') {
+                } elseif (strtolower($row[$this->row_category]) == 'calzado') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['number']->getId() => $array_attribues['number']
@@ -224,21 +248,21 @@ class CommandUtilMagento
                 foreach(array_slice($products, 1) as $row) {
                     // Create product instances
                     $simpleProduct = $this->createProduct(
-                        $row['sku'], 
-                        $row['producto'],
-                        $row['talle'] . " - " . $row['color'] . " - " . ucfirst(strtolower($row['descripcion'])), // crea un titulo propio para identificarlo
-                        ucfirst(strtolower($row['descripcion'])), 
-                        $row['cod_color'], 
-                        $row['color'], 
-                        $row['talle'], 
-                        $row['marca'], 
-                        $row['origen'], 
-                        $row['temporada'], 
-                        $row['genero'], 
-                        $row['linea'],
-                        $row['familia'], 
-                        $row['precio_vtas'],
-                        ucfirst(strtolower($row['linea'])),
+                        $row[$this->row_sku], 
+                        $row[$this->row_product_id],
+                        $row[$this->row_attr_size] . " - " . $row[$this->row_attr_color] . " - " . ucfirst(strtolower($row[$this->row_name])), // crea un titulo propio para identificarlo
+                        ucfirst(strtolower($row[$this->row_description])), 
+                        $row[$this->row_attr_cod_color], 
+                        $row[$this->row_attr_color], 
+                        $row[$this->row_attr_size], 
+                        $row[$this->row_attr_manufacture], 
+                        $row[$this->row_attr_source], 
+                        $row[$this->row_attr_season], 
+                        $row[$this->row_attr_gender], 
+                        $row[$this->row_category],
+                        $row[$this->row_subcategory], 
+                        $row[$this->row_price],
+                        ucfirst(strtolower($row[$this->row_category])),
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
                         true); 
