@@ -1317,10 +1317,15 @@ function boostrap()
 {
     // init requires
     try {
-        // or 
+        // script en base /
         if (file_exists('app/Mage.php' )) 
         {
             require_once("app/Mage.php");
+        }
+        // script en script/ 
+        elseif (file_exists('../app/Mage.php' )) 
+        {
+            require_once("../app/Mage.php");
         } 
         elseif (file_exists('/var/www/magento/app/Mage.php' )) 
         {
