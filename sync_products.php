@@ -40,8 +40,8 @@ class CommandUtilMagento
 
     var $row_sku = 'sku';
     var $row_product_id = 'producto';
-    var $row_name = 'description'; 
-    var $row_description = 'description'; 
+    var $row_name = 'descripcion'; 
+    var $row_description = 'descripcion'; 
 
     var $row_attr_cod_color = 'cod_fam_col'; 
     var $row_attr_color = 'fam_color'; 
