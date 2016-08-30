@@ -24,6 +24,26 @@ define('MAPPING_VALIDATION_ARRAY', array(
     ),
 ));
 
+
+class ftp 
+{ 
+    public $conn; 
+
+    public function __construct($url){ 
+        $this->conn = ftp_connect($url); 
+    } 
+    
+    public function __call($func,$a){ 
+        if(strstr($func,'ftp_') !== false && function_exists($func)){ 
+            array_unshift($a,$this->conn); 
+            return call_user_func_array($func,$a); 
+        }else{ 
+            // replace with your own error handler. 
+            die("$func is not a valid FTP function"); 
+        } 
+    } 
+} 
+
 /**
  * Commands Utils for Magento
  **/
@@ -341,24 +361,6 @@ class CommandUtilMagento
     {
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
-        class ftp{ 
-            public $conn; 
-
-            public function __construct($url){ 
-                $this->conn = ftp_connect($url); 
-            } 
-            
-            public function __call($func,$a){ 
-                if(strstr($func,'ftp_') !== false && function_exists($func)){ 
-                    array_unshift($a,$this->conn); 
-                    return call_user_func_array($func,$a); 
-                }else{ 
-                    // replace with your own error handler. 
-                    die("$func is not a valid FTP function"); 
-                } 
-            } 
-        } 
-        
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
         var_dump($ftp->ftp_nlist());
