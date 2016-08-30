@@ -37,7 +37,6 @@ class CommandUtilMagento
     var $_cached_category = []; // "category/subcategory" => ID
     var $_cached_attribute = []; // "attricube_code" => "attribute" => ID
 
-
     var $row_sku = 'sku';
     var $row_product_id = 'producto';
     var $row_name = 'descripcion'; 
@@ -342,6 +341,28 @@ class CommandUtilMagento
     {
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
+        class ftp{ 
+            public $conn; 
+
+            public function __construct($url){ 
+                $this->conn = ftp_connect($url); 
+            } 
+            
+            public function __call($func,$a){ 
+                if(strstr($func,'ftp_') !== false && function_exists($func)){ 
+                    array_unshift($a,$this->conn); 
+                    return call_user_func_array($func,$a); 
+                }else{ 
+                    // replace with your own error handler. 
+                    die("$func is not a valid FTP function"); 
+                } 
+            } 
+        } 
+        
+        $ftp = new ftp($this->opt_ftp['server']);
+        $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
+        var_dump($ftp->ftp_nlist());
+
     }
 
     public function reindex()
@@ -520,9 +541,10 @@ class CommandUtilMagento
 
     // Methods
 
-    public function createProduct($sku, $cod_product, $name, $description, $cod_color, $color, 
-        $size, $manufacturer, $source, $season, $gender, $category,
-        $subcategory, $price, $attribute_set=null, $product_type=null, $product_visibility=null, $commit=true) { 
+    public function createProduct($sku, $cod_product, $name, $description, 
+        $cod_color, $color, $size, $manufacturer, $source, $season, $gender, 
+        $category, $subcategory, $price, $attribute_set=null, 
+        $product_type=null, $product_visibility=null, $commit=true) { 
         //
         // Create a new product
         //
@@ -777,7 +799,7 @@ class CommandUtilMagento
 
         $total_options = count($_options);
         
-        //_log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value . "\033[0m");
+        _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
 
         if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
             $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
@@ -1156,6 +1178,10 @@ class CommandUtilMagento
         $longopts  = array(
             "file:",            // path to csv file
             "images-path::",    // path for images
+            "use-ftp::",        // use ftp
+            "ftp-server:",      // ftp server
+            "ftp-user:",        // ftp user
+            "ftp-pass:",        // ftp pass
             "commit",           // create product
             "add-category",     // add category if not exists
             "add-attribute",    // add attribute selector
@@ -1176,6 +1202,12 @@ php sync_products.php [options] -f file.csv
 
     -h, --help                              This help
     -c, --commit                            Commit make changes permanent.
+    -i, --images-path=path/to/images        Path for images
+    
+    --use-ftp,
+        --ftp-server=server.com
+        --ftp-user=user
+        --ftp-pass=mypass
 ");
 //    -a, --add-category                      Create [sub]category if not exists.
 //    
@@ -1184,13 +1216,14 @@ php sync_products.php [options] -f file.csv
 //        --attribute-label                   Label for attribute
 //        --attribute-options                 Options for attribute
 //
-//    -i, --images-path=path/to/images        Path for images
 
             exit(1);
 
         } 
 
         // Prevalidate options
+
+        $this->opt_ftp = array();
 
         $this->opt_commit = ( 
             getattr($options['c'], null) == null ? 
@@ -1212,6 +1245,14 @@ php sync_products.php [options] -f file.csv
         {
             _log($file_data);
             $this->loadFileData($file_data);
+        }
+        elseif (getattr($options['use-ftp'], false))
+        { 
+            $this->opt_ftp = array(
+                'server'    => getattr($options['ftp-server']),
+                'user'      => getattr($options['ftp-user']),
+                'pass'      =>getattr($options['ftp-pass']),
+            );
         }
         else 
         {
