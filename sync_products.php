@@ -358,7 +358,7 @@ class CommandUtilMagento
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
         $ftp_list = $ftp->ftp_nlist($this->opt_ftp['path']);
 
-        _log($ftp_list);
+        _log(var_export($ftp_list, 1));
 
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
 
