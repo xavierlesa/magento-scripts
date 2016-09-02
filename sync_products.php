@@ -356,7 +356,9 @@ class CommandUtilMagento
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
-        var_dump($ftp->ftp_nlist('.'));
+        $ftp_list = $ftp->ftp_nlist($this->opt_ftp['path']);
+
+        _log($ftp_list);
 
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
 
@@ -1179,6 +1181,7 @@ class CommandUtilMagento
             "ftp-server:",      // ftp server
             "ftp-user:",        // ftp user
             "ftp-pass:",        // ftp pass
+            "ftp-path:",        // ftp path
             "commit",           // create product
             "add-category",     // add category if not exists
             "add-attribute",    // add attribute selector
@@ -1205,6 +1208,7 @@ php sync_products.php [options] -f file.csv
         --ftp-server=server.com
         --ftp-user=user
         --ftp-pass=mypass
+        --ftp-pass=/route/to/path/
 ");
 //    -a, --add-category                      Create [sub]category if not exists.
 //    
@@ -1248,7 +1252,8 @@ php sync_products.php [options] -f file.csv
             $this->opt_ftp = array(
                 'server'    => getattr($options['ftp-server']),
                 'user'      => getattr($options['ftp-user']),
-                'pass'      =>getattr($options['ftp-pass']),
+                'pass'      => getattr($options['ftp-pass']),
+                'path'      => getattr($options['ftp-path']),
             );
         }
         else 
