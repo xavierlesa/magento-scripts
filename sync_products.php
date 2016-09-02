@@ -1240,7 +1240,7 @@ php sync_products.php [options] -f file.csv
             _log($file_data);
             $this->loadFileData($file_data);
         }
-        elseif (getattr($options['use-ftp'], false))
+        elseif array_key_exists($options, 'use-ftp')
         { 
             $this->opt_ftp = array(
                 'server'    => getattr($options['ftp-server']),
