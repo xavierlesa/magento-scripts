@@ -24,10 +24,13 @@ class ftp
     } 
     
     public function __call($func, $a){ 
-        if(strstr($func,'ftp_') !== false && function_exists($func)){ 
-            array_unshift($a,$this->conn); 
+        if(strstr($func, 'ftp_') !== false && function_exists($func))
+        { 
+            array_unshift($a, $this->conn); 
             return call_user_func_array($func, $a); 
-        }else{ 
+        } 
+        else
+        { 
             // replace with your own error handler. 
             die("$func is not a valid FTP function"); 
         } 
@@ -353,7 +356,7 @@ class CommandUtilMagento
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
-        var_dump($ftp->ftp_nlist());
+        var_dump($ftp->ftp_nlist('.'));
 
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
 
