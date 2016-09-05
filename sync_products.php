@@ -416,7 +416,8 @@ class CommandUtilMagento
                 
                 if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                 {
-                    echo str_replace($path_parts, "", $path . DS . $dir) . "\r\n";
+                    $_path = str_replace($path_parts, "", $path . DS . $dir);
+                    echo  $_path . "\r\n";
                 }
                 else $this->getFileTree($ftp, $path . DS . $dir);
             }
