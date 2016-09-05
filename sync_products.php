@@ -421,15 +421,15 @@ class CommandUtilMagento
         //return $array_tree;
     }
 
-    public function ftpRecursiveFileListing($ftpConnection, $path) 
+    public function ftpRecursiveFileListing($ftp, $path) 
     {
         static $allFiles = array(); 
-        $contents = ftp_nlist($ftpConnection, $path); 
+        $contents = $ftp->ftp_nlist($path); 
 
         foreach($contents as $currentFile) { 
             // assuming its a folder if there's no dot in the name 
             if (strpos($currentFile, '.') === false) { 
-                $this->ftpRecursiveFileListing($ftpConnection, $currentFile); 
+                $this->ftpRecursiveFileListing($ftp, $currentFile); 
             } 
             $allFiles[$path][] = substr($currentFile, strlen($path) + 1); 
         } 
