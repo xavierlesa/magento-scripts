@@ -14,6 +14,9 @@
     5- Sincroniza las imagenes.
  */
 
+define('ATTRIBUTES_DEFAULTS', array(
+    'ftp-path' => 'ecommerce/linea_web/Urban',
+));
 
 class ftp 
 { 
@@ -488,28 +491,43 @@ class CommandUtilMagento
         //    $array[] = $row[$col]; 
         //}
 
-        $fila = 0;
+        // ES un xlsx ?
+        $extension = end(explode('.', $file_data));
 
-        if (($gestor = fopen($file_data, "r")) !== false) {
-            while (($row = fgetcsv($gestor, 1000, ";")) !== false) {
-                // la primer fila tiene los encabezados, la salto
-                if ( $fila == 0 ) {
-                    $this->csv_array_header = array_map("mb_strtolower", $row);
-                    _log("header:\r\n" . var_export($this->csv_array_header, true));
-                    $fila++;
-                    continue;
-                }
+        if ($extension == 'xls' || $extension == 'xlsx') 
+        {
+            require_once('.parse_xlsx.php');
+            $array_data = parse_xlsx_as_array($file_data);
+            $this->csv_array_header = array_map("mb_strtolower", array_keys($array_data[0]));
+            $this->csv_array_data = $array_data;
+        
+        }
+        elseif ($extension == 'cvs') 
+        {
+            $fila = 0;
 
-                if ($flat) {
-                    $this->csv_array_data[] = $row;
-                } else {
-                    $this->csv_array_data[] = array_combine($this->csv_array_header, $row);
+            if (($gestor = fopen($file_data, "r")) !== false) {
+                while (($row = fgetcsv($gestor, 1000, ";")) !== false) {
+                    // la primer fila tiene los encabezados, la salto
+                    if ( $fila == 0 ) {
+                        $this->csv_array_header = array_map("mb_strtolower", $row);
+                        $fila++;
+                        continue;
+                    }
+                    if ($flat) {
+                        $this->csv_array_data[] = $row;
+                    } else {
+                        $this->csv_array_data[] = array_combine($this->csv_array_header, $row);
+                    }
+
                 }
 
             }
 
-            _log(count($this->csv_array_data) . " Artículos en CSV"); 
         }
+
+        _log("header:\r\n" . var_export($this->csv_array_header, true));
+        _log(count($this->csv_array_data) . " Artículos en CSV"); 
 
     }
 
@@ -1208,7 +1226,7 @@ php sync_products.php [options] -f file.csv
         --ftp-server=server.com
         --ftp-user=user
         --ftp-pass=mypass
-        --ftp-pass=/route/to/path/
+        --ftp-path=/route/to/path/
 ");
 //    -a, --add-category                      Create [sub]category if not exists.
 //    
@@ -1253,7 +1271,7 @@ php sync_products.php [options] -f file.csv
                 'server'    => getattr($options['ftp-server']),
                 'user'      => getattr($options['ftp-user']),
                 'pass'      => getattr($options['ftp-pass']),
-                'path'      => getattr($options['ftp-path']),
+                'path'      => getattr($options['ftp-path'], DEFAULT_ATTRIBUTES['ftp-path']),
             );
         }
         else 
