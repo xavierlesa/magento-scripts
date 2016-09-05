@@ -1458,7 +1458,7 @@ function boostrap()
     Mage::app('admin');
     Mage::register('isSecureArea', 1);
     Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-    $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+    global $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
 
     define('DEFAULT_ATTRIBUTES', 4); // default
     define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
