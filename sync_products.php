@@ -429,7 +429,7 @@ class CommandUtilMagento
         foreach($contents as $currentFile) { 
             // assuming its a folder if there's no dot in the name 
             if (strpos($currentFile, '.') === false) { 
-                $this->ftpRecursiveFileListing($ftp, $currentFile); 
+                $this->ftpRecursiveFileListing($ftp, $path . DS . $currentFile); 
             } 
             $allFiles[$path][] = substr($currentFile, strlen($path) + 1); 
         } 
