@@ -387,6 +387,7 @@ class CommandUtilMagento
 
     public function syncImages()
     {
+        global $STORE_DATA;
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
@@ -1421,6 +1422,8 @@ function prompt($message, $choices = null)
 
 function boostrap()
 {
+    
+    global $STORE_DATA;
     // init requires
     try {
         // script en base /
@@ -1458,7 +1461,7 @@ function boostrap()
     Mage::app('admin');
     Mage::register('isSecureArea', 1);
     Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-    global $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+    $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
 
     define('DEFAULT_ATTRIBUTES', 4); // default
     define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
