@@ -405,17 +405,19 @@ class CommandUtilMagento
 
     public function getFileTree($ftp, $path)
     {
-        $array_tree = array();
         $ftp_list = $ftp->ftp_nlist($path);
         foreach($ftp_list as $dir)
         {
             if ($dir != '.' && $dir != '..') 
             {
-                echo $dir . "\r\n";
-                $array_tree[$path][$dir] = $this->getFileTree($ftp, $path . DS . $dir);
+                
+                if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
+                {
+                    echo $dir . "\r\n";
+                }
+                else $this->getFileTree($ftp, $path . DS . $dir);
             }
         }
-        return $array_tree;
     }
 
 
