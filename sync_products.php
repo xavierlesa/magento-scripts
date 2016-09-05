@@ -405,6 +405,8 @@ class CommandUtilMagento
 
     public function getFileTree($ftp, $path)
     {
+        $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
+
         $ftp_list = $ftp->ftp_nlist($path);
         foreach($ftp_list as $dir)
         {
@@ -413,7 +415,7 @@ class CommandUtilMagento
                 
                 if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                 {
-                    echo $path . DS . $dir . "\r\n";
+                    echo str_replace($path_parts, "", $path . DS . $dir) . "\r\n";
                 }
                 else $this->getFileTree($ftp, $path . DS . $dir);
             }
