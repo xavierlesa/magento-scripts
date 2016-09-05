@@ -14,8 +14,15 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp/')
 
     // Unzip
     $zip = new ZipArchive();
-    $zip->open($inputFile);
-    $zip->extractTo($dir);
+    if ($zip->open($inputFile) === true) 
+    {
+        $zip->extractTo($dir);
+        $zip->close();
+    } 
+    else 
+    {
+        _log("Error open Zip");
+    }
 
     // Open up shared strings & the first worksheet
     $strings = simplexml_load_file($dir . '/xl/sharedStrings.xml');
@@ -71,7 +78,7 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp/')
     }
 
     @unlink($dir);
-    @unlink($inputFile);
+    //@unlink($inputFile);
 
     return $array_data;
 }
