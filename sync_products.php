@@ -405,7 +405,7 @@ class CommandUtilMagento
 
     public function getFileTree($ftp, $path)
     {
-        $array_tree = array();
+        static $array_tree = array();
 
         $ftp_list = $ftp->ftp_nlist($path);
 
@@ -414,12 +414,11 @@ class CommandUtilMagento
             if ($dir != '.' && $dir != '..') 
             {
                 echo $dir . "\r\n";
-
-                $array_tree[] = $this->getFileTree($ftp, $path . DS . $dir);
+                $array_tree[$path][$dir][] = $this->getFileTree($ftp, $path . DS . $dir);
             }
         }
 
-        return $array_tree;
+        //return $array_tree;
     }
 
 
