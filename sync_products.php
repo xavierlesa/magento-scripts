@@ -14,9 +14,8 @@
     5- Sincroniza las imagenes.
  */
 
-define('CONFIG_DEFAULTS', array(
-    'ftp-path' => 'ecommerce/linea_web/Urban',
-));
+define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web/');
+define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 
 class ftp 
 { 
@@ -1271,7 +1270,7 @@ php sync_products.php [options] -f file.csv
                 'server'    => getattr($options['ftp-server']),
                 'user'      => getattr($options['ftp-user']),
                 'pass'      => getattr($options['ftp-pass']),
-                'path'      => getattr($options['ftp-path'], CONFIG_DEFAULTS['ftp-path']),
+                'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
             );
         }
         else 
