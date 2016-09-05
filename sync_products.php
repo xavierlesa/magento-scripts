@@ -397,7 +397,7 @@ class CommandUtilMagento
 
         _log("Busca imagenes en " . $path_parts);
 
-        $ftp_list = $this->getFileTree($ftp, $path_parts);
+        $ftp_list = $this->ftpRecursiveFileListing($ftp, $path_parts);
 
         _log(var_export($ftp_list, 1));
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
@@ -420,6 +420,22 @@ class CommandUtilMagento
 
         //return $array_tree;
     }
+
+    public function ftpRecursiveFileListing($ftpConnection, $path) 
+    {
+        static $allFiles = array(); 
+        $contents = ftp_nlist($ftpConnection, $path); 
+
+        foreach($contents as $currentFile) { 
+            // assuming its a folder if there's no dot in the name 
+            if (strpos($currentFile, '.') === false) { 
+                $this->ftpRecursiveFileListing($ftpConnection, $currentFile); 
+            } 
+            $allFiles[$path][] = substr($currentFile, strlen($path) + 1); 
+        } 
+        return $allFiles; 
+    } 
+
 
 
     public function reindex()
