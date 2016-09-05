@@ -49,11 +49,6 @@ define('STORE_ID', $urban_store_id); // ID del STORE VIEW NAME
 define('WEBSITE_ID', $urban_website_id); // ID del STORE VIEW NAME
 define('PARENT_ID', $urban_parent_id); // ID del root category
 
-define('DEFAULT_ATTRIBUTES', 4); // default
-define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
-define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
-define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
-
 class ftp 
 { 
     public $conn; 
@@ -1464,6 +1459,11 @@ function boostrap()
     Mage::register('isSecureArea', 1);
     Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
     $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+
+    define('DEFAULT_ATTRIBUTES', 4); // default
+    define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
+    define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
+    define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
     
 }
 
