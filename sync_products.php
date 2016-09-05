@@ -413,7 +413,7 @@ class CommandUtilMagento
         {
             if ($dir != '.' && $dir != '..') 
             {
-                $array_tree[$path][$dir] = $this->getFileTree($ftp, $path . DS . $dir);
+                $array_tree[$dir] = $this->getFileTree($ftp, $path . DS . $dir);
             }
         }
 
