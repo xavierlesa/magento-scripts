@@ -14,7 +14,7 @@
     5- Sincroniza las imagenes.
  */
 
-define('ATTRIBUTES_DEFAULTS', array(
+define('CONFIG_DEFAULTS', array(
     'ftp-path' => 'ecommerce/linea_web/Urban',
 ));
 
@@ -1271,7 +1271,7 @@ php sync_products.php [options] -f file.csv
                 'server'    => getattr($options['ftp-server']),
                 'user'      => getattr($options['ftp-user']),
                 'pass'      => getattr($options['ftp-pass']),
-                'path'      => getattr($options['ftp-path'], DEFAULT_ATTRIBUTES['ftp-path']),
+                'path'      => getattr($options['ftp-path'], CONFIG_DEFAULTS['ftp-path']),
             );
         }
         else 
