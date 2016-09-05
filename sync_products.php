@@ -409,7 +409,7 @@ class CommandUtilMagento
 
         $ftp_list = $ftp->ftp_nlist($path);
 
-        foreach($path as $dir)
+        foreach($ftp_list as $dir)
         {
             if ($dir != '.' && $dir != '..') 
             {
