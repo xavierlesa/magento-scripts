@@ -17,7 +17,7 @@
 
 // DEFINITIONS
 
-define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web/');
+define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web');
 define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 define('CONFIG_DEFAULT_SITE_NAME', 'urban');
 define('STORE_NAME', 'urban');
@@ -397,11 +397,27 @@ class CommandUtilMagento
 
         _log("Busca imagenes en " . $path_parts);
 
-        $ftp_list = $ftp->ftp_nlist($path_parts);
+        $ftp_list = $this->getFileTree($ftp, $path_parts);
 
         _log(var_export($ftp_list, 1));
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
+    }
 
+    public function getFileTree($ftp, $path)
+    {
+        $array_tree = array();
+
+        $ftp_list = $ftp->ftp_nlist($path);
+
+        foreach($path as $dir)
+        {
+            if ($dir != '.' && $dir != '..') 
+            {
+                $array_tree[$path][] = $this->getFileTree($ftp, $dir);
+            }
+        }
+
+        return $array_tree;
     }
 
 
