@@ -7,7 +7,7 @@
  * graphs, etc ..., I don't know what'd happen).
  */
 
-function parse_xlsx_as_array($inputFile, $dir='/tmp/')
+function parse_xlsx_as_array($inputFile, $dir='/tmp')
 {
     //$inputFile = '/path/to/spreadsheet.xlsx';
     //$dir = '/path/to/tmp/dir';

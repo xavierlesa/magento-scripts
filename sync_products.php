@@ -12,10 +12,47 @@
     4- Crea/Modifica los productos configurables por talle y/o color.
 
     5- Sincroniza las imagenes.
+        desde --ftp-path o CONFIG_DEFAULT_FTP_PATH / $STORE_DATA['name'] / category / sub_category / 
  */
+
+// DEFINITIONS
 
 define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web/');
 define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
+define('CONFIG_DEFAULT_SITE_NAME', 'urban');
+define('STORE_NAME', 'urban');
+
+$STORE_DATA = array(
+  // 'store_id' => '1',
+  // 'code' => 'default',
+  // 'website_id' => '1',
+  // 'group_id' => '1',
+  // 'name' => 'urbanstore.com.ar',
+  // 'sort_order' => '0',
+  // 'is_active' => '1',
+  );
+
+
+// STORES
+$urban_store_id = 1;
+$oneill_store_id = 2;
+
+// WEBSITES
+$urban_website_id = 1;
+$oneill_website_id = 3;
+
+// ROOT CATEGORIES
+$urban_parent_id = 2;
+$oneill_parent_id = 3;
+
+define('STORE_ID', $urban_store_id); // ID del STORE VIEW NAME
+define('WEBSITE_ID', $urban_website_id); // ID del STORE VIEW NAME
+define('PARENT_ID', $urban_parent_id); // ID del root category
+
+define('DEFAULT_ATTRIBUTES', 4); // default
+define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
+define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
+define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
 
 class ftp 
 { 
@@ -155,6 +192,7 @@ class CommandUtilMagento
 
     }
 
+
     public function syncSimpleProducts()
     {
         // Sincroniza solo los productos simples.
@@ -169,8 +207,8 @@ class CommandUtilMagento
                 $this->createProduct(
                     $row[$this->row_sku], 
                     $row[$this->row_product_id], 
-                    ucfirst(strtolower($row[$this->row_name])), 
-                    ucfirst(strtolower($row[$this->row_description])), 
+                    ucfirst(mb_strtolower($row[$this->row_name])), 
+                    ucfirst(mb_strtolower($row[$this->row_description])), 
                     $row[$this->row_attr_cod_color], 
                     $row[$this->row_attr_color], 
                     $row[$this->row_attr_size], 
@@ -181,7 +219,7 @@ class CommandUtilMagento
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
-                    ucfirst(strtolower($row[$this->row_category]))
+                    ucfirst(mb_strtolower($row[$this->row_category]))
                 );
             }
         }
@@ -216,8 +254,8 @@ class CommandUtilMagento
                 $configProduct = $this->createProduct(
                     $sku, // crea un SKU propio
                     $row[$this->row_product_id], 
-                    ucfirst(strtolower($row[$this->row_name])), 
-                    ucfirst(strtolower($row[$this->row_description])), 
+                    ucfirst(mb_strtolower($row[$this->row_name])), 
+                    ucfirst(mb_strtolower($row[$this->row_description])), 
                     $row[$this->row_attr_cod_color], 
                     $row[$this->row_attr_color], 
                     $row[$this->row_attr_size], 
@@ -228,7 +266,7 @@ class CommandUtilMagento
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
-                    ucfirst(strtolower($row[$this->row_category])),
+                    ucfirst(mb_strtolower($row[$this->row_category])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
                     false); // NO COMMIT 
@@ -239,12 +277,12 @@ class CommandUtilMagento
                 // calzado -> set calzado (color, number)
 
 
-                if (strtolower($row[$this->row_category]) == 'indumentaria') {
+                if (mb_strtolower($row[$this->row_category]) == 'indumentaria') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['size']->getId() => $array_attribues['size']
                     );
-                } elseif (strtolower($row[$this->row_category]) == 'calzado') {
+                } elseif (mb_strtolower($row[$this->row_category]) == 'calzado') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['number']->getId() => $array_attribues['number']
@@ -264,8 +302,8 @@ class CommandUtilMagento
                     $simpleProduct = $this->createProduct(
                         $row[$this->row_sku], 
                         $row[$this->row_product_id],
-                        $row[$this->row_attr_size] . " - " . $row[$this->row_attr_color] . " - " . ucfirst(strtolower($row[$this->row_name])), // crea un titulo propio para identificarlo
-                        ucfirst(strtolower($row[$this->row_description])), 
+                        $row[$this->row_attr_size] . " - " . $row[$this->row_attr_color] . " - " . ucfirst(mb_strtolower($row[$this->row_name])), // crea un titulo propio para identificarlo
+                        ucfirst(mb_strtolower($row[$this->row_description])), 
                         $row[$this->row_attr_cod_color], 
                         $row[$this->row_attr_color], 
                         $row[$this->row_attr_size], 
@@ -276,7 +314,7 @@ class CommandUtilMagento
                         $row[$this->row_category],
                         $row[$this->row_subcategory], 
                         $row[$this->row_price],
-                        ucfirst(strtolower($row[$this->row_category])),
+                        ucfirst(mb_strtolower($row[$this->row_category])),
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
                         true); 
@@ -358,13 +396,15 @@ class CommandUtilMagento
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
-        $ftp_list = $ftp->ftp_nlist($this->opt_ftp['path']);
+
+        $path_parts = array($this->opt_ftp['path'], $STORE_DATA['name']); // category / sub_category / 
+        $ftp_list = $ftp->ftp_nlist(join(DS, $path_parts));
 
         _log(var_export($ftp_list, 1));
-
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
 
     }
+
 
     public function reindex()
     {
@@ -474,7 +514,6 @@ class CommandUtilMagento
     }
 
 
-
     public function loadFileData($file_data, $flat = 0)
     {
         // Carga el archivo en un array de rows con key -> val (columna -> datos)
@@ -501,7 +540,7 @@ class CommandUtilMagento
             $this->csv_array_data = $array_data;
         
         }
-        elseif ($extension == 'cvs') 
+        elseif ($extension == 'cvs' || $extension == 'csv') 
         {
             $fila = 0;
 
@@ -530,6 +569,7 @@ class CommandUtilMagento
 
     }
 
+
     public function groupArray($array, $arg)
     {
         // Agrupa un array por un key y devuelve un nuevo array
@@ -556,11 +596,11 @@ class CommandUtilMagento
 
 
     // Methods
-
     public function createProduct($sku, $cod_product, $name, $description, 
         $cod_color, $color, $size, $manufacturer, $source, $season, $gender, 
         $category, $subcategory, $price, $attribute_set=null, 
-        $product_type=null, $product_visibility=null, $commit=true) { 
+        $product_type=null, $product_visibility=null, $commit=true) 
+    { 
         //
         // Create a new product
         //
@@ -583,7 +623,7 @@ class CommandUtilMagento
             $attr_color = $this->getOrCreateAttributes('color', $color, $color);
 
             // set size attributes
-            if ( !is_numeric( $size ) && trim(strtolower($size)) != 'tu') {
+            if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu') {
                 _log("\033[33mAdd attribute size_letter: " . $size . "\033[0m");
                 $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
             } 
@@ -653,7 +693,7 @@ class CommandUtilMagento
 
             $product_model
                 ->setStoreId(STORE_ID)                      // you can set data in store scope
-                ->setWebsiteIds(array(1))                   // website ID the product is assigned to, as an array
+                ->setWebsiteIds(array())                   // website ID the product is assigned to, as an array
                 ->setAttributeSetId($attribute_set_id)      // ID of a attribute set named 'default'
                 ->setTypeId($product_type)                  // product type
                 // ->setCreatedAt(strtotime('now'))         // product creation time
@@ -765,16 +805,17 @@ class CommandUtilMagento
     }
 
 
-    public function getOrCreateAttributes($attr_code, $attr_label, $attr_value = '', $attr_options = -1) {
+    public function getOrCreateAttributes($attr_code, $attr_label, $attr_value = '', $attr_options = -1) 
+    {
         //
         //  Get or create new attribute and options of attribute (if exists)
         //
 
-        $attr_code = strtolower(trim($attr_code));
-        $attr_label = ucfirst(strtolower(trim($attr_label)));
+        $attr_code = mb_strtolower(trim($attr_code));
+        $attr_label = ucfirst(mb_strtolower(trim($attr_label)));
 
         if ( ! $attr_value == '' && ! is_array( $attr_value ) ) {
-            $attr_value = array(ucfirst(strtolower(trim($attr_value))));
+            $attr_value = array(ucfirst(mb_strtolower(trim($attr_value))));
         }
 
         //$total_options = count($attr_value);
@@ -869,7 +910,8 @@ class CommandUtilMagento
     }
 
 
-    public function createAttribute($attributeCode, $labelText = '', $values = -1, $productTypes = -1, $setInfo = -1, $options = -1) {
+    public function createAttribute($attributeCode, $labelText = '', $values = -1, $productTypes = -1, $setInfo = -1, $options = -1) 
+    {
         //
         // Create an attribute.
         //
@@ -1027,7 +1069,8 @@ class CommandUtilMagento
     }
 
 
-    public function addAttributeValue($arg_attribute, $arg_value) {
+    public function addAttributeValue($arg_attribute, $arg_value) 
+    {
         $attribute_model        = Mage::getModel('eav/entity_attribute');
 
         $attribute_code         = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
@@ -1055,7 +1098,9 @@ class CommandUtilMagento
         return false;
     }
 
-    public function attributeValueExists($arg_attribute, $arg_value) {
+
+    public function attributeValueExists($arg_attribute, $arg_value) 
+    {
         $attribute_model        = Mage::getModel('eav/entity_attribute');
         $attribute_options_model= Mage::getModel('eav/entity_attribute_source_table') ;
 
@@ -1076,7 +1121,9 @@ class CommandUtilMagento
         return false;
     }
 
-    public function getOrCreateCategories($stringId, $parentId = null, $commit = true) {
+
+    public function getOrCreateCategories($stringId, $parentId = null, $commit = true) 
+    {
         //
         //  Resolve categories from a string based categories splited by slash "/"
         //  if category does not exists try to create it.
@@ -1104,7 +1151,7 @@ class CommandUtilMagento
                 $_parentId = $_arrayIds[$i-1];
             }
 
-            $_str_category = ucfirst(strtolower($_stringIds[$i]));
+            $_str_category = ucfirst(mb_strtolower($_stringIds[$i]));
 
             // chequea en cache si no existe así no hace hit en la DB
             if ( ! array_key_exists($_parentId . "-" . $_str_category, $this->_cached_category) ) {
@@ -1132,7 +1179,9 @@ class CommandUtilMagento
         return $_arrayIds;
     }
 
-    public function _categoryExists($name, $parentId) {
+
+    public function _categoryExists($name, $parentId) 
+    {
         //
         // Check if category exists
         //
@@ -1156,7 +1205,9 @@ class CommandUtilMagento
         return false;
     }
 
-    public function _createCategory($name, $url, $parentId) {
+
+    public function _createCategory($name, $url, $parentId) 
+    {
         //
         //  Try to create a new Category
         //
@@ -1179,6 +1230,7 @@ class CommandUtilMagento
 
         return false;
     }
+
 
     public function getMenu() 
     {
@@ -1287,7 +1339,6 @@ php sync_products.php [options] -f file.csv
 }
 
 // UTILS
-
 function getattr(&$var, $default=null)
 {
     return isset($var) ? $var : $default;
@@ -1315,7 +1366,7 @@ function slugify($text)
     // remove duplicate -
     $text = preg_replace('~-+~', '-', $text);
     // lowercase
-    $text = strtolower($text);
+    $text = mb_strtolower($text);
     if (empty($text)) {
         return $text;
     }
@@ -1412,86 +1463,11 @@ function boostrap()
     Mage::app('admin');
     Mage::register('isSecureArea', 1);
     Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-
-    $urbanconnection_store_id = 1;
-    $oneillstore_store_id = 3;
-    define('STORE_ID', $urbanconnection_store_id); // 1
-
-    $urbanconnection_parent_id = 2;
-    $oneillstore_parent_id = 3;
-    define('PARENT_ID', $urbanconnection_parent_id);
-
-    define('DEFAULT_ATTRIBUTES', 4); // default
-    define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
-    define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
-    define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
-
+    $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+    
 }
 
 
-
-
 // Start
-
 $commands = new CommandUtilMagento;
 $commands->init();
-
-//$cProduct = Mage::getModel('catalog/product');
-////set configurable product base data
-//$cProduct->setTypeId(Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)
-//            ->setWebsiteIds(array(1)) //Website Ids
-//            ->setStatus(Mage_Catalog_Model_Product_Status::STATUS_DISABLED)
-//            ->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH)
-//            ->setTaxClassId(2)
-//            ->setAttributeSetId(1) // Attribute Set Id
-//            ->setSku($sku)
-//            ->setName($name)
-//            ->setWeight($weight)
-//            ->setShortDescription($short_description)
-//            ->setDescription($description)
-//            ->setPrice(sprintf("%0.2f", $price));
-//$superAttributeIds = array('21'); //'21' attribute ids of super attributes
-//$cProduct->getTypeInstance()->setUsedProductAttributeIds($superAttributeIds); //set super attribute for configurable product
-//
-///** assigning associated product to configurable */
-//$associatedProductData = array();
-//$option1 = array(
-//     'label'            => 'option label',
-//     'default_label     => 'option default label',
-//     'store_label'      => 'option store label',
-//     'attribute_id'     => '21',//'Super Attribute Id'
-//     'value_index'      => '178', // attribute option Id,
-//     'is_percent'       => '0', // 0 not percent, 1 is percent
-//     'pricing_value'    => '20',
-//     'use_default_value'=> '1'
-//);
-//
-//$associatedProductData[93][] = $option; // 93 - simple product id
-//
-//$option2 = array(
-//     'label'            => 'option label',
-//     'default_label     => 'option default label',
-//     'store_label'      => 'option store label',
-//     'attribute_id'     => '21',//'Super Attribute Id'
-//     'value_index'      => '180', // attribute option Id,
-//     'is_percent'       => '0', // 0 not percent, 1 is percent
-//     'pricing_value'    => '10',
-//     'use_default_value'=> '1'
-//);
-//
-//$associatedProductData[95][] = $option2; // 93 - simple product id
-//
-//$cProduct->setConfigurableProductsData($configurableProductsData);
-//
-//$configurableAttributesData[]['values'] = array($option1, $option2);
-//$cProduct->setConfigurableAttributesData($configurableAttributesData);
-//
-//$cProduct->setCanSaveConfigurableAttributes(true);
-//
-//try{
-//        $cProduct->save();
-//     }catch( Exception $e) {
-//        echo $e->getMessage();
-//     }
-//
-//
