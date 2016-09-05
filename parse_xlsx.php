@@ -13,7 +13,7 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp/')
     //$dir = '/path/to/tmp/dir';
 
     // Unzip
-    $zip = new ZipArchive();
+    $zip = new ZipArchive;
     if ($zip->open($inputFile) === true) 
     {
         $zip->extractTo($dir);
