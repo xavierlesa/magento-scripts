@@ -387,7 +387,7 @@ class CommandUtilMagento
 
     public function syncImages()
     {
-        global $STORE_DATA;
+        global $STORE_DATA, $array_images_files;
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
@@ -399,13 +399,15 @@ class CommandUtilMagento
 
         $ftp_list = $this->getFileTree($ftp, $path_parts);
 
-        _log(var_export($ftp_list, 1));
+        _log(var_export($array_images_files, 1));
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
     }
 
+    $array_images_files = array();
+
     public function getFileTree($ftp, $path)
     {
-        global $STORE_DATA;
+        global $STORE_DATA, $array_images_files;
         $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
 
         $ftp_list = $ftp->ftp_nlist($path);
@@ -417,7 +419,8 @@ class CommandUtilMagento
                 if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                 {
                     $_path = str_replace($path_parts, "", $path . DS . $dir);
-                    echo  $_path . "\r\n";
+                    #echo  $_path . "\r\n";
+                    $array_images_files[] = $_path;
                 }
                 else $this->getFileTree($ftp, $path . DS . $dir);
             }
