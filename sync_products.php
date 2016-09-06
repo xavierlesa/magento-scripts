@@ -411,19 +411,21 @@ class CommandUtilMagento
         global $STORE_DATA, $array_images_files;
         $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
 
-        $ftp_list = $ftp->ftp_nlist($path);
-        foreach($ftp_list as $dir)
+        if ($ftp_list = $ftp->ftp_nlist($path))
         {
-            if ($dir != '.' && $dir != '..') 
+            foreach($ftp_list as $dir)
             {
-                
-                if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
+                if ($dir != '.' && $dir != '..') 
                 {
-                    $_path = str_replace($path_parts, "", $path . DS . $dir);
-                    #echo  $_path . "\r\n";
-                    $array_images_files[] = $_path;
+
+                    if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
+                    {
+                        $_path = str_replace($path_parts, "", $path . DS . $dir);
+                        #echo  $_path . "\r\n";
+                        $array_images_files[] = $_path;
+                    }
+                    else $this->getFileTree($ftp, $path . DS . $dir);
                 }
-                else $this->getFileTree($ftp, $path . DS . $dir);
             }
         }
     }
