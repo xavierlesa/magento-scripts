@@ -32,6 +32,8 @@ $STORE_DATA = array(
   // 'is_active' => '1',
   );
 
+$array_images_files = array();
+
 
 // STORES
 $urban_store_id = 1;
@@ -403,7 +405,6 @@ class CommandUtilMagento
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
     }
 
-    $array_images_files = array();
 
     public function getFileTree($ftp, $path)
     {
