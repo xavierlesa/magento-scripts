@@ -887,7 +887,10 @@ class CommandUtilMagento
 
         $total_options = count($_options);
 
-        _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
+        if(is_array($attr_value) && count($attr_value))
+        {
+            _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
+        }
 
         if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
             $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
