@@ -650,17 +650,22 @@ class CommandUtilMagento
         if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
 
             // add attributes
-            _log("\033[33mAdd attribute color: " . $color . "\033[0m");
-            $attr_color = $this->getOrCreateAttributes('color', $color, $color);
-
+            if ($color)
+            {
+                _log("\033[33mAdd attribute color: " . $color . "\033[0m");
+                $attr_color = $this->getOrCreateAttributes('color', $color, $color);
+            }
             // set size attributes
-            if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu') {
-                _log("\033[33mAdd attribute size_letter: " . $size . "\033[0m");
-                $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
-            } 
-            else {
-                _log("\033[33mAdd attribute size: " . $size . "\033[0m");
-                $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
+            if ($size)
+            {
+                if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu') {
+                    _log("\033[33mAdd attribute size_letter: " . $size . "\033[0m");
+                    $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
+                } 
+                else {
+                    _log("\033[33mAdd attribute size: " . $size . "\033[0m");
+                    $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
+                }
             }
         }
 
@@ -845,7 +850,8 @@ class CommandUtilMagento
         $attr_code = mb_strtolower(trim($attr_code));
         $attr_label = ucfirst(mb_strtolower(trim($attr_label)));
 
-        if ( ! $attr_value == '' && ! is_array( $attr_value ) ) {
+        if ( ! $attr_value == '' && ! is_array( $attr_value ) )
+        {
             $attr_value = array(ucfirst(mb_strtolower(trim($attr_value))));
         }
 
@@ -855,11 +861,13 @@ class CommandUtilMagento
         // carga el attr
 
         // existe e cache?
-        if ( array_key_exists($attr_code, $this->_cached_attribute) ) {
+        if ( array_key_exists($attr_code, $this->_cached_attribute) )
+        {
             $attribute = $this->_cached_attribute[$attr_code];
-            _log("\033[37mLoad cached attribute\033[0m");
-        } elseif ( $attr = $attr_model->loadByCode('catalog_product', $attr_code) ) {
-
+            _log("\033[37mLoad cached attribute by code:\033[0m {code}", array('code' => $attr_code));
+        } 
+        elseif ( $attr = $attr_model->loadByCode('catalog_product', $attr_code) ) 
+        {
             // Add new options for an exsiting attribute
             _log("El attributo con ese code {code} existe\n", array('code' => $attr_code));
 
@@ -869,17 +877,20 @@ class CommandUtilMagento
 
             $this->_cached_attribute[$attr_code] = $attribute;
         }
-        else {
+        else 
+        {
             _log("!!\tEl attributo con code \"{code}\" no existe\n", array('code' => $attr_code));
             $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
             return $id;
         }
 
         $_options = array();
-        if ($attribute->usesSource()) {
+        if ($attribute->usesSource()) 
+        {
             $_options = $attribute->getSource()->getAllOptions(false);
         } 
-        else {
+        else 
+        {
             _log("No tiene opciones, usesSource Code: {code}, ID: {id}\n", array('code'=>$attr_code, 'id'=> $attribute->getID()));
             // Crea si no existe el valor para el attr.
             $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
@@ -887,23 +898,20 @@ class CommandUtilMagento
 
         $total_options = count($_options);
 
-        if(is_array($attr_value) && count($attr_value))
-        {
-            _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
+        _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
 
-            if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
-                $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
-            }
-            elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label'))) {
-                //_log("Attribute value exists, assign it to the product: " . $index_key . " -> " . var_export($_options[$index_key], true));
-                $id = $_options[$index_key]['value'];
-                $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
-            } else {
-                $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
-                $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
-            }
-
+        if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
+            $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
         }
+        elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label'))) {
+            //_log("Attribute value exists, assign it to the product: " . $index_key . " -> " . var_export($_options[$index_key], true));
+            $id = $_options[$index_key]['value'];
+            $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
+        } else {
+            $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
+            $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
+        }
+
         //for($i = 0; $i < $total_options; $i++) {
         //    
         //    _log("\033[37m " . $i . " -> " . $_options[$i]['label'] . "\033[0m");
