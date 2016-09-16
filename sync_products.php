@@ -890,20 +890,20 @@ class CommandUtilMagento
         if(is_array($attr_value) && count($attr_value))
         {
             _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
-        }
 
-        if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
-            $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
-        }
-        elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label'))) {
-            //_log("Attribute value exists, assign it to the product: " . $index_key . " -> " . var_export($_options[$index_key], true));
-            $id = $_options[$index_key]['value'];
-            $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
-        } else {
-            $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
-            $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
-        }
+            if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
+                $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
+            }
+            elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label'))) {
+                //_log("Attribute value exists, assign it to the product: " . $index_key . " -> " . var_export($_options[$index_key], true));
+                $id = $_options[$index_key]['value'];
+                $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
+            } else {
+                $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
+                $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
+            }
 
+        }
         //for($i = 0; $i < $total_options; $i++) {
         //    
         //    _log("\033[37m " . $i . " -> " . $_options[$i]['label'] . "\033[0m");
