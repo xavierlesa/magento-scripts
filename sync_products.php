@@ -576,7 +576,7 @@ class CommandUtilMagento
             $fila = 0;
 
             if (($gestor = fopen($file_data, "r")) !== false) {
-                while (($row = fgetcsv($gestor, 1000, ";")) !== false) {
+                while (($row = fgetcsv($gestor, 1000, $this->opt_csv)) !== false) {
                     // la primer fila tiene los encabezados, la salto
                     if ( $fila == 0 ) {
                         $this->csv_array_header = array_map("mb_strtolower", $row);
@@ -1280,6 +1280,7 @@ class CommandUtilMagento
         $shortopts  = "";
         $shortopts .= "f:";     // path to csv file
         $shortopts .= "i::";    // path for images
+        $shortopts .= "s::";    // path for images
         $shortopts .= "c";      // create product
         $shortopts .= "a";      // add category if not exists
         $shortopts .= "t";      // add attribute selector
@@ -1288,6 +1289,7 @@ class CommandUtilMagento
         $longopts  = array(
             "file:",            // path to csv file
             "images-path::",    // path for images
+            "csv-split::",      // CSV split
             "use-ftp::",        // use ftp
             "ftp-server:",      // ftp server
             "ftp-user:",        // ftp user
@@ -1312,6 +1314,7 @@ class CommandUtilMagento
                 "\r\n".
                 "-h, --help                              This help\r\n".
                 "-c, --commit                            Commit make changes permanent.\r\n".
+                "-s, --csv-split                         CSV split by , or ; (default \";\").\r\n".
                 "-i, --images-path=path/to/images        Path for images\r\n".
                 "\r\n".
                 "--use-ftp,\r\n".
@@ -1344,6 +1347,11 @@ class CommandUtilMagento
         $this->opt_images_path = ( 
             getattr($options['i'], null) == null ? 
             getattr($options['images-path'], '') : getattr($options['i'], '') 
+        ); 
+
+        $this->opt_csv = ( 
+            getattr($options['s'], null) == null ? 
+            getattr($options['csv-split'], ';') : getattr($options['c'], ';') 
         ); 
 
 
