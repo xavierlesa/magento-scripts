@@ -637,6 +637,8 @@ class CommandUtilMagento
         //
 
         // if first argument is an array try to convert to Product Model Object
+        _log("PRODUCT TYPE: " . $product_type);
+
         $product_type = $product_type ? $product_type : DEFAULT_PRODUCT_TYPE;
 
         // add category if does not exist
