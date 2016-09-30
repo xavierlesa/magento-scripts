@@ -1307,8 +1307,8 @@ class CommandUtilMagento
         if (!$options || array_key_exists("h", $options) || array_key_exists("help", $options)) { 
 
             print(
-                "Usage:\r\n\r\n"
-                "php sync_products.php \[options\] -f file.csv\r\n".
+                "Usage:\r\n\r\n".
+                "php sync_products.php [options] -f file.csv\r\n".
                 "\r\n".
                 "-h, --help                              This help\r\n".
                 "-c, --commit                            Commit make changes permanent.\r\n".
