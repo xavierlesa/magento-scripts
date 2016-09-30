@@ -1306,21 +1306,20 @@ class CommandUtilMagento
 
         if (!$options || array_key_exists("h", $options) || array_key_exists("help", $options)) { 
 
-            print("
-            Usage:
-
-            php sync_products.php [options] -f file.csv
-
-            -h, --help                              This help
-            -c, --commit                            Commit make changes permanent.
-            -i, --images-path=path/to/images        Path for images
-
-            --use-ftp,
-            --ftp-server=server.com
-            --ftp-user=user
-            --ftp-pass=mypass
-            --ftp-path=/route/to/path/
-            ");
+            print(
+                "Usage:\r\n\r\n"
+                "php sync_products.php [options] -f file.csv\r\n".
+                "\r\n".
+                "-h, --help                              This help\r\n".
+                "-c, --commit                            Commit make changes permanent.\r\n".
+                "-i, --images-path=path/to/images        Path for images\r\n".
+                "\r\n".
+                "--use-ftp,\r\n".
+                "--ftp-server=server.com\r\n".
+                "--ftp-user=user\r\n".
+                "--ftp-pass=mypass\r\n".
+                "--ftp-path=/route/to/path/\r\n"
+            );
             //    -a, --add-category                      Create [sub]category if not exists.
             //    
             //    -t, --add-attribute                     Create attribute
@@ -1331,192 +1330,192 @@ class CommandUtilMagento
 
             exit(1);
 
-            } 
+        } 
 
-            // Prevalidate options
+        // Prevalidate options
 
-            $this->opt_ftp = array();
+        $this->opt_ftp = array();
 
-            $this->opt_commit = ( 
+        $this->opt_commit = ( 
             getattr($options['c'], null) == null ? 
             getattr($options['commit'], false) : getattr($options['c'], false) 
-            ); 
+        ); 
 
-            $this->opt_images_path = ( 
+        $this->opt_images_path = ( 
             getattr($options['i'], null) == null ? 
             getattr($options['images-path'], '') : getattr($options['i'], '') 
-            ); 
+        ); 
 
 
-            if ($file_data = getattr($options['f'], false)) 
-            {
+        if ($file_data = getattr($options['f'], false)) 
+        {
             _log($file_data);
             $this->loadFileData($file_data);
-            }
-            elseif ($file_data = getattr($options['file'], false)) 
-            {
+        }
+        elseif ($file_data = getattr($options['file'], false)) 
+        {
             _log($file_data);
             $this->loadFileData($file_data);
-            }
-            elseif (array_key_exists('use-ftp', $options))
-            { 
+        }
+        elseif (array_key_exists('use-ftp', $options))
+        { 
             $this->opt_ftp = array(
-            'server'    => getattr($options['ftp-server']),
-            'user'      => getattr($options['ftp-user']),
-            'pass'      => getattr($options['ftp-pass']),
-            'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
+                'server'    => getattr($options['ftp-server']),
+                'user'      => getattr($options['ftp-user']),
+                'pass'      => getattr($options['ftp-pass']),
+                'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
             );
-            }
-            else 
-            {
+        }
+        else 
+        {
             echo "El archivo " . $file_data . " no se ha encontrado o no se puede acceder\r\n";
             exit(0);
-            }
+        }
 
-            $this->sync();
+        $this->sync();
 
-            exit(0);
-            }
+        exit(0);
+    }
 
-            }
+}
 
-            // UTILS
-            function getattr(&$var, $default=null)
-            {
-            return isset($var) ? $var : $default;
-            }
+// UTILS
+function getattr(&$var, $default=null)
+{
+    return isset($var) ? $var : $default;
+}
 
-            function pprint($str, $args=array())
-            {
-            $_str = $str;
-            foreach($args as $key => $val) {
-            $_str = preg_replace('[{'.$key.'}]', $val, $_str);
-            }
-            return $_str;
-            }
+function pprint($str, $args=array())
+{
+    $_str = $str;
+    foreach($args as $key => $val) {
+        $_str = preg_replace('[{'.$key.'}]', $val, $_str);
+    }
+    return $_str;
+}
 
-            function slugify($text)
-            {
-            // replace non letter or digits by -
-            $text = preg_replace('~[^\pL\d]+~u', '-', $text);
-            // transliterate
-            $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
-            // remove unwanted characters
-            $text = preg_replace('~[^-\w]+~', '', $text);
-            // trim
-            $text = trim($text, '-');
-            // remove duplicate -
-            $text = preg_replace('~-+~', '-', $text);
-            // lowercase
-            $text = mb_strtolower($text);
-            if (empty($text)) {
-            return $text;
-            }
-            return $text;
-            }
+function slugify($text)
+{
+    // replace non letter or digits by -
+    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+    // transliterate
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    // remove unwanted characters
+    $text = preg_replace('~[^-\w]+~', '', $text);
+    // trim
+    $text = trim($text, '-');
+    // remove duplicate -
+    $text = preg_replace('~-+~', '-', $text);
+    // lowercase
+    $text = mb_strtolower($text);
+    if (empty($text)) {
+        return $text;
+    }
+    return $text;
+}
 
-            function _log($message, $args=array(), $stdout = true)
-            {
-            $message = pprint($message, $args);
+function _log($message, $args=array(), $stdout = true)
+{
+    $message = pprint($message, $args);
 
-            if ($stdout) {
-            echo "[DEBUG] " . $message . "\r\n";
-            } else {
-            Mage::log($message, null, 'sync_products.log');
-            }
-            }
+    if ($stdout) {
+        echo "[DEBUG] " . $message . "\r\n";
+    } else {
+        Mage::log($message, null, 'sync_products.log');
+    }
+}
 
-            function prompt($message, $choices = null)
-            {
-            $handle = fopen ("php://stdin","r");
+function prompt($message, $choices = null)
+{
+    $handle = fopen ("php://stdin","r");
 
-            if (!$choices) {
+    if (!$choices) {
 
-            echo "\033[33m" . $message . "\033[0m: ";
-            $line = trim(fgets($handle));
-            $choices = array('/^([Yy]|[Yy]es|[Ss]|[Ss]i)$/' => true, '/^([Nn]|[Nn]o)$/' => false);
+        echo "\033[33m" . $message . "\033[0m: ";
+        $line = trim(fgets($handle));
+        $choices = array('/^([Yy]|[Yy]es|[Ss]|[Ss]i)$/' => true, '/^([Nn]|[Nn]o)$/' => false);
 
-            foreach($choices as $reg => $val) {
+        foreach($choices as $reg => $val) {
             if(preg_match($reg, trim($line))) return $val;
-            }
+        }
 
-            return null;
+        return null;
 
-            } else {
-            // array key -> (title, function)
+    } else {
+        // array key -> (title, function)
 
-            echo "\033[33m" . $message . "\033[0m: \r\n\r\n";
+        echo "\033[33m" . $message . "\033[0m: \r\n\r\n";
 
-            foreach($choices as $key => $opt) {
+        foreach($choices as $key => $opt) {
             echo "\t" . $key . ") " . $opt[0] . "\r\n";
-            }
+        }
 
-            echo "\r\nIngrese opción: ";
-            $line = trim(fgets($handle));
+        echo "\r\nIngrese opción: ";
+        $line = trim(fgets($handle));
 
-            //_log("\r\n". $line);
+        //_log("\r\n". $line);
 
-            if (array_key_exists($line, $choices)) {
+        if (array_key_exists($line, $choices)) {
             return $line; //$choices[$line];
-            } else return prompt($message, $choices);
+        } else return prompt($message, $choices);
 
-            }
+    }
 
-            fclose($handle);
+    fclose($handle);
 
-            }
+}
 
-            function boostrap()
-            {
+function boostrap()
+{
 
-            global $STORE_DATA;
-            // init requires
-            try {
-            // script en base /
-            if (file_exists('app/Mage.php' )) 
-            {
+    global $STORE_DATA;
+    // init requires
+    try {
+        // script en base /
+        if (file_exists('app/Mage.php' )) 
+        {
             require_once("app/Mage.php");
-            }
-            // script en script/ 
-            elseif (file_exists('../app/Mage.php' )) 
-            {
+        }
+        // script en script/ 
+        elseif (file_exists('../app/Mage.php' )) 
+        {
             require_once("../app/Mage.php");
-            } 
-            elseif (file_exists('/var/www/magento/app/Mage.php' )) 
-            {
+        } 
+        elseif (file_exists('/var/www/magento/app/Mage.php' )) 
+        {
             require_once('/var/www/magento/app/Mage.php');
-            }
-            else 
-            {
+        }
+        else 
+        {
             throw new Exception ('[/var/www/magento/]app/Mage.php does not exist');
-            }
-            }
-            catch(Exception $e) {    
-            echo "\r\nMessage : " . $e->getMessage();
-            echo "\r\nCode : " . $e->getCode();
-            echo "\r\n";
-            exit(1);
-            }
+        }
+    }
+    catch(Exception $e) {    
+        echo "\r\nMessage : " . $e->getMessage();
+        echo "\r\nCode : " . $e->getCode();
+        echo "\r\n";
+        exit(1);
+    }
 
-            //$mageFilename = 'app/Mage.php';
-            //require_once $mageFilename;
+    //$mageFilename = 'app/Mage.php';
+    //require_once $mageFilename;
 
-            Mage::setIsDeveloperMode(true);
-            ini_set('display_errors', 1);
-            umask(0);
-            Mage::app('admin');
-            Mage::register('isSecureArea', 1);
-            Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-            $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+    Mage::setIsDeveloperMode(true);
+    ini_set('display_errors', 1);
+    umask(0);
+    Mage::app('admin');
+    Mage::register('isSecureArea', 1);
+    Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
+    $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
 
-            define('DEFAULT_ATTRIBUTES', 4); // default
-            define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
-            define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
-            define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
+    define('DEFAULT_ATTRIBUTES', 4); // default
+    define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
+    define('DEFAULT_PRODUCT_STATUS', 1); // product status (1 - enabled, 2 - disabled)
+    define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
 
-            }
+}
 
 
-            // Start
-            $commands = new CommandUtilMagento;
-            $commands->init();
+// Start
+$commands = new CommandUtilMagento;
+$commands->init();
