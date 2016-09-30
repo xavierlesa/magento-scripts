@@ -1351,7 +1351,7 @@ class CommandUtilMagento
 
         $this->opt_csv = ( 
             getattr($options['s'], null) == null ? 
-            getattr($options['csv-split'], ';') : getattr($options['c'], ';') 
+            getattr($options['csv-split'], ';') : getattr($options['s'], ';') 
         ); 
 
 
