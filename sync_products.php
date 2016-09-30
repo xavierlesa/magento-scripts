@@ -272,7 +272,8 @@ class CommandUtilMagento
                     ucfirst(mb_strtolower($row[$this->row_category])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
-                    false); // NO COMMIT 
+                    //false); // NO COMMIT 
+                    true); // COMMIT
 
 
                 // Configuracion de atributos
@@ -299,7 +300,9 @@ class CommandUtilMagento
 
                 $configurableProductsData = array();
 
-                _log("Crea los " . (count($products) - 1) . " productos asociados al configurable"); 
+                _log("\tCrea los " . (count($products) - 1) . " productos asociados al configurable\r\n".
+                    "\t================================================================================\r\n");
+
                 foreach(array_slice($products, 1) as $row) {
                     // Create product instances
                     $simpleProduct = $this->createProduct(
@@ -320,7 +323,7 @@ class CommandUtilMagento
                         ucfirst(mb_strtolower($row[$this->row_category])),
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
-                        true); 
+                        true); // COMMIT 
 
                     $associatedArrayAttribues = [];
                     foreach($_attributes as $id => $_attribute) {
@@ -334,25 +337,6 @@ class CommandUtilMagento
                     }
 
                     $configurableProductsData[$simpleProduct->getId()] = $associatedArrayAttribues;
-
-                    //['920'] = id of a simple product associated with this configurable                        
-
-                    //array(
-                    //    '0' => array(
-                    //        'label'         => $simpleProduct->getAttributeText('color'),
-                    //        'attribute_id'  => $_attributes[0],
-                    //        'value_index'   => (int) $simpleProduct->getColor(),
-                    //        'is_percent'    => 0,
-                    //        'pricing_value' => $simpleProduct->getPrice()
-                    //    ),
-                    //    '1' => array(
-                    //        'label'         => $simpleProduct->getAttributeText('size'),
-                    //        'attribute_id'  => $_attributes[1],
-                    //        'value_index'   => (int) $simpleProduct->getSize(),
-                    //        'is_percent'    => 0,
-                    //        'pricing_value' => $simpleProduct->getPrice()
-                    //    )
-                    //);
 
                 }
 
