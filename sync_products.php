@@ -34,7 +34,6 @@ $STORE_DATA = array(
 
 $array_images_files = array();
 
-
 // STORES
 $urban_store_id = 1;
 $oneill_store_id = 2;
@@ -50,6 +49,30 @@ $oneill_parent_id = 3;
 define('STORE_ID', $urban_store_id); // ID del STORE VIEW NAME
 define('WEBSITE_ID', $urban_website_id); // ID del STORE VIEW NAME
 define('PARENT_ID', $urban_parent_id); // ID del root category
+
+
+// SHELL AND LOGS
+//Black        0;30     Dark Gray     1;30
+//Red          0;31     Light Red     1;31
+//Green        0;32     Light Green   1;32
+//Brown/Orange 0;33     Yellow        1;33
+//Blue         0;34     Light Blue    1;34
+//Purple       0;35     Light Purple  1;35
+//Cyan         0;36     Light Cyan    1;36
+//Light Gray   0;37     White         1;37
+
+define('BLACK', '\033[0;30');
+define('RED', '\033[0;31');
+define('GREEN', '\033[0;32');
+define('BROWN', '\033[0;33');
+define('BLUE', '\033[0;34');
+define('PURPLE', '\033[0;35');
+define('CYAN', '\033[0;36');
+define('LIGHT_GRAY', '\033[0;37');
+define('DARK_GRAY', '\033[1;30');
+define('YELLOW', '\033[1;33');
+define('WHITE', '\033[1;37');
+define('NC', '\033[0m'); # No Color
 
 class ftp
 {
@@ -357,14 +380,14 @@ class CommandUtilMagento
                     $configProduct->save();
                 } catch(Exception $e) {
 
-                    _log("ERROR al guarar el producto configurable\n" . $e->getMessage());
+                    _log(CYAN . "ERROR al guarar el producto configurable\n" . NC . $e->getMessage());
 
                     try {
                         _log("Try with getResource -> save");
                         $configProduct->getResource()->save($configProduct);
                     }
                     catch(Exception $e) {
-                        _log("ERROR al guarar el producto configurable desde el resocurce\n" . $e->getMessage());
+                        _log(RED . "ERROR al guarar el producto configurable desde el resocurce\n" . NC . $e->getMessage());
                     }
 
                 }
