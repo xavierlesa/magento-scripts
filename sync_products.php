@@ -292,8 +292,8 @@ class CommandUtilMagento
                     ucfirst(mb_strtolower($row[$this->row_category])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
-                    //false); // NO COMMIT 
-                    true); // COMMIT
+                    false); // NO COMMIT 
+                    //true); // COMMIT
 
 
                 // Configuracion de atributos
@@ -693,15 +693,6 @@ class CommandUtilMagento
 
         _log("\033[33mAdd attribute manufacturer: " . $manufacturer . "\033[0m");
         $attr_manufacturer = $this->getOrCreateAttributes('manufacturer', $manufacturer, $manufacturer);
-
-        //if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_SIMPLE) {
-        //    $product_visibility = DEFAULT_PRODUCT_VISIBILITY;
-        //} elseif ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
-        //    $product_visibility = DEFAULT_PRODUCT_VISIBILITY;
-        //} else {
-        //    $product_visibility = Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE;
-        //}
-
         $product_visibility = $product_visibility === null ? DEFAULT_PRODUCT_VISIBILITY : $product_visibility;
 
         try {
@@ -740,8 +731,8 @@ class CommandUtilMagento
                 ->setWebsiteIds(array())                   // website ID the product is assigned to, as an array
                 ->setAttributeSetId($attribute_set_id)      // ID of a attribute set named 'default'
                 ->setTypeId($product_type)                  // product type
-                // ->setCreatedAt(strtotime('now'))         // product creation time
-                //->setUpdatedAt(strtotime('now'))          // product update time
+                 ->setCreatedAt(strtotime('now'))         // product creation time
+                ->setUpdatedAt(strtotime('now'))          // product update time
 
                 ->setName($name)                            // product name
                 ->setDescription($description)              // Long product description
@@ -766,9 +757,7 @@ class CommandUtilMagento
                 )
 
                 ->setCategoryIds($array_categories)         // Assign product to categories
-
                 ->setManufacturer($attr_manufacturer)       // Manufacturer id
-
                 ->setCodProduct($attr_cod_product)          // Cod Product internal reference
                 ->setNewsFromDate(strtotime('now'))         // Product set as new from
                 ->setNewsToDate()                           // Product set as new to
