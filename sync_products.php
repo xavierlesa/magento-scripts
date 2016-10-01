@@ -262,6 +262,7 @@ class CommandUtilMagento
         foreach($array_attr as $code) {
             $attr = Mage::getModel('catalog/resource_eav_attribute')->loadByCode('catalog_product', $code);
             $array_attribues[$code] = $attr;
+            _log("array_attribues[$code] = $attr");
         }
 
         foreach( $this->csv_grouped_array_data as $key => $products ) {
@@ -303,12 +304,12 @@ class CommandUtilMagento
                 if (mb_strtolower($row[$this->row_category]) == 'indumentaria') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
-                        $array_attribues['size']->getId() => $array_attribues['size']
+                        $array_attribues['size_letter']->getId() => $array_attribues['size_letter']
                     );
                 } elseif (mb_strtolower($row[$this->row_category]) == 'calzado') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
-                        $array_attribues['number']->getId() => $array_attribues['number']
+                        $array_attribues['size']->getId() => $array_attribues['size']
                     );
 
                 } else {
