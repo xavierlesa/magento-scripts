@@ -61,18 +61,15 @@ define('PARENT_ID', $urban_parent_id); // ID del root category
 //Cyan         0;36     Light Cyan    1;36
 //Light Gray   0;37     White         1;37
 
-define('BLACK', '\033[0;30m');
-define('RED', '\033[0;31m');
-define('GREEN', '\033[0;32m');
-define('BROWN', '\033[0;33m');
-define('BLUE', '\033[0;34m');
-define('PURPLE', '\033[0;35m');
-define('CYAN', '\033[0;36m');
-define('LIGHT_GRAY', '\033[0;37m');
-define('DARK_GRAY', '\033[1;30m');
-define('YELLOW', '\033[1;33m');
-define('WHITE', '\033[1;37m');
-define('NC', '\033[0m'); # No Color
+define('BLACK',         '\033[30m');
+define('RED',           '\033[31m');
+define('GREEN',         '\033[32m');
+define('BROWN',         '\033[33m');
+define('BLUE',          '\033[34m');
+define('PURPLE',        '\033[35m');
+define('CYAN',          '\033[36m');
+define('LIGHT_GRAY',    '\033[37m');
+define('NC',            '\033[0m'); # No Color
 
 class ftp
 {
@@ -349,15 +346,31 @@ class CommandUtilMagento
                         true); // COMMIT 
 
                     $associatedArrayAttribues = [];
-                    foreach($_attributes as $id => $_attribute) {
+
+                    //foreach($_attributes as $id => $_attribute) {
+                    //    $associatedArrayAttribues[] = array(
+                    //        'label'         => $_attribute->getLabel(),
+                    //        'attribute_id'  => $id,
+                    //        'value_index'   => (int) $simpleProduct->getColor(),
+                    //        'is_percent'    => 0,
+                    //        'pricing_value' => $simpleProduct->getPrice()
+                    //    );
+                    //}
+
+                    foreach($_attributes as $attrCode){
+                        $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product',$attrCode->code);
+                        $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
                         $associatedArrayAttribues[] = array(
-                            'label'         => $_attribute->getLabel(),
-                            'attribute_id'  => $id,
-                            'value_index'   => (int) $simpleProduct->getColor(),
-                            'is_percent'    => 0,
-                            'pricing_value' => $simpleProduct->getPrice()
+                           'id'             => $configurableAtt->getId(),
+                           'label'          => $configurableAtt->getLabel(),
+                           'position'       => $super_attribute->getPosition(),
+                           'values'         => $configurableAtt->getPrices() ? $configProduct->getPrices() : array(),
+                           'attribute_id'   => $super_attribute->getId(),
+                           'attribute_code' => $super_attribute->getAttributeCode(),
+                           'frontend_label' => $super_attribute->getFrontend()->getLabel(),
                         );
                     }
+
 
                     $configurableProductsData[$simpleProduct->getId()] = $associatedArrayAttribues;
 
