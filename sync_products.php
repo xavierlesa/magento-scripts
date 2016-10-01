@@ -61,17 +61,17 @@ define('PARENT_ID', $urban_parent_id); // ID del root category
 //Cyan         0;36     Light Cyan    1;36
 //Light Gray   0;37     White         1;37
 
-define('BLACK', '\033[0;30');
-define('RED', '\033[0;31');
-define('GREEN', '\033[0;32');
-define('BROWN', '\033[0;33');
-define('BLUE', '\033[0;34');
-define('PURPLE', '\033[0;35');
-define('CYAN', '\033[0;36');
-define('LIGHT_GRAY', '\033[0;37');
-define('DARK_GRAY', '\033[1;30');
-define('YELLOW', '\033[1;33');
-define('WHITE', '\033[1;37');
+define('BLACK', '\033[0;30m');
+define('RED', '\033[0;31m');
+define('GREEN', '\033[0;32m');
+define('BROWN', '\033[0;33m');
+define('BLUE', '\033[0;34m');
+define('PURPLE', '\033[0;35m');
+define('CYAN', '\033[0;36m');
+define('LIGHT_GRAY', '\033[0;37m');
+define('DARK_GRAY', '\033[1;30m');
+define('YELLOW', '\033[1;33m');
+define('WHITE', '\033[1;37m');
 define('NC', '\033[0m'); # No Color
 
 class ftp
@@ -375,7 +375,7 @@ class CommandUtilMagento
                     $configProduct->setConfigurableAttributesData($configurableAttributesData);
                     //$configProduct->save();
                 } else {
-                    _log(RED . "existingAtt as: " . NC . "\r\n" . var_dump($existingAtt, 1));
+                    _log(RED . "existingAtt as: " . NC);
                 }
 
                 //$configProduct->setCanSaveConfigurableAttributes(true);
