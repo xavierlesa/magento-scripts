@@ -684,7 +684,7 @@ class CommandUtilMagento
         
         $product_model = Mage::getModel('catalog/product');
 
-        if ( $product_model->load($product_model->getIdBySku($data['sku'])) )
+        if ( $product_model->load($product_model->getIdBySku($sku)) )
         {
             // solo actualiza el precio del producto, no lo vuelve a crear
             _log("Actualiza el precio del producto $sku -> $price");
