@@ -357,10 +357,17 @@ class CommandUtilMagento
                     //    );
                     //}
 
+                    $configurableProductsData[$simpleProduct->getId()] = $associatedArrayAttribues;
+
+
+                    // ASOCIA LOS ATRIBUTOS y gaurda la instanci
+
                     foreach($_attributes as $attrCode){
-                        $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product',$attrCode->code);
+
+                        $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', $attrCode->code);
                         $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
-                        $associatedArrayAttribues[] = array(
+
+                        $newAttributes[] = array(
                            'id'             => $configurableAtt->getId(),
                            'label'          => $configurableAtt->getLabel(),
                            'position'       => $super_attribute->getPosition(),
@@ -371,25 +378,28 @@ class CommandUtilMagento
                         );
                     }
 
+                    $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
 
-                    $configurableProductsData[$simpleProduct->getId()] = $associatedArrayAttribues;
-
+                    if(empty($existingAtt) && !empty($newAttributes)){
+                        $configProduct->setCanSaveConfigurableAttributes(true);
+                        $configProduct->setConfigurableAttributesData($newAttributes);
+                        $configProduct->save();
+                    }
                 }
 
-                //_log("_attributes: " . var_export($_attributes, true));
-                $configProduct->getTypeInstance()->setUsedProductAttributeIds(array_keys($_attributes)); //attribute ID of attribute 'color' in my store
-                $configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
+                //$configProduct->getTypeInstance()->setUsedProductAttributeIds(array_keys($_attributes)); //attribute ID of attribute 'color' in my store
+                //$configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
 
-                $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
+                //$existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
 
-                if(empty($existingAtt) && !empty($configurableAttributesData)){
-                    _log(RED . "setConfigurableAttributesData as: " . NC . "\r\n" . var_export($configurableAttributesData, 1));
-                    $configProduct->setCanSaveConfigurableAttributes(true);
-                    $configProduct->setConfigurableAttributesData($configurableAttributesData);
-                    //$configProduct->save();
-                } else {
-                    _log(RED . "existingAtt as: " . NC);
-                }
+                //if(empty($existingAtt) && !empty($configurableAttributesData)){
+                //    _log(RED . "setConfigurableAttributesData as: " . NC . "\r\n" . var_export($configurableAttributesData, 1));
+                //    $configProduct->setCanSaveConfigurableAttributes(true);
+                //    $configProduct->setConfigurableAttributesData($configurableAttributesData);
+                //    //$configProduct->save();
+                //} else {
+                //    _log(RED . "existingAtt as: " . NC);
+                //}
 
                 //$configProduct->setCanSaveConfigurableAttributes(true);
                 //$configProduct->setConfigurableAttributesData($configurableAttributesData);
@@ -399,32 +409,6 @@ class CommandUtilMagento
 
                 //_log("configurableAttributesData: " . var_export($configurableAttributesData, true));
                 //_log("configurableProductsData: " . var_export($configurableProductsData, true));
-
-
-//                foreach($configAttrCodes as $attrCode){
-//
-//                    $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product',$attrCode->code);
-//                    $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
-//
-//                    $newAttributes[] = array(
-//                       'id'             => $configurableAtt->getId(),
-//                       'label'          => $configurableAtt->getLabel(),
-//                       'position'       => $super_attribute->getPosition(),
-//                       'values'         => $configurableAtt->getPrices() ? $configProduct->getPrices() : array(),
-//                       'attribute_id'   => $super_attribute->getId(),
-//                       'attribute_code' => $super_attribute->getAttributeCode(),
-//                       'frontend_label' => $super_attribute->getFrontend()->getLabel(),
-//                    );
-//                }
-//
-//                $existingAtt = $product->getTypeInstance()->getConfigurableAttributes();
-//
-//                if(empty($existingAtt) && !empty($newAttributes)){
-//                    $configProduct->setCanSaveConfigurableAttributes(true);
-//                    $configProduct->setConfigurableAttributesData($newAttributes);
-//                    $configProduct->save();
-//
-//                }
 
 
                 try {
