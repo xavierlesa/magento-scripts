@@ -374,6 +374,8 @@ class CommandUtilMagento
                     $configProduct->setCanSaveConfigurableAttributes(true);
                     $configProduct->setConfigurableAttributesData($configurableAttributesData);
                     //$configProduct->save();
+                } else {
+                    _log(RED . "existingAtt as: " . NC . "\r\n" . var_export($existingAtt, 1));
                 }
 
                 //$configProduct->setCanSaveConfigurableAttributes(true);
