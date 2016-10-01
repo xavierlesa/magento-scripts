@@ -157,10 +157,10 @@ class CommandUtilMagento
         $col_category = $this->row_category;
         $col_subcategory = $this->row_subcategory;
 
-        if ( count($this->csv_array_header) === 2 or 
-            ( !array_key_exists($this->row_category, $this->csv_array_header) and 
-            !array_key_exists($this->row_subcategory, $this->csv_array_header) ) 
-        ) {
+        if ( count($this->csv_array_header) === 2 
+            or ( !array_key_exists($this->row_category, $this->csv_array_header) 
+            and !array_key_exists($this->row_subcategory, $this->csv_array_header) ) )
+        {
 
             $col_category = 0;
             $col_subcategory = 1;
@@ -168,7 +168,8 @@ class CommandUtilMagento
 
         _log(var_export($this->csv_array_header, true ));
 
-        foreach ($this->csv_array_data as $row) {
+        foreach ($this->csv_array_data as $row) 
+        {
             $this->getOrCreateCategories(array($row[$col_category], $row[$col_subcategory]), null, $this->opt_commit);
         }
 
@@ -189,7 +190,8 @@ class CommandUtilMagento
             $this->row_subcategory,
             $this->row_price);
 
-        if (count(array_intersect($required, $this->csv_array_header)) !== count($required)) {
+        if (count(array_intersect($required, $this->csv_array_header)) !== count($required)) 
+        {
             _log("Error el archivo no corresponde al formato de columnas " . implode(', ', $required));
 
             _log("Requeridas: \r\n" . var_export($required, true));
@@ -205,7 +207,8 @@ class CommandUtilMagento
         $_total_config = 0;
         $_total_simple = 0;
 
-        foreach ($this->csv_grouped_array_data as $key => $val) {
+        foreach ($this->csv_grouped_array_data as $key => $val) 
+        {
             if(count($val) > 1) $_total_config++;
             else $_total_simple++;
         }
@@ -221,8 +224,10 @@ class CommandUtilMagento
         // Sincroniza solo los productos simples.
         echo "syncSimpleProducts\r\n";
 
-        foreach( $this->csv_grouped_array_data as $key => $products ) {
-            if(count($products) == 1) {
+        foreach( $this->csv_grouped_array_data as $key => $products ) 
+        {
+            if(count($products) == 1) 
+            {
                 $row = $products[0];
 
                 _log("Preparando producto {sku} {descripcion}", $row);
@@ -257,16 +262,19 @@ class CommandUtilMagento
 
 
         // resuelve una sola vez los atributos posibles
-        $array_attr = array('color', 'size', 'number');
+        $array_attr = array('color', 'size', 'size_letter');
         $array_attribues = [];
-        foreach($array_attr as $code) {
+        foreach($array_attr as $code) 
+        {
             $attr = Mage::getModel('catalog/resource_eav_attribute')->loadByCode('catalog_product', $code);
             $array_attribues[$code] = $attr;
             _log("array_attribues[".$code."] = ".var_export($attr,1));
         }
 
-        foreach( $this->csv_grouped_array_data as $key => $products ) {
-            if(count($products) > 1) {
+        foreach( $this->csv_grouped_array_data as $key => $products )
+        {
+            if(count($products) > 1) 
+            {
 
                 $row = $products[0];
 
@@ -294,25 +302,29 @@ class CommandUtilMagento
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
                     false); // NO COMMIT 
-                    //true); // COMMIT
 
 
                 // Configuracion de atributos
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-                if (mb_strtolower($row[$this->row_category]) == 'indumentaria') {
+                if (mb_strtolower($row[$this->row_category]) == 'indumentaria')
+                {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['size_letter']->getId() => $array_attribues['size_letter']
                     );
-                } elseif (mb_strtolower($row[$this->row_category]) == 'calzado') {
+                } 
+                elseif (mb_strtolower($row[$this->row_category]) == 'calzado')
+                {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['size']->getId() => $array_attribues['size']
                     );
 
-                } else {
+                } 
+                else 
+                {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color']
                     );
@@ -326,9 +338,9 @@ class CommandUtilMagento
                 $configProduct->setConfigurableAttributesData($configurableAttributesData);
                 
                 
-                // ASOCIA LOS ATRIBUTOS y gaurda la instancia
-                foreach($_attributes as $attrCode){
-
+                // ASOCIA LOS ATRIBUTOS y guarda la instancia
+                foreach($_attributes as $attrCode)
+                {
                     $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', $attrCode->code);
                     $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
 
@@ -345,7 +357,8 @@ class CommandUtilMagento
 
                 $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
 
-                if(empty($existingAtt) && !empty($newAttributes)){
+                if(empty($existingAtt) && !empty($newAttributes))
+                {
                     $configProduct->setCanSaveConfigurableAttributes(true);
                     $configProduct->setConfigurableAttributesData($newAttributes);
                     $configProduct->save();
@@ -355,10 +368,11 @@ class CommandUtilMagento
 
                 $configurableProductsData = array();
 
-                _log("\tCrea los " . (count($products) - 1) . " productos asociados al configurable\r\n".
-                    "\t================================================================================\r\n");
+                _log("Crea los " . (count($products) - 1) . " productos asociados al configurable\r\n".
+                    "================================================================================\r\n");
 
-                foreach(array_slice($products, 1) as $row) {
+                foreach(array_slice($products, 1) as $row)
+                {
                     // Create product instances
                     $simpleProduct = $this->createProduct(
                         $row[$this->row_sku], 
@@ -385,17 +399,22 @@ class CommandUtilMagento
 
                 $configProduct->setConfigurableProductsData($configurableProductsData); // asocia los productos simples al configurable
 
-                try {
+                try 
+                {
                     $configProduct->save();
-                } catch(Exception $e) {
+                } 
+                catch(Exception $e) 
+                {
 
                     _log(RED . "ERROR al guarar el producto configurable\n" . NC . $e->getMessage());
 
-                    try {
+                    try 
+                    {
                         _log("Try with getResource -> save");
                         $configProduct->getResource()->save($configProduct);
                     }
-                    catch(Exception $e) {
+                    catch(Exception $e)
+                    {
                         _log(RED . "ERROR al guarar el producto configurable desde el resocurce\n" . NC . $e->getMessage());
                     }
 
@@ -460,7 +479,8 @@ class CommandUtilMagento
 
         /* @var $indexCollection Mage_Index_Model_Resource_Process_Collection */
         $indexCollection = Mage::getModel('index/process')->getCollection();
-        foreach ($indexCollection as $index) {
+        foreach ($indexCollection as $index)
+        {
             /* @var $index Mage_Index_Model_Process */
             $index->reindexAll();
         }
@@ -572,7 +592,8 @@ class CommandUtilMagento
 
         //echo var_export($col, True);
 
-        //foreach ($csv as $row) {      
+        //foreach ($csv as $row)
+        //{      
         //    $array[] = $row[$col]; 
         //}
 
@@ -591,17 +612,23 @@ class CommandUtilMagento
         {
             $fila = 0;
 
-            if (($gestor = fopen($file_data, "r")) !== false) {
-                while (($row = fgetcsv($gestor, 1000, $this->opt_csv)) !== false) {
+            if (($gestor = fopen($file_data, "r")) !== false)
+            {
+                while (($row = fgetcsv($gestor, 1000, $this->opt_csv)) !== false)
+                {
                     // la primer fila tiene los encabezados, la salto
-                    if ( $fila == 0 ) {
+                    if ( $fila == 0 )
+                    {
                         $this->csv_array_header = array_map("mb_strtolower", $row);
                         $fila++;
                         continue;
                     }
-                    if ($flat) {
+                    if ($flat)
+                    {
                         $this->csv_array_data[] = $row;
-                    } else {
+                    } 
+                    else 
+                    {
                         $this->csv_array_data[] = array_combine($this->csv_array_header, $row);
                     }
 
@@ -626,13 +653,17 @@ class CommandUtilMagento
 
         $grouparr = array();
 
-        foreach ($array as $key => $val) {
+        foreach ($array as $key => $val)
+        {
             //_log("groupArray: " . $key . " => " . $val[$arg]);
 
-            if (array_key_exists($val[$arg], $grouparr)) {
+            if (array_key_exists($val[$arg], $grouparr))
+            {
                 // existe en el array ese key, asocia un nuevo item
                 $grouparr[$val[$arg]][] = $val;
-            } else {
+            } 
+            else 
+            {
                 $grouparr[$val[$arg]] = array($val);
             }
 
@@ -665,8 +696,8 @@ class CommandUtilMagento
         $attr_size = '';
         $attr_size_l = '';
 
-        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
-
+        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)
+        {
             // add attributes
             if ($color)
             {
@@ -676,7 +707,8 @@ class CommandUtilMagento
             // set size attributes
             if ($size)
             {
-                if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu') {
+                if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu')
+                {
                     _log("\033[33mAdd attribute size_letter: " . $size . "\033[0m");
                     $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
                 } 
@@ -697,7 +729,8 @@ class CommandUtilMagento
         $cost = null;
 
         if (!$attribute_set) $attribute_set = 'Default';
-        if (! $attribute_set_id = $this->getAttributeSetByName($attribute_set) ) {
+        if (! $attribute_set_id = $this->getAttributeSetByName($attribute_set) )
+        {
             $attribute_set_id = DEFAULT_ATTRIBUTES;
         } 
 
@@ -705,7 +738,8 @@ class CommandUtilMagento
         $attr_manufacturer = $this->getOrCreateAttributes('manufacturer', $manufacturer, $manufacturer);
         $product_visibility = $product_visibility === null ? DEFAULT_PRODUCT_VISIBILITY : $product_visibility;
 
-        try {
+        try 
+        {
 
             _log("Try to create a new product.\n"
                 ."STORE_ID: {store_id}\n"
@@ -806,33 +840,43 @@ class CommandUtilMagento
                 ; // close product
 
 
-            if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)
+            {
 
                 $product_model->setColor($attr_color);            // Color
-                if ($attr_cod_product) {
+                if ($attr_cod_product)
+                {
                     $product_model->setCodProduct($cod_product);
                 }
-
-                if ($attr_size) {
+                if ($attr_size)
+                {
                     _log("try to add size " . $attr_size); 
                     $product_model->setSize($attr_size);
-                } elseif ($attr_size_l) {
+                } 
+                elseif ($attr_size_l)
+                {
                     _log("try to add size_l " . $attr_size_l); 
                     $product_model->setSizeLetter($attr_size_l);
                 }
 
             }
 
-            if($commit) {
-                try {
+            if($commit)
+            {
+                try 
+                {
                     $product_model->save();
-                } catch(Exception $e) {
+                } 
+                catch(Exception $e)
+                {
                     _log("ERROR product_model\n" . $e->getMessage());
-                    try {
+                    try 
+                    {
                         _log("Try with getResource -> save");
                         $product_model->getResource()->save($product_model);
                     }
-                    catch(Exception $e) {
+                    catch(Exception $e)
+                    {
                         _log("ERROR product_model resource\n" . $e->getMessage());
                     }
                 }
@@ -841,7 +885,8 @@ class CommandUtilMagento
             _log("\033[32mProducto " . ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ? 'Configurable' : 'Simple') . " creado " . $product_model->getId() . "\033[0m");
             return $product_model;
         } 
-        catch(Exception $e) {
+        catch(Exception $e)
+        {
             _log("ERROR product_model\n" . $e->getMessage());
         }
 
@@ -907,23 +952,28 @@ class CommandUtilMagento
 
         _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
 
-        if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) ) {
+        if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) )
+        {
             $id = $this->_cached_attribute[$attr_code . "-" . $attr_value[0]];
         }
-        elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label'))) {
+        elseif ($index_key = array_search($attr_value[0], array_column($_options, 'label')))
+        {
             //_log("Attribute value exists, assign it to the product: " . $index_key . " -> " . var_export($_options[$index_key], true));
             $id = $_options[$index_key]['value'];
             $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
-        } else {
+        } 
+        else {
             $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
             $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
         }
 
-        //for($i = 0; $i < $total_options; $i++) {
+        //for($i = 0; $i < $total_options; $i++)
+        //{
         //    
         //    _log("\033[37m " . $i . " -> " . $_options[$i]['label'] . "\033[0m");
 
-        //    if ( $_options[$i]['label'] == $attr_value[0] ) {
+        //    if ( $_options[$i]['label'] == $attr_value[0] )
+        //    {
         //        _log("Attribute value exists, assign it to the product:\n" . $attr_value[0] . ": " . $_options[$i]['value']);
         //        $id = $_options[$i]['value'];
         //        break;
@@ -1072,32 +1122,40 @@ class CommandUtilMagento
         catch(Exception $ex)
         {
             //_log($ex->getMessage());
-            if($ex->getMessage() == "Attribute with the same code already exists.") {
-                if(is_array($options)){
-                    foreach($options as $_opt){
+            if($ex->getMessage() == "Attribute with the same code already exists.")
+            {
+                if(is_array($options))
+                {
+                    foreach($options as $_opt)
+                    {
                         $_value_id = $this->addAttributeValue($attributeCode, $_opt);
                     }
 
-                } else {
+                } 
+                else {
                     _log("Attribute [$labelText] could not be saved: " . $ex->getMessage());
                     return false;
                 }
             }
         }
 
-        if(is_array($options)){
-            foreach($options as $_opt){
+        if(is_array($options))
+        {
+            foreach($options as $_opt)
+            {
                 $_value_id = $this->addAttributeValue($attributeCode, $_opt);
             }
         }
 
-        //try {
+        //try 
+        //{
         //    // hack label
         //    echo "Add AttributeLabel (" . $model->getAttributeLabel() . ") -> " . $labelText . "\n";
         //    $model->setAttributeLabel($labelText);
         //    $model->save();
         //}
-        //catch(Exception $ex) {
+        //catch(Exception $ex)
+        //{
         //    echo $ex->getMessage()."\n";
         //}
 
@@ -1182,36 +1240,44 @@ class CommandUtilMagento
 
         $parentId = $parentId ? $parentId : PARENT_ID;
 
-        if( ! is_array($stringId) ) {
+        if( ! is_array($stringId) )
+        {
             $_stringIds = split("/", $stringId);
         } 
-        else {
+        else 
+        {
             $_stringIds = $stringId;
         }
 
         $_arrayIds = array();
 
-        for($i = 0; $i < count($_stringIds); $i++) {
-
-            if($i == 0 || !$commit) {
+        for($i = 0; $i < count($_stringIds); $i++)
+        {
+            if($i == 0 || !$commit)
+            {
                 $_parentId = $parentId;
             }
-            else {
+            else 
+            {
                 $_parentId = $_arrayIds[$i-1];
             }
 
             $_str_category = ucfirst(mb_strtolower($_stringIds[$i]));
 
             // chequea en cache si no existe así no hace hit en la DB
-            if ( ! array_key_exists($_parentId . "-" . $_str_category, $this->_cached_category) ) {
+            if ( ! array_key_exists($_parentId . "-" . $_str_category, $this->_cached_category) )
+            {
 
-                if ( ! ( $_category = $this->_categoryExists($_str_category, $_parentId) ) ) {
+                if ( ! ( $_category = $this->_categoryExists($_str_category, $_parentId) ) )
+                {
 
                     _log("Category \"" . $_str_category . "\" does not exists, try to ceate it");
 
                     if ($commit) $_category = $this->_createCategory($_str_category, slugify($_str_category), $_parentId);
 
-                } else {
+                } 
+                else 
+                {
                     _log("Category \"" . $_str_category . "\" exists, SKIP");
                 }
 
@@ -1220,7 +1286,9 @@ class CommandUtilMagento
                 // guarda en cache
                 $this->_cached_category[$_parentId . "-" . $_str_category] = $_category->getId();
 
-            } else {
+            } 
+            else 
+            {
                 $_arrayIds[$i] = $this->_cached_category[$_parentId . "-" . $_str_category]; 
             }
         }
@@ -1243,10 +1311,13 @@ class CommandUtilMagento
             ->getFirstItem()    // Assuming your category names are unique ??
             ;
 
-        if (null !== $childCategory->getId()) {
+        if (null !== $childCategory->getId())
+        {
             _log("[SKIP] Category: " . $childCategory->getData('name') . " exists");
             return $childCategory;
-        } else {
+        } 
+        else 
+        {
             _log("Category not found");
             return false;
         }
@@ -1261,7 +1332,8 @@ class CommandUtilMagento
         //  Try to create a new Category
         //
 
-        try {
+        try 
+        {
             $category = Mage::getModel('catalog/category');
             $category->setName($name);
             $category->setUrlKey($url);
@@ -1273,7 +1345,9 @@ class CommandUtilMagento
             $category->setPath($parentCategory->getPath());
             $category->save();
             return $category;
-        } catch(Exception $e) {
+        } 
+        catch(Exception $e)
+        {
             print_r($e);
         }
 
@@ -1313,8 +1387,8 @@ class CommandUtilMagento
 
         $options = getopt($shortopts, $longopts);
 
-        if (!$options || array_key_exists("h", $options) || array_key_exists("help", $options)) { 
-
+        if (!$options || array_key_exists("h", $options) || array_key_exists("help", $options))
+        { 
             print(
                 "Usage:\r\n\r\n".
                 "php sync_products.php [options] -f file.csv\r\n".
@@ -1403,7 +1477,8 @@ function getattr(&$var, $default=null)
 function pprint($str, $args=array())
 {
     $_str = $str;
-    foreach($args as $key => $val) {
+    foreach($args as $key => $val)
+    {
         $_str = preg_replace('[{'.$key.'}]', $val, $_str);
     }
     return $_str;
@@ -1423,7 +1498,8 @@ function slugify($text)
     $text = preg_replace('~-+~', '-', $text);
     // lowercase
     $text = mb_strtolower($text);
-    if (empty($text)) {
+    if (empty($text))
+    {
         return $text;
     }
     return $text;
@@ -1433,9 +1509,12 @@ function _log($message, $args=array(), $stdout = true)
 {
     $message = pprint($message, $args);
 
-    if ($stdout) {
+    if ($stdout)
+    {
         echo "[DEBUG] " . $message . "\r\n";
-    } else {
+    }
+    else 
+    {
         Mage::log($message, null, 'sync_products.log');
     }
 }
@@ -1444,24 +1523,29 @@ function prompt($message, $choices = null)
 {
     $handle = fopen ("php://stdin","r");
 
-    if (!$choices) {
+    if (!$choices)
+    {
 
         echo "\033[33m" . $message . "\033[0m: ";
         $line = trim(fgets($handle));
         $choices = array('/^([Yy]|[Yy]es|[Ss]|[Ss]i)$/' => true, '/^([Nn]|[Nn]o)$/' => false);
 
-        foreach($choices as $reg => $val) {
+        foreach($choices as $reg => $val)
+        {
             if(preg_match($reg, trim($line))) return $val;
         }
 
         return null;
 
-    } else {
+    } 
+    else 
+    {
         // array key -> (title, function)
 
         echo "\033[33m" . $message . "\033[0m: \r\n\r\n";
 
-        foreach($choices as $key => $opt) {
+        foreach($choices as $key => $opt)
+        {
             echo "\t" . $key . ") " . $opt[0] . "\r\n";
         }
 
@@ -1470,9 +1554,11 @@ function prompt($message, $choices = null)
 
         //_log("\r\n". $line);
 
-        if (array_key_exists($line, $choices)) {
+        if (array_key_exists($line, $choices))
+        {
             return $line; //$choices[$line];
-        } else return prompt($message, $choices);
+        } 
+        else return prompt($message, $choices);
 
     }
 
@@ -1485,7 +1571,8 @@ function boostrap()
 
     global $STORE_DATA;
     // init requires
-    try {
+    try 
+    {
         // script en base /
         if (file_exists('app/Mage.php' )) 
         {
@@ -1505,7 +1592,8 @@ function boostrap()
             throw new Exception ('[/var/www/magento/]app/Mage.php does not exist');
         }
     }
-    catch(Exception $e) {    
+    catch(Exception $e)
+    {    
         echo "\r\nMessage : " . $e->getMessage();
         echo "\r\nCode : " . $e->getCode();
         echo "\r\n";
