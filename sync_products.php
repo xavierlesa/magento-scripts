@@ -300,7 +300,6 @@ class CommandUtilMagento
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-
                 if (mb_strtolower($row[$this->row_category]) == 'indumentaria') {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
@@ -317,6 +316,34 @@ class CommandUtilMagento
                         $array_attribues['color']->getId() => $array_attribues['color']
                     );
                 }
+
+
+                // ASOCIA LOS ATRIBUTOS y gaurda la instancia
+                foreach($_attributes as $attrCode){
+
+                    $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', $attrCode->code);
+                    $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
+
+                    $newAttributes[] = array(
+                       'id'             => $configurableAtt->getId(),
+                       'label'          => $configurableAtt->getLabel(),
+                       'position'       => $super_attribute->getPosition(),
+                       'values'         => $configurableAtt->getPrices() ? $configProduct->getPrices() : array(),
+                       'attribute_id'   => $super_attribute->getId(),
+                       'attribute_code' => $super_attribute->getAttributeCode(),
+                       'frontend_label' => $super_attribute->getFrontend()->getLabel(),
+                    );
+                }
+
+                $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
+
+                if(empty($existingAtt) && !empty($newAttributes)){
+                    $configProduct->setCanSaveConfigurableAttributes(true);
+                    $configProduct->setConfigurableAttributesData($newAttributes);
+                    $configProduct->save();
+                }
+
+
 
                 $configurableProductsData = array();
 
@@ -345,71 +372,8 @@ class CommandUtilMagento
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
                         true); // COMMIT 
 
-                    $associatedArrayAttribues = [];
-
-                    //foreach($_attributes as $id => $_attribute) {
-                    //    $associatedArrayAttribues[] = array(
-                    //        'label'         => $_attribute->getLabel(),
-                    //        'attribute_id'  => $id,
-                    //        'value_index'   => (int) $simpleProduct->getColor(),
-                    //        'is_percent'    => 0,
-                    //        'pricing_value' => $simpleProduct->getPrice()
-                    //    );
-                    //}
-
-                    $configurableProductsData[$simpleProduct->getId()] = $associatedArrayAttribues;
-
-
-                    // ASOCIA LOS ATRIBUTOS y gaurda la instanci
-
-                    foreach($_attributes as $attrCode){
-
-                        $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', $attrCode->code);
-                        $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
-
-                        $newAttributes[] = array(
-                           'id'             => $configurableAtt->getId(),
-                           'label'          => $configurableAtt->getLabel(),
-                           'position'       => $super_attribute->getPosition(),
-                           'values'         => $configurableAtt->getPrices() ? $configProduct->getPrices() : array(),
-                           'attribute_id'   => $super_attribute->getId(),
-                           'attribute_code' => $super_attribute->getAttributeCode(),
-                           'frontend_label' => $super_attribute->getFrontend()->getLabel(),
-                        );
-                    }
-
-                    $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
-
-                    if(empty($existingAtt) && !empty($newAttributes)){
-                        $configProduct->setCanSaveConfigurableAttributes(true);
-                        $configProduct->setConfigurableAttributesData($newAttributes);
-                        $configProduct->save();
-                    }
+                    $configurableProductsData[$simpleProduct->getId()] = $simpleProduct;
                 }
-
-                //$configProduct->getTypeInstance()->setUsedProductAttributeIds(array_keys($_attributes)); //attribute ID of attribute 'color' in my store
-                //$configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
-
-                //$existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
-
-                //if(empty($existingAtt) && !empty($configurableAttributesData)){
-                //    _log(RED . "setConfigurableAttributesData as: " . NC . "\r\n" . var_export($configurableAttributesData, 1));
-                //    $configProduct->setCanSaveConfigurableAttributes(true);
-                //    $configProduct->setConfigurableAttributesData($configurableAttributesData);
-                //    //$configProduct->save();
-                //} else {
-                //    _log(RED . "existingAtt as: " . NC);
-                //}
-
-                //$configProduct->setCanSaveConfigurableAttributes(true);
-                //$configProduct->setConfigurableAttributesData($configurableAttributesData);
-
-                //$configProduct->setConfigurableProductsData($configurableProductsData);
-                //$configProduct->setCanSaveCustomOptions(true);
-
-                //_log("configurableAttributesData: " . var_export($configurableAttributesData, true));
-                //_log("configurableProductsData: " . var_export($configurableProductsData, true));
-
 
                 try {
                     $configProduct->save();
