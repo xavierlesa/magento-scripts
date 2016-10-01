@@ -179,7 +179,6 @@ class CommandUtilMagento
     public function syncProducts()
     {
         // Ejecuta el proceso de mapeo para poductos
-
         // Checkea que todas las key requeridas existan. (ref: http://stackoverflow.com/questions/13169588/how-to-check-if-multiple-array-keys-exists)
 
         $required = array(
@@ -193,16 +192,12 @@ class CommandUtilMagento
         if (count(array_intersect($required, $this->csv_array_header)) !== count($required)) 
         {
             _log("Error el archivo no corresponde al formato de columnas " . implode(', ', $required));
-
             _log("Requeridas: \r\n" . var_export($required, true));
             _log("Columnas del CSV: \r\n" . var_export($this->csv_array_header, true));
-
             exit(0);
         }
 
         $this->csv_grouped_array_data = $this->groupArray($this->csv_array_data, $this->row_product_id);
-
-        _log("Hay " . count($this->csv_grouped_array_data) . " grupos de productos");
 
         $_total_config = 0;
         $_total_simple = 0;
@@ -213,6 +208,7 @@ class CommandUtilMagento
             else $_total_simple++;
         }
 
+        _log("Hay " . count($this->csv_grouped_array_data) . " grupos de productos");
         _log("Hay " . $_total_simple . " productos simples");
         _log("Hay " . $_total_config . " productos configurables");
 
@@ -235,8 +231,8 @@ class CommandUtilMagento
                 $this->createProduct(
                     $row[$this->row_sku], 
                     $row[$this->row_product_id], 
-                    ucfirst(mb_strtolower($row[$this->row_name])), 
-                    ucfirst(mb_strtolower($row[$this->row_description])), 
+                    ucfirst(mb_strtoupper($row[$this->row_name])), 
+                    ucfirst(mb_strtoupper($row[$this->row_description])), 
                     $row[$this->row_attr_cod_color], 
                     $row[$this->row_attr_color], 
                     $row[$this->row_attr_size], 
@@ -286,8 +282,8 @@ class CommandUtilMagento
                 $configProduct = $this->createProduct(
                     $sku, // crea un SKU propio
                     $row[$this->row_product_id], 
-                    ucfirst(mb_strtolower($row[$this->row_name])), 
-                    ucfirst(mb_strtolower($row[$this->row_description])), 
+                    ucfirst(mb_strtoupper($row[$this->row_name])), 
+                    ucfirst(mb_strtoupper($row[$this->row_description])), 
                     $row[$this->row_attr_cod_color], 
                     $row[$this->row_attr_color], 
                     $row[$this->row_attr_size], 
@@ -685,6 +681,20 @@ class CommandUtilMagento
 
         // if first argument is an array try to convert to Product Model Object
         _log("PRODUCT TYPE: " . $product_type);
+        
+        $product_model = Mage::getModel('catalog/product');
+
+        if ($product_model->getIdBySku($sku))
+        {
+            // solo actualiza el precio del producto, no lo vuelve a crear
+            _("Actualiza el precio del producto $sku -> $pice");
+            $product_model->setPrice($price);
+            $product_model->save();
+            return $product_model;
+        }
+
+        $cost = null;
+        //$special_price = null;
 
         $product_type = $product_type ? $product_type : DEFAULT_PRODUCT_TYPE;
 
@@ -723,10 +733,6 @@ class CommandUtilMagento
         $attr_cod_product = $this->getOrCreateAttributes('cod_product', 'cod_product', $cod_product, array(
             'frontend_input' => 'text',
         ));
-
-        $product_model = Mage::getModel('catalog/product');
-
-        $cost = null;
 
         if (!$attribute_set) $attribute_set = 'Default';
         if (! $attribute_set_id = $this->getAttributeSetByName($attribute_set) )
@@ -769,6 +775,10 @@ class CommandUtilMagento
 
             //echo "color: " . $attr_color . "\n";
             //echo "manufacturer: " . $attr_manufacturer . "\n";
+            //if (is_array($price)) {
+            //    $price = $price[0];
+            //    $special_price = $price[1];
+            //}
 
             $product_model
                 ->setStoreId(STORE_ID)                      // you can set data in store scope
@@ -791,10 +801,10 @@ class CommandUtilMagento
 
                 ->setStockData(
                     array(
-                        'use_config_manage_stock' => 0,     // 'Use config settings' checkbox
-                        'manage_stock' => 1,                // Manage stock
+                        'use_config_manage_stock' => 1,     // 'Use config settings' checkbox
+                        'manage_stock' => 0,                // Manage stock
                         'min_sale_qty' => 1,                // Minimum Qty Allowed in Shopping Cart
-                        //'max_sale_qty' => 2,                // Maximum Qty Allowed in Shopping Cart
+                        'max_sale_qty' => 9,                // Maximum Qty Allowed in Shopping Cart
                         'is_in_stock' => 1,                 // Stock Availability
                         'qty' => 999                        // qty
                     )
@@ -807,10 +817,10 @@ class CommandUtilMagento
                 ->setNewsToDate()                           // Product set as new to
                 ->setCountryOfManufacture('AF')             // Country of manufacture (2-letter country code)
 
-                ->setCost(( $cost ? $cost : $price ))                  // Cost 2 decimal
-                //->setSpecialPrice($price)                   // Special price in form 11.22
-                //->setSpecialFromDate(strtotime('now'))      // Special price from (MM-DD-YYYY)
-                //->setSpecialToDate()                        // Special price to (MM-DD-YYYY)
+                ->setCost($cost ? $cost : $price)           // Cost 2 decimal
+                //->setSpecialPrice($special_price ? $special_price : $special_price)         // Special price in form 11.22
+                //->setSpecialFromDate(strtotime('now'))    // Special price from (MM-DD-YYYY)
+                //->setSpecialToDate()                      // Special price to (MM-DD-YYYY)
 
                 // VALIDATE?
                 ->setMsrpEnabled(1)                         // Enable MAP
@@ -818,7 +828,7 @@ class CommandUtilMagento
                 ->setMsrp($price)                           // Manufacturer's Suggested Retail Price
 
                 // Meta SEO title, keywords and description.
-                ->setMetaTitle($name)                    // SEO Title
+                ->setMetaTitle($name)                       // SEO Title
                 ->setMetaKeyword($description)              // SEO Keywords  
                 ->setMetaDescription($description)          // SEO Desacription
 
@@ -827,7 +837,7 @@ class CommandUtilMagento
                 //        'images' => array(), 
                 //        'values' => array()
                 //    )
-                //)                                           // Media gallery initialization
+                //)                                         // Media gallery initialization
 
                 //->addImageToMediaGallery(
                 //    'media/catalog/product/1/0/10243-1.png', 
@@ -835,7 +845,7 @@ class CommandUtilMagento
                 //        'image',
                 //        'thumbnail',
                 //        'small_image'
-                //    ), false, false)                        // Assigning image, thumb and small image to media gallery
+                //    ), false, false)                      // Assigning image, thumb and small image to media gallery
 
                 ; // close product
 
@@ -883,6 +893,7 @@ class CommandUtilMagento
             }
 
             _log("\033[32mProducto " . ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ? 'Configurable' : 'Simple') . " creado " . $product_model->getId() . "\033[0m");
+
             return $product_model;
         } 
         catch(Exception $e)
