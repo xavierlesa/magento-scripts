@@ -383,6 +383,8 @@ class CommandUtilMagento
                     $configurableProductsData[$simpleProduct->getId()] = $simpleProduct;
                 }
 
+                $configProduct->setConfigurableProductsData($configurableProductsData); // asocia los productos simples al configurable
+
                 try {
                     $configProduct->save();
                 } catch(Exception $e) {
