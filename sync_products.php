@@ -367,14 +367,49 @@ class CommandUtilMagento
                 $configProduct->getTypeInstance()->setUsedProductAttributeIds(array_keys($_attributes)); //attribute ID of attribute 'color' in my store
                 $configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
 
-                $configProduct->setConfigurableAttributesData($configurableAttributesData);
+                $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
+
+                if(empty($existingAtt) && !empty($configurableAttributesData)){
+                    $configProduct->setCanSaveConfigurableAttributes(true);
+                    $configProduct->setConfigurableAttributesData($configurableAttributesData);
+                    $configProduct->save();
+                }
+
+                //$configProduct->setCanSaveConfigurableAttributes(true);
+                //$configProduct->setConfigurableAttributesData($configurableAttributesData);
 
                 $configProduct->setConfigurableProductsData($configurableProductsData);
-                $configProduct->setCanSaveConfigurableAttributes(true);
                 $configProduct->setCanSaveCustomOptions(true);
 
                 _log("configurableAttributesData: " . var_export($configurableAttributesData, true));
                 _log("configurableProductsData: " . var_export($configurableProductsData, true));
+
+
+//                foreach($configAttrCodes as $attrCode){
+//
+//                    $super_attribute= Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product',$attrCode->code);
+//                    $configurableAtt = Mage::getModel('catalog/product_type_configurable_attribute')->setProductAttribute($super_attribute);
+//
+//                    $newAttributes[] = array(
+//                       'id'             => $configurableAtt->getId(),
+//                       'label'          => $configurableAtt->getLabel(),
+//                       'position'       => $super_attribute->getPosition(),
+//                       'values'         => $configurableAtt->getPrices() ? $configProduct->getPrices() : array(),
+//                       'attribute_id'   => $super_attribute->getId(),
+//                       'attribute_code' => $super_attribute->getAttributeCode(),
+//                       'frontend_label' => $super_attribute->getFrontend()->getLabel(),
+//                    );
+//                }
+//
+//                $existingAtt = $product->getTypeInstance()->getConfigurableAttributes();
+//
+//                if(empty($existingAtt) && !empty($newAttributes)){
+//                    $configProduct->setCanSaveConfigurableAttributes(true);
+//                    $configProduct->setConfigurableAttributesData($newAttributes);
+//                    $configProduct->save();
+//
+//                }
+
 
                 try {
                     $configProduct->save();
