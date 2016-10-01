@@ -319,10 +319,13 @@ class CommandUtilMagento
                 }
 
                 $_attributes_ids = array_keys($_attributes);
-                
-                _log("_attributes_ids = " . var_export($_attributes_ids, 1));
 
-                $configProduct->getTypeInstance()->setUsedProductAttributeIds($_attributes_ids); //attribute ID of attribute 'color' in my store                
+                $configProduct->getTypeInstance()->setUsedProductAttributeIds($_attributes_ids); //attribute ID of attribute 'color' in my store
+                $configurableAttributesData = $configProduct->getTypeInstance()->getConfigurableAttributesAsArray();
+                $configProduct->setCanSaveConfigurableAttributes(true);
+                $configProduct->setConfigurableAttributesData($configurableAttributesData);
+                
+                
                 // ASOCIA LOS ATRIBUTOS y gaurda la instancia
                 foreach($_attributes as $attrCode){
 
