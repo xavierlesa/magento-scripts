@@ -317,7 +317,11 @@ class CommandUtilMagento
                     );
                 }
 
+                $_attributes_ids = array_keys($_attributes);
+                
+                _log("_attributes_ids = " . var_export($_attributes_ids, 1));
 
+                $configProduct->getTypeInstance()->setUsedProductAttributeIds($_attributes_ids); //attribute ID of attribute 'color' in my store                
                 // ASOCIA LOS ATRIBUTOS y gaurda la instancia
                 foreach($_attributes as $attrCode){
 
@@ -379,7 +383,7 @@ class CommandUtilMagento
                     $configProduct->save();
                 } catch(Exception $e) {
 
-                    _log(CYAN . "ERROR al guarar el producto configurable\n" . NC . $e->getMessage());
+                    _log(RED . "ERROR al guarar el producto configurable\n" . NC . $e->getMessage());
 
                     try {
                         _log("Try with getResource -> save");
