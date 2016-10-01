@@ -370,19 +370,20 @@ class CommandUtilMagento
                 $existingAtt = $configProduct->getTypeInstance()->getConfigurableAttributes();
 
                 if(empty($existingAtt) && !empty($configurableAttributesData)){
+                    _log(RED . "setConfigurableAttributesData as: " . NC . "\r\n" . var_export($configurableAttributesData, 1));
                     $configProduct->setCanSaveConfigurableAttributes(true);
                     $configProduct->setConfigurableAttributesData($configurableAttributesData);
-                    $configProduct->save();
+                    //$configProduct->save();
                 }
 
                 //$configProduct->setCanSaveConfigurableAttributes(true);
                 //$configProduct->setConfigurableAttributesData($configurableAttributesData);
 
-                $configProduct->setConfigurableProductsData($configurableProductsData);
-                $configProduct->setCanSaveCustomOptions(true);
+                //$configProduct->setConfigurableProductsData($configurableProductsData);
+                //$configProduct->setCanSaveCustomOptions(true);
 
-                _log("configurableAttributesData: " . var_export($configurableAttributesData, true));
-                _log("configurableProductsData: " . var_export($configurableProductsData, true));
+                //_log("configurableAttributesData: " . var_export($configurableAttributesData, true));
+                //_log("configurableProductsData: " . var_export($configurableProductsData, true));
 
 
 //                foreach($configAttrCodes as $attrCode){
