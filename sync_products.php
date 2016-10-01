@@ -687,7 +687,7 @@ class CommandUtilMagento
         if ($product_model->getIdBySku($sku))
         {
             // solo actualiza el precio del producto, no lo vuelve a crear
-            _log("Actualiza el precio del producto $sku -> $pice");
+            _log("Actualiza el precio del producto $sku -> $price");
             $product_model->setPrice($price);
             $product_model->save();
             return $product_model;
