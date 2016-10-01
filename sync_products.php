@@ -772,11 +772,11 @@ class CommandUtilMagento
 
             $product_model
                 ->setStoreId(STORE_ID)                      // you can set data in store scope
-                ->setWebsiteIds(array())                   // website ID the product is assigned to, as an array
+                ->setWebsiteIds(array(WEBSITE_ID))          // website ID the product is assigned to, as an array
                 ->setAttributeSetId($attribute_set_id)      // ID of a attribute set named 'default'
                 ->setTypeId($product_type)                  // product type
-                 ->setCreatedAt(strtotime('now'))         // product creation time
-                ->setUpdatedAt(strtotime('now'))          // product update time
+                ->setCreatedAt(strtotime('now'))            // product creation time
+                ->setUpdatedAt(strtotime('now'))            // product update time
 
                 ->setName($name)                            // product name
                 ->setDescription($description)              // Long product description
@@ -793,7 +793,7 @@ class CommandUtilMagento
                     array(
                         'use_config_manage_stock' => 0,     // 'Use config settings' checkbox
                         'manage_stock' => 1,                // Manage stock
-                        //'min_sale_qty' => 1,                // Minimum Qty Allowed in Shopping Cart
+                        'min_sale_qty' => 1,                // Minimum Qty Allowed in Shopping Cart
                         //'max_sale_qty' => 2,                // Maximum Qty Allowed in Shopping Cart
                         'is_in_stock' => 1,                 // Stock Availability
                         'qty' => 999                        // qty
@@ -805,7 +805,7 @@ class CommandUtilMagento
                 ->setCodProduct($attr_cod_product)          // Cod Product internal reference
                 ->setNewsFromDate(strtotime('now'))         // Product set as new from
                 ->setNewsToDate()                           // Product set as new to
-                //->setCountryOfManufacture('AF')             // Country of manufacture (2-letter country code)
+                ->setCountryOfManufacture('AF')             // Country of manufacture (2-letter country code)
 
                 ->setCost(( $cost ? $cost : $price ))                  // Cost 2 decimal
                 //->setSpecialPrice($price)                   // Special price in form 11.22
