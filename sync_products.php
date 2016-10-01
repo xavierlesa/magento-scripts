@@ -262,7 +262,7 @@ class CommandUtilMagento
         foreach($array_attr as $code) {
             $attr = Mage::getModel('catalog/resource_eav_attribute')->loadByCode('catalog_product', $code);
             $array_attribues[$code] = $attr;
-            _log("array_attribues[$code] = $attr");
+            _log("array_attribues[".$code."] = ".$attr);
         }
 
         foreach( $this->csv_grouped_array_data as $key => $products ) {
