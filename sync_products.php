@@ -690,21 +690,24 @@ class CommandUtilMagento
             _log("Actualiza el precio del producto $sku -> $price");
             $product_model->setPrice($price);
 
-            try 
+            if ($commit) 
             {
-                $product_model->save();
-            } 
-            catch(Exception $e)
-            {
-                _log("ERROR product_model\n" . $e->getMessage());
                 try 
                 {
-                    _log("Try with getResource -> save");
-                    $product_model->getResource()->save($product_model);
-                }
+                    $product_model->save();
+                } 
                 catch(Exception $e)
                 {
-                    _log("ERROR product_model resource\n" . $e->getMessage());
+                    _log("ERROR product_model\n" . $e->getMessage());
+                    try 
+                    {
+                        _log("Try with getResource -> save");
+                        $product_model->getResource()->save($product_model);
+                    }
+                    catch(Exception $e)
+                    {
+                        _log("ERROR product_model resource\n" . $e->getMessage());
+                    }
                 }
             }
 
