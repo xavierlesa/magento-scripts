@@ -509,17 +509,18 @@ class CommandUtilMagento
             $collection->addAttributeToSelect('color');
 
             //filter for products who name is equal (eq) to Widget A, or equal (eq) to Widget B
-
-            $query = array(
-                array('attribute'=>'cod_product','eq'=>$producto),
-            );
+            $collection->addAttributeToFilter('cod_product', $producto);
+            //$query = array(
+            //    array('attribute'=>'cod_product','eq'=>$producto),
+            //);
 
             if (getattr($mapped_colors[$color], null))
             {
-                $query = $query + array('attribute'=>'color','eq'=>$mapped_colors[$color]);
+                //$query = $query + array('attribute'=>'color','eq'=>$mapped_colors[$color]);
+                $collection->addAttributeToFilter('color', $mapped_colors[$color]);
             }
 
-            $collection->addFieldToFilter($query);
+            //$collection->addFieldToFilter($query);
 
             _log(_PURPLE("Productos encontrados para el cod_product: " . $producto . " = " . count($collection)));
 
