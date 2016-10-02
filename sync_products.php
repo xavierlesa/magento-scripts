@@ -16,7 +16,6 @@
  */
 
 // DEFINITIONS
-
 define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web');
 define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 define('CONFIG_DEFAULT_SITE_NAME', 'urban');
@@ -32,7 +31,6 @@ $STORE_DATA = array(
     // 'is_active' => '1',
 );
 
-$array_images_files = array();
 
 // STORES
 $urban_store_id = 1;
@@ -70,6 +68,44 @@ define('PURPLE',        '\033[35m');
 define('CYAN',          '\033[36m');
 define('LIGHT_GRAY',    '\033[37m');
 define('NC',            '\033[0m'); # No Color
+
+// CATEGORY MAPPING
+//
+// ROOT -> GENDER 
+//
+// BABY, JUNIOR -> NIÑO
+// HOMBRE -> HOMBRE
+// MUJER -> MUJER
+// UNISEX -> HOMBRE, MUJER
+// Si la LINEA es INDUMENTARIA o ACCESORIOS: usar LINEA como Subcategoria y GENERO como Categoria
+
+function mapping_categories($genero, $linea, $familia)
+{
+    // Genero	Linea	Familia
+    $_category = $linea;
+    $_subcategory = $familia;
+
+    if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA')))
+    {
+        $_category = $genero;
+
+        if (in_array(mb_strtoupper($genero), array('BABY', 'JUNIOR')))
+        {
+            $_category = 'NIÑO';
+        }
+        elseif (mb_strtoupper($genero) == 'UNISEX')
+        {
+            $_category = array('HOMBRE', 'MUJER');
+        }
+
+        $_subcategory = $linea;
+    }
+
+    return array($_category, $_subcategory);
+
+}
+
+$array_images_files = array();
 
 class ftp
 {
@@ -678,7 +714,7 @@ class CommandUtilMagento
         //
         // Create a new product
         //
-
+        
         // if first argument is an array try to convert to Product Model Object
         _log("PRODUCT TYPE: " . $product_type);
         
@@ -721,7 +757,23 @@ class CommandUtilMagento
 
         // add category if does not exist
         _log("\033[33mAdd category if does not exist\033[0m");
-        $array_categories = $this->getOrCreateCategories( array($category, $subcategory) );
+        //$array_categories = $this->getOrCreateCategories( array($category, $subcategory) );
+
+        $mapped_categories = mapping_categories($gender, $category, $subcategory);
+
+        if (is_array($mapped_categories[0])) 
+        {
+            $array_categories = array();
+            foreach ($mapped_categories[0] as $category)
+            {
+                $array_categories = $array_categories + $this->getOrCreateCategories(array($category, $mapped_categories[1]));
+            }
+
+        }
+        else 
+        {
+            $array_categories = $this->getOrCreateCategories($mapped_categories);
+        }
 
         $attr_color = '';
         $attr_size = '';
