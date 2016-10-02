@@ -602,7 +602,7 @@ class CommandUtilMagento
 
         case '9':
 
-            $result = prompt("SEGURO QUE QUERE BORRAR TODOS LOS PRODUCTOS?");
+            $result = prompt("SEGURO QUE QUERES BORRAR TODOS LOS PRODUCTOS?");
             if ( $result === true ) $this->deleteAllProducts();
             else echo "\r\nCAGON!\r\n";
             break;
@@ -720,7 +720,7 @@ class CommandUtilMagento
         
         $product_model = Mage::getModel('catalog/product');
 
-        if ( $product_model->load($product_model->getIdBySku($sku)) )
+        if ( $_id = $product_model->getIdBySku($sku) && $product_model->load($_id) )
         {
             // solo actualiza el precio del producto, no lo vuelve a crear
             _log("Actualiza el precio del producto $sku -> $price");
