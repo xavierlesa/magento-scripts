@@ -85,7 +85,7 @@ function mapping_categories($genero, $linea, $familia)
     $_category = $linea;
     $_subcategory = $familia;
 
-    if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA')))
+    if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA', 'AUDIO')))
     {
         $_category = $genero;
 
@@ -99,6 +99,12 @@ function mapping_categories($genero, $linea, $familia)
         }
 
         $_subcategory = $linea;
+
+        if ($linea == 'AUDIO') 
+        {
+            $_subcategory = 'ACCESORIOS';
+        }
+
     }
 
     return array($_category, $_subcategory);
@@ -476,6 +482,25 @@ class CommandUtilMagento
 
         _log(var_export($array_images_files, 1));
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
+
+
+                //->setMediaGallery(
+                //    array(
+                //        'images' => array(), 
+                //        'values' => array()
+                //    )
+                //)                                         // Media gallery initialization
+
+                //->addImageToMediaGallery(
+                //    'media/catalog/product/1/0/10243-1.png', 
+                //    array(
+                //        'image',
+                //        'thumbnail',
+                //        'small_image'
+                //    ), false, false)                      // Assigning image, thumb and small image to media gallery
+
+
+
     }
 
 
@@ -904,22 +929,6 @@ class CommandUtilMagento
                 ->setMetaTitle($name)                       // SEO Title
                 ->setMetaKeyword($description)              // SEO Keywords  
                 ->setMetaDescription($description)          // SEO Desacription
-
-                //->setMediaGallery(
-                //    array(
-                //        'images' => array(), 
-                //        'values' => array()
-                //    )
-                //)                                         // Media gallery initialization
-
-                //->addImageToMediaGallery(
-                //    'media/catalog/product/1/0/10243-1.png', 
-                //    array(
-                //        'image',
-                //        'thumbnail',
-                //        'small_image'
-                //    ), false, false)                      // Assigning image, thumb and small image to media gallery
-
                 ; // close product
 
 
@@ -1541,7 +1550,7 @@ class CommandUtilMagento
         }
         else 
         {
-            echo "El archivo " . $file_data . " no se ha encontrado o no se puede acceder\r\n";
+            _log(RED . "El archivo " . $file_data . " no se ha encontrado o no se puede acceder" . NC);
             exit(0);
         }
 
