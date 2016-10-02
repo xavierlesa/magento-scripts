@@ -524,12 +524,17 @@ class CommandUtilMagento
 
             _log(_PURPLE("Productos encontrados para el cod_product: " . $producto . " = " . count($collection)));
 
+            foreach($collection as $product)
+            {
+                _log($product->getName());
+            
+            }
+
         }
 
         fclose($fp);
 
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
-
 
         //->setMediaGallery(
         //    array(
