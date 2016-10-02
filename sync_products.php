@@ -477,21 +477,10 @@ class CommandUtilMagento
         _log("Busca imagenes en " . $path_parts);
 
         $ftp_list = $this->getFileTree($ftp, $path_parts);
-
         //_log(var_export($array_images_files, 1));
-
-        // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
-        $fp_colors = fopen('mapping_colors.csv', 'r');
-        $mapped_colors = array();
-        while (($datos = fgetcsv($fp_colors, 1000, ",")) !== FALSE) 
-        {
-            $mapped_colors[$datos[0]] = $datos[1];
-        }
-        fclose($fp_colors);
-
         $fp = fopen('mapping_images.csv', 'w');
         // HEADERS
-        fputcsv($fp, array('product', 'color', 'file', 'path'));
+        fputcsv($fp, array('product', 'color', 'path'));
 
         foreach($array_images_files as $pimg)
         {
@@ -499,41 +488,15 @@ class CommandUtilMagento
             preg_match($regex, $pimg, $campos); //producto_color, producto, color
             $producto = getattr($campos['producto'], '');
             $color = getattr($campos['color'], '');
-            $campos = array($producto, $color, $pimg);
-            //_log(var_export($campos));
-            // codigo_producto, codigo_color, file, path
-            fputcsv($fp, $campos);
 
-//            $collection = Mage::getModel('catalog/product')->getCollection();
-//            $collection->addAttributeToSelect('cod_product');
-//            $collection->addAttributeToSelect('color');
-//
-//            //filter for products who name is equal (eq) to Widget A, or equal (eq) to Widget B
-//            $collection->addAttributeToFilter('cod_product', $producto);
-//            //$query = array(
-//            //    array('attribute'=>'cod_product','eq'=>$producto),
-//            //);
-//
-//            if (getattr($mapped_colors[$color], null))
-//            {
-//                //$query = $query + array('attribute'=>'color','eq'=>$mapped_colors[$color]);
-//                $collection->addAttributeToFilter('color', $mapped_colors[$color]);
-//            }
-//
-//            //$collection->addFieldToFilter($query);
-//
-//            _log(_PURPLE("Productos encontrados para el cod_product: " . $producto . " = " . count($collection)));
-//
-//            foreach($collection as $product)
-//            {
-//                _log($product->getID());
-//            
-//            }
+            $local_file = "/var/www/magento/tmp_media/".$producto."_".$color.".jpg";
 
-
-            if ($ftp->ftp_get("/var/www/magento/tmp_media/".$producto."_".$color.".jpg", $path_parts . $pimg, FTP_BINARY))
+            if ($ftp->ftp_get($local_file, $path_parts . $pimg, FTP_BINARY))
             {
-                _log(_GREEN("Imagen desde el server \"".$pimg."\" ha sido guardada."));
+                // codigo_producto, codigo_color, path
+                $campos = array($producto, $color, $local_file);
+                fputcsv($fp, $campos);
+                _log(_GREEN("Imagen desde el server \"".$pimg."\" ha sido guardada a \"" . $local_file . "\""));
             }
             else
             {
@@ -544,26 +507,6 @@ class CommandUtilMagento
         }
 
         fclose($fp);
-
-        // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
-
-        //->setMediaGallery(
-        //    array(
-        //        'images' => array(), 
-        //        'values' => array()
-        //    )
-        //)                                         // Media gallery initialization
-
-        //->addImageToMediaGallery(
-        //    'media/catalog/product/1/0/10243-1.png', 
-        //    array(
-        //        'image',
-        //        'thumbnail',
-        //        'small_image'
-        //    ), false, false)                      // Assigning image, thumb and small image to media gallery
-
-
-
     }
 
 
@@ -589,6 +532,68 @@ class CommandUtilMagento
                 }
             }
         }
+    }
+
+    public function attachLocalMedia()
+    {
+
+        // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
+        $fp_colors = fopen('mapping_colors.csv', 'r');
+        $mapped_colors = array();
+        while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
+        {
+            $mapped_colors[$datos[0]] = $datos[1];
+        }
+        fclose($fp_colors);
+        
+        //array('product', 'color', 'path');
+        $fp = fopen('mapping_images.csv', 'r');
+
+        while (($row = fgetcsv($fp, 1000, ",")) !== false)
+        {
+
+            $product_model = Mage::getModel('catalog/product');
+            $attr = $product_model->getResource()->getAttribute('color');
+
+            $collection = $product_model->getCollection();
+            $collection->addAttributeToSelect('cod_product');
+            $collection->addAttributeToSelect('color');
+            $collection->addAttributeToFilter('cod_product', $row[0]);
+
+            if ($row[1] && $color = getattr($mapped_colors[$row[1]], null))
+            {
+                if ($attr->usesSource()) {
+                    $collection->addAttributeToFilter('color', $attr->getSource()->getOptionId($color));
+                }
+            }
+
+            _log(_PURPLE("Productos encontrados para el cod_product: " . $row[0] . " & color: ". $row[1] . " = " . count($collection)));
+
+            foreach($collection as $product)
+            {
+                _log($product->getID());
+            
+            }
+
+        // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
+
+        //->setMediaGallery(
+        //    array(
+        //        'images' => array(), 
+        //        'values' => array()
+        //    )
+        //)                                         // Media gallery initialization
+
+        //->addImageToMediaGallery(
+        //    'media/catalog/product/1/0/10243-1.png', 
+        //    array(
+        //        'image',
+        //        'thumbnail',
+        //        'small_image'
+        //    ), false, false)                      // Assigning image, thumb and small image to media gallery
+        }
+
+        fclose($fp);
     }
 
 
@@ -647,10 +652,11 @@ class CommandUtilMagento
         $result = prompt("Cargar todos los productos, categorías y atributos?", array(
             "1" => array("Productos Simples", "simples"),
             "2" => array("Productos Configurables", "configurables"),
-            "3" => array("Actualizar Imágenes de Productos", "imagenes"),
-            "4" => array("Solo las Categorías", "categorias"),
-            "5" => array("Solo los Atributos", "atributos"),
-            "6" => array("Todos los productos (precaución experimental)", "todos"),
+            "3" => array("Descarga las Imágenes de Productos desde el FTP", "imagenes_server"),
+            "4" => array("Actualizar Imágenes de Productos desde el local", "imagenes_local"),
+            "5" => array("Solo las Categorías", "categorias"),
+            "6" => array("Solo los Atributos", "atributos"),
+            "7" => array("Todos los productos (precaución experimental)", "todos"),
             "9" => array("BORRAR TODOS LOS PRODUCTOS !!!", "delete_all"),
         ));
 
@@ -673,14 +679,18 @@ class CommandUtilMagento
             break;
 
         case '4':
-            $this->syncCategories();
+            $this->attachLocalMedia();
             break;
 
         case '5':
-            $this->syncAttributes();
+            $this->syncCategories();
             break;
 
         case '6':
+            $this->syncAttributes();
+            break;
+
+        case '7':
             $this->syncProducts();
             $this->syncSimpleProducts();
             echo "\r\n";
