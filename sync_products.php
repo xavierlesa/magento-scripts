@@ -791,6 +791,8 @@ class CommandUtilMagento
         _log("PRODUCT TYPE: " . $product_type);
         
         $product_model = Mage::getModel('catalog/product');
+        
+        $_id = null;
 
         if ( $_id = $product_model->getIdBySku($sku) && $product_model->load($_id) )
         {
