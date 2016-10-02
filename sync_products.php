@@ -490,11 +490,12 @@ class CommandUtilMagento
         {
             preg_match_all("/([^\/]+)/", $pimg, $campos); //producto_color, producto, color
             
-            array_push($campos, $pimg);
-
             _log(var_export($campos));
+            
+            //array_push($campos, $pimg);
+
             // codigo_producto, codigo_color, file, path
-            fputcsv($fp, array_values($campos));
+            //fputcsv($fp, array_values($campos));
         }
 
         fclose($fp);
