@@ -526,7 +526,7 @@ class CommandUtilMagento
 
             foreach($collection as $product)
             {
-                _log($product->getName());
+                _log(var_export($product));
             
             }
 
