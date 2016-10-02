@@ -493,9 +493,9 @@ class CommandUtilMagento
             $producto = getattr($campos['producto'], '');
             $color = getattr($campos['color'], '');
             $campos = array($producto, $color, $pimg);
-            _log(var_export($campos));
+            //_log(var_export($campos));
             // codigo_producto, codigo_color, file, path
-            //fputcsv($fp, $campos);
+            fputcsv($fp, $campos);
         }
 
         fclose($fp);
