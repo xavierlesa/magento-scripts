@@ -533,7 +533,7 @@ class CommandUtilMagento
 
             if ($ftp->ftp_get("/var/www/magento/tmp_media/".$producto."_".$color.".jpg", $path_parts . $pimg, FTP_BINARY))
             {
-                _log(_GREEN("Imagen \"".$server_file."\" guardada."));
+                _log(_GREEN("Imagen desde el server \"".$pimg."\" ha sido guardada."));
             }
             else
             {
