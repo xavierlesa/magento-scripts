@@ -87,9 +87,9 @@ function mapping_categories($genero, $linea, $familia)
     {
         $_category = $genero;
 
-        if (in_array(mb_strtoupper($genero), array('BABY', 'JUNIOR')))
+        if (in_array(mb_strtoupper($genero), array('BABY', 'JUNIOR', 'NIÑOS')))
         {
-            $_category = 'NIÑO';
+            $_category = 'KIDS';
         }
         elseif (mb_strtoupper($genero) == 'UNISEX')
         {
@@ -551,32 +551,13 @@ class CommandUtilMagento
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
-
             $product_model = Mage::getModel('catalog/product');
-            $attr = $product_model->getResource()->getAttribute('color');
 
-            $collection = $product_model->getCollection();
-            $collection->addAttributeToSelect('cod_product');
-            $collection->addAttributeToSelect('color');
-            $collection->addAttributeToFilter('cod_product', $row[0]);
+            $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
 
-            if ($row[1] && $color = getattr($mapped_colors[$row[1]], null))
+            if ( $_id && $product_model->load($_id) )
             {
-                if ($attr->usesSource()) {
-                    $collection->addAttributeToFilter('color', $attr->getSource()->getOptionId($color));
-                }
-            }
-
-            _log(_PURPLE("Productos encontrados para el cod_product: " . $row[0] . " & color: ". $row[1] . " = " . count($collection)));
-
-            foreach($collection as $product)
-            {
-                _log($product->getID());
-            
-
-                // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
-
-                $product->setMediaGallery(          // Media gallery initialization
+                $product_model->setMediaGallery(    // Media gallery initialization
                         array(
                             'images' => array(), 
                             'values' => array()
@@ -591,6 +572,43 @@ class CommandUtilMagento
                         ), false, false)
                     ->save();
             }
+
+            //$attr = $product_model->getResource()->getAttribute('color');
+            //$collection = $product_model->getCollection();
+            //$collection->addAttributeToSelect('cod_product');
+            //$collection->addAttributeToSelect('color');
+            //$collection->addAttributeToFilter('cod_product', $row[0]);
+
+            //if ($row[1] && $color = getattr($mapped_colors[$row[1]], null))
+            //{
+            //    if ($attr->usesSource()) {
+            //        $collection->addAttributeToFilter('color', $attr->getSource()->getOptionId($color));
+            //    }
+            //}
+
+            //_log(_PURPLE("Productos encontrados para el cod_product: " . $row[0] . " & color: ". $row[1] . " = " . count($collection)));
+
+            //$i = 0;
+            //foreach($collection as $product)
+            //{
+            //    _log($product->getID()); 
+            //    // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
+
+            //    $product->setMediaGallery(          // Media gallery initialization
+            //            array(
+            //                'images' => array(), 
+            //                'values' => array()
+            //            )
+            //        )
+            //        ->addImageToMediaGallery(       // Assigning image, thumb and small image to media gallery
+            //            $row[2], 
+            //            array(
+            //                'image',
+            //                'thumbnail',
+            //                'small_image'
+            //            ), false, false)
+            //        ->save();
+            //}
         }
 
         fclose($fp);
