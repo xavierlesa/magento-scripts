@@ -583,7 +583,7 @@ class CommandUtilMagento
                         )
                     )
                     ->addImageToMediaGallery(       // Assigning image, thumb and small image to media gallery
-                        $row[3], 
+                        $row[2], 
                         array(
                             'image',
                             'thumbnail',
