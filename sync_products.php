@@ -59,14 +59,14 @@ define('PARENT_ID', $urban_parent_id); // ID del root category
 //Cyan         0;36     Light Cyan    1;36
 //Light Gray   0;37     White         1;37
 
-function _BLACK($w){ return '\033[30m' . $w. '\033[0m'; }
-function _RED($w){ return '\033[31m' . $w. '\033[0m'; }
-function _GREEN($w){ return "\033[32m" . $w. "\033[0m"; }
-function _BROWN($w){ return "\033[33m" . $w. "\033[0m"; }
-function _BLUE($w){ return '\033[34m' . $w. '\033[0m'; }
-function _PURPLE($w){ return '\033[35m' . $w. '\033[0m'; }
-function _CYAN($w){ return '\033[36m' . $w. '\033[0m'; }
-function _GRAY($w){ return '\033[37m' . $w. '\033[0m'; }
+function _BLACK($w){ return "\033[30m" . $w . "\033[0m"; }
+function _RED($w){ return "\033[31m" . $w . "\033[0m"; }
+function _GREEN($w){ return "\033[32m" . $w . "\033[0m"; }
+function _BROWN($w){ return "\033[33m" . $w . "\033[0m"; }
+function _BLUE($w){ return "\033[34m" . $w . "\033[0m"; }
+function _PURPLE($w){ return "\033[35m" . $w . "\033[0m"; }
+function _CYAN($w){ return "\033[36m" . $w . "\033[0m"; }
+function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
 
 // CATEGORY MAPPING
 //
@@ -488,7 +488,7 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            preg_match("/([^\/]+)/", $pimg, $campos); //producto_color, producto, color
+            preg_match("/(?:(\w+)_([a-zA-Z]+))+/", $pimg, $campos); //producto_color, producto, color
             
             _log(var_export($campos));
             
