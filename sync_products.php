@@ -487,7 +487,7 @@ class CommandUtilMagento
         foreach($array_images_files as $pimg)
         {
             $array_path = pathinfo($pimg);
-            $campos = explode($array_path['filename'], '_') + array($array_path['basename'], $pimg);
+            $campos = explode('_', $array_path['filename']) + array($array_path['basename'], $pimg);
             // codigo_producto, codigo_color, path
             fputcsv($fp, $campos);
         }
