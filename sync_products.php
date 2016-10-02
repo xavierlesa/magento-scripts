@@ -59,15 +59,14 @@ define('PARENT_ID', $urban_parent_id); // ID del root category
 //Cyan         0;36     Light Cyan    1;36
 //Light Gray   0;37     White         1;37
 
-define('BLACK',         '\033[30m');
-define('RED',           '\033[31m');
-define('GREEN',         '\033[32m');
-define('BROWN',         '\033[33m');
-define('BLUE',          '\033[34m');
-define('PURPLE',        '\033[35m');
-define('CYAN',          '\033[36m');
-define('LIGHT_GRAY',    '\033[37m');
-define('NC',            '\033[0m'); # No Color
+function _BLACK($w){ return '\033[30m' . $w. '\033[0m'; }
+function _RED($w){ return '\033[31m' . $w. '\033[0m'; }
+function _GREEN($w){ return '\033[32m' . $w. '\033[0m'; }
+function _BROWN($w){ return '\033[33m' . $w. '\033[0m'; }
+function _BLUE($w){ return '\033[34m' . $w. '\033[0m'; }
+function _PURPLE($w){ return '\033[35m' . $w. '\033[0m'; }
+function _CYAN($w){ return '\033[36m' . $w. '\033[0m'; }
+function _GRAY($w){ return '\033[37m' . $w. '\033[0m'; }
 
 // CATEGORY MAPPING
 //
@@ -444,7 +443,7 @@ class CommandUtilMagento
                 catch(Exception $e) 
                 {
 
-                    _log(RED . "ERROR al guarar el producto configurable\n" . NC . $e->getMessage());
+                    _log(_RED("ERROR al guarar el producto configurable\r\n" . $e->getMessage() ) );
 
                     try 
                     {
@@ -453,12 +452,12 @@ class CommandUtilMagento
                     }
                     catch(Exception $e)
                     {
-                        _log(RED . "ERROR al guarar el producto configurable desde el resocurce\n" . NC . $e->getMessage());
+                        _log(_RED("ERROR al guarar el producto configurable desde el resocurce\n" . $e->getMessage() ));
                     }
 
                 }
 
-                _log("\033[32mProducto configurable creado " . $configProduct->getId() . "\033[0m");
+                _log(_GREEN("Producto configurable creado " . $configProduct->getId()));
 
             }
         }
@@ -481,23 +480,37 @@ class CommandUtilMagento
         $ftp_list = $this->getFileTree($ftp, $path_parts);
 
         _log(var_export($array_images_files, 1));
+
+        // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
+        $fp = fopen('mapping_images.csv', 'w');
+
+        foreach($array_images_files as $pimg)
+        {
+            $array_path = pathinfo($pimg);
+            $campos = explode($array_path['filename'], '_') + array($array_path['basename'], $pimg);
+            // codigo_producto, codigo_color, path
+            fputcsv($fp, $campos);
+        }
+
+        fclose($fp);
+
         // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
 
 
-                //->setMediaGallery(
-                //    array(
-                //        'images' => array(), 
-                //        'values' => array()
-                //    )
-                //)                                         // Media gallery initialization
+        //->setMediaGallery(
+        //    array(
+        //        'images' => array(), 
+        //        'values' => array()
+        //    )
+        //)                                         // Media gallery initialization
 
-                //->addImageToMediaGallery(
-                //    'media/catalog/product/1/0/10243-1.png', 
-                //    array(
-                //        'image',
-                //        'thumbnail',
-                //        'small_image'
-                //    ), false, false)                      // Assigning image, thumb and small image to media gallery
+        //->addImageToMediaGallery(
+        //    'media/catalog/product/1/0/10243-1.png', 
+        //    array(
+        //        'image',
+        //        'thumbnail',
+        //        'small_image'
+        //    ), false, false)                      // Assigning image, thumb and small image to media gallery
 
 
 
@@ -542,7 +555,7 @@ class CommandUtilMagento
             $index->reindexAll();
         }
 
-        _log("\033[32mReindexado completo\033[0m");
+        _log(_GREEN("Reindexado completo"));
     }
 
 
@@ -781,7 +794,7 @@ class CommandUtilMagento
         $product_type = $product_type ? $product_type : DEFAULT_PRODUCT_TYPE;
 
         // add category if does not exist
-        _log("\033[33mAdd category if does not exist\033[0m");
+        _log(_BROWN("Add category if does not exist"));
         //$array_categories = $this->getOrCreateCategories( array($category, $subcategory) );
 
         $mapped_categories = mapping_categories($gender, $category, $subcategory);
@@ -809,7 +822,7 @@ class CommandUtilMagento
             // add attributes
             if ($color)
             {
-                _log("\033[33mAdd attribute color: " . $color . "\033[0m");
+                _log(_BROWN("Add attribute color: " . $color));
                 $attr_color = $this->getOrCreateAttributes('color', $color, $color);
             }
             // set size attributes
@@ -817,17 +830,17 @@ class CommandUtilMagento
             {
                 if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu')
                 {
-                    _log("\033[33mAdd attribute size_letter: " . $size . "\033[0m");
+                    _log(_BROWN("Add attribute size_letter: " . $size));
                     $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
                 } 
                 else {
-                    _log("\033[33mAdd attribute size: " . $size . "\033[0m");
+                    _log(_BROWN("Add attribute size: " . $size));
                     $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
                 }
             }
         }
 
-        _log("\033[33mAdd attribute cod_product: " .$cod_product . "\033[0m");
+        _log(_BROWN("Add attribute cod_product: " .$cod_product));
         $attr_cod_product = $this->getOrCreateAttributes('cod_product', 'cod_product', $cod_product, array(
             'frontend_input' => 'text',
         ));
@@ -838,7 +851,7 @@ class CommandUtilMagento
             $attribute_set_id = DEFAULT_ATTRIBUTES;
         } 
 
-        _log("\033[33mAdd attribute manufacturer: " . $manufacturer . "\033[0m");
+        _log(_BROWN("Add attribute manufacturer: " . $manufacturer));
         $attr_manufacturer = $this->getOrCreateAttributes('manufacturer', $manufacturer, $manufacturer);
         $product_visibility = $product_visibility === null ? DEFAULT_PRODUCT_VISIBILITY : $product_visibility;
 
@@ -974,7 +987,7 @@ class CommandUtilMagento
                 }
             }
 
-            _log("\033[32mProducto " . ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ? 'Configurable' : 'Simple') . " creado " . $product_model->getId() . "\033[0m");
+            _log(_GREEN("Producto " . ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ? 'Configurable' : 'Simple') . " creado " . $product_model->getId()));
 
             return $product_model;
         } 
@@ -1009,7 +1022,7 @@ class CommandUtilMagento
         if ( array_key_exists($attr_code, $this->_cached_attribute) )
         {
             $attribute = $this->_cached_attribute[$attr_code];
-            _log("\033[37mLoad cached attribute by code:\033[0m {code}", array('code' => $attr_code));
+            _log(_GRAY("Load cached attribute by code:") . " {code}", array('code' => $attr_code));
         } 
         elseif ( $attr = $attr_model->loadByCode('catalog_product', $attr_code) ) 
         {
@@ -1043,7 +1056,7 @@ class CommandUtilMagento
 
         $total_options = count($_options);
 
-        _log("\033[37mItera sobre las opciones " . $total_options . " buscando para " . $attr_value[0] . "\033[0m");
+        _log(_GRAY("Itera sobre las opciones " . $total_options . " buscando para " . $attr_value[0]));
 
         if ( array_key_exists($attr_code . "-" . $attr_value[0], $this->_cached_attribute) )
         {
@@ -1063,7 +1076,7 @@ class CommandUtilMagento
         //for($i = 0; $i < $total_options; $i++)
         //{
         //    
-        //    _log("\033[37m " . $i . " -> " . $_options[$i]['label'] . "\033[0m");
+        //    _log(_GRAY(" . $i . " -> " . $_options[$i]['label']));
 
         //    if ( $_options[$i]['label'] == $attr_value[0] )
         //    {
@@ -1619,7 +1632,7 @@ function prompt($message, $choices = null)
     if (!$choices)
     {
 
-        echo "\033[33m" . $message . "\033[0m: ";
+        echo _BROWN($message .": ");
         $line = trim(fgets($handle));
         $choices = array('/^([Yy]|[Yy]es|[Ss]|[Ss]i)$/' => true, '/^([Nn]|[Nn]o)$/' => false);
 
@@ -1635,7 +1648,7 @@ function prompt($message, $choices = null)
     {
         // array key -> (title, function)
 
-        echo "\033[33m" . $message . "\033[0m: \r\n\r\n";
+        echo _BROWN($message .": \r\n\r\n");
 
         foreach($choices as $key => $opt)
         {
