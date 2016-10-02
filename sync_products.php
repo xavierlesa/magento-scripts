@@ -488,11 +488,14 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            preg_match("/(?:(\w+)_([a-zA-Z]+))+/", $pimg, $campos); //producto_color, producto, color
-            array_push($campos, $pimg);
+            $regex = "/.*\/+(?P<producto>[^/_.]+)_?(?P<color>[a-zA-Z]+)?/";
+            preg_match($regex, $pimg, $campos); //producto_color, producto, color
+            $producto = getattr($campos['producto'], '');
+            $color = getattr($campos['color'], '');
+            $campos = array($producto, $color, $pimg);
             _log(var_export($campos));
             // codigo_producto, codigo_color, file, path
-            //fputcsv($fp, array_values($campos));
+            //fputcsv($fp, $campos);
         }
 
         fclose($fp);
