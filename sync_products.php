@@ -488,8 +488,8 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            preg_match_all("/([^\/]+)/", $pimg, $array_path); //producto_color, producto, color
-            $campos = array_push($array_path, $pimg);
+            preg_match_all("/([^\/]+)/", $pimg, $campos); //producto_color, producto, color
+            array_push($campos, $pimg);
             // codigo_producto, codigo_color, file, path
             fputcsv($fp, $campos);
         }
