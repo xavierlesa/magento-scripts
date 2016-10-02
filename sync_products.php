@@ -483,12 +483,14 @@ class CommandUtilMagento
 
         // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
         $fp = fopen('mapping_images.csv', 'w');
+        // HEADERS
+        fputcsv($fp, array('product', 'color', 'file', 'path'));
 
         foreach($array_images_files as $pimg)
         {
             $array_path = pathinfo($pimg);
             $campos = array_merge(explode('_', $array_path['filename']), array($array_path['basename'], $pimg));
-            // codigo_producto, codigo_color, path
+            // codigo_producto, codigo_color, file, path
             fputcsv($fp, $campos);
         }
 
