@@ -495,7 +495,7 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            $regex = "#.*\/+(?P<producto>[^/-_.]+)_?(?P<color>[a-zA-Z]+)?#";
+            $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?#";
             preg_match($regex, $pimg, $campos); //producto_color, producto, color
             $producto = getattr($campos['producto'], '');
             $color = getattr($campos['color'], '');
