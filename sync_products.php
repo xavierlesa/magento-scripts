@@ -504,31 +504,42 @@ class CommandUtilMagento
             // codigo_producto, codigo_color, file, path
             fputcsv($fp, $campos);
 
-            $collection = Mage::getModel('catalog/product')->getCollection();
-            $collection->addAttributeToSelect('cod_product');
-            $collection->addAttributeToSelect('color');
+//            $collection = Mage::getModel('catalog/product')->getCollection();
+//            $collection->addAttributeToSelect('cod_product');
+//            $collection->addAttributeToSelect('color');
+//
+//            //filter for products who name is equal (eq) to Widget A, or equal (eq) to Widget B
+//            $collection->addAttributeToFilter('cod_product', $producto);
+//            //$query = array(
+//            //    array('attribute'=>'cod_product','eq'=>$producto),
+//            //);
+//
+//            if (getattr($mapped_colors[$color], null))
+//            {
+//                //$query = $query + array('attribute'=>'color','eq'=>$mapped_colors[$color]);
+//                $collection->addAttributeToFilter('color', $mapped_colors[$color]);
+//            }
+//
+//            //$collection->addFieldToFilter($query);
+//
+//            _log(_PURPLE("Productos encontrados para el cod_product: " . $producto . " = " . count($collection)));
+//
+//            foreach($collection as $product)
+//            {
+//                _log($product->getID());
+//            
+//            }
 
-            //filter for products who name is equal (eq) to Widget A, or equal (eq) to Widget B
-            $collection->addAttributeToFilter('cod_product', $producto);
-            //$query = array(
-            //    array('attribute'=>'cod_product','eq'=>$producto),
-            //);
 
-            if (getattr($mapped_colors[$color], null))
+            if ($ftp->ftp_get("tmp_media/".$producto."_".$color.".jpg", $pimg, FTP_BINARY))
             {
-                //$query = $query + array('attribute'=>'color','eq'=>$mapped_colors[$color]);
-                $collection->addAttributeToFilter('color', $mapped_colors[$color]);
+                _log(_GREEN("Imagen \"".$server_file."\" guardada."));
             }
-
-            //$collection->addFieldToFilter($query);
-
-            _log(_PURPLE("Productos encontrados para el cod_product: " . $producto . " = " . count($collection)));
-
-            foreach($collection as $product)
+            else
             {
-                _log(var_export($product));
+                _log(_RED("Error al guardar la imagen \"tmp_media/".$producto."_".$color.".jpg\""));
+            }
             
-            }
 
         }
 
