@@ -489,11 +489,8 @@ class CommandUtilMagento
         foreach($array_images_files as $pimg)
         {
             preg_match("/(?:(\w+)_([a-zA-Z]+))+/", $pimg, $campos); //producto_color, producto, color
-            
+            array_push($campos, $pimg);
             _log(var_export($campos));
-            
-            //array_push($campos, $pimg);
-
             // codigo_producto, codigo_color, file, path
             //fputcsv($fp, array_values($campos));
         }
@@ -646,7 +643,7 @@ class CommandUtilMagento
 
         case '9':
 
-            $result = prompt("SEGURO QUE QUERES BORRAR TODOS LOS PRODUCTOS?");
+            $result = prompt(_RED("SEGURO QUE QUERES BORRAR TODOS LOS PRODUCTOS?"));
             if ( $result === true ) $this->deleteAllProducts();
             else echo "\r\nCAGON!\r\n";
             break;
