@@ -573,24 +573,23 @@ class CommandUtilMagento
             {
                 _log($product->getID());
             
+
+                // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
+
+                $product->setMediaGallery(          // Media gallery initialization
+                        array(
+                            'images' => array(), 
+                            'values' => array()
+                        )
+                    )
+                    ->addImageToMediaGallery(       // Assigning image, thumb and small image to media gallery
+                        $row[3], 
+                        array(
+                            'image',
+                            'thumbnail',
+                            'small_image'
+                        ), false, false);
             }
-
-        // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
-
-        //->setMediaGallery(
-        //    array(
-        //        'images' => array(), 
-        //        'values' => array()
-        //    )
-        //)                                         // Media gallery initialization
-
-        //->addImageToMediaGallery(
-        //    'media/catalog/product/1/0/10243-1.png', 
-        //    array(
-        //        'image',
-        //        'thumbnail',
-        //        'small_image'
-        //    ), false, false)                      // Assigning image, thumb and small image to media gallery
         }
 
         fclose($fp);
