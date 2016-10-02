@@ -588,7 +588,8 @@ class CommandUtilMagento
                             'image',
                             'thumbnail',
                             'small_image'
-                        ), false, false);
+                        ), false, false)
+                    ->save();
             }
         }
 
