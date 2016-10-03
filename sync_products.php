@@ -491,7 +491,7 @@ class CommandUtilMagento
             $producto = getattr($campos['producto'], '');
             $color = getattr($campos['color'], '');
 
-            $local_file = "/var/www/magento/tmp_media/".$producto."_".$color.".jpg";
+            $local_file = "../tmp_media/".$producto."_".$color.".jpg";
 
             if ($ftp->ftp_get($local_file, $path_parts . $pimg, FTP_BINARY))
             {
