@@ -477,8 +477,10 @@ class CommandUtilMagento
         _log("Busca imagenes en " . $path_parts);
 
         $ftp_list = $this->getFileTree($ftp, $path_parts);
-        //_log(var_export($array_images_files, 1));
+        _log(var_export($array_images_files, 1));
+
         $fp = fopen('mapping_images.csv', 'w');
+        
         // HEADERS
         fputcsv($fp, array('product', 'color', 'path'));
 
@@ -571,6 +573,8 @@ class CommandUtilMagento
                             'small_image'
                         ), false, false)
                     ->save();
+
+                _log(_CYAN("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\""));
             }
 
             //$attr = $product_model->getResource()->getAttribute('color');
