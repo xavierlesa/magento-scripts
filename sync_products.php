@@ -536,7 +536,7 @@ class CommandUtilMagento
         }
         else
         {
-            _log(_GRAY("El listado del $parh desde el FTP está vacio"));
+            _log(_GRAY("El listado del $path desde el FTP está vacio"));
         }
     }
 
