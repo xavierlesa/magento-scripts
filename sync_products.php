@@ -534,6 +534,10 @@ class CommandUtilMagento
                 }
             }
         }
+        else
+        {
+            _log(_GRAY("El listado del $parh desde el FTP está vacio"));
+        }
     }
 
     public function attachLocalMedia()
