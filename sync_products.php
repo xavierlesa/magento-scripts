@@ -121,6 +121,10 @@ class ftp
         {
             die(_RED("Error al conectar al FTP:\r\n" . $url));
         }
+        else
+        {
+            _log(_GREEN("Conectado al FTP: " . $this->conn));
+        }
     }
 
     public function __call($func, $a)
