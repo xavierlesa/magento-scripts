@@ -124,6 +124,7 @@ class ftp
         else
         {
             _log(_GREEN("Conectado al FTP: " . $this->conn));
+            ftp_pasv($this->conn, true);
         }
     }
 
@@ -137,7 +138,7 @@ class ftp
         else
         {
             // replace with your own error handler.
-            die("$func is not a valid FTP function");
+            die(_RED("$func is not a valid FTP function"));
         }
     }
 }
