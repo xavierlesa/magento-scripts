@@ -1584,6 +1584,9 @@ class CommandUtilMagento
             "attribute-code",   // attribute code
             "attribute-label",  // attribute labels
             "attribute-values", // attribute values
+            "store",            // set Store ID
+            "website",          // set Website ID
+            "category",         // set Root Category ID
             "help",             // help
         );
 
@@ -1604,7 +1607,13 @@ class CommandUtilMagento
                 "--ftp-server=server.com\r\n".
                 "--ftp-user=user\r\n".
                 "--ftp-pass=mypass\r\n".
-                "--ftp-path=/route/to/path/\r\n"
+                "--ftp-path=/route/to/path/\r\n".
+                "\r\n".
+                "Store, Website and Root category\r\n".
+                "\r\n".
+                "--store=1\r\n".
+                "--website=1\r\n".
+                "--category=1\r\n"
             );
             //    -a, --add-category                      Create [sub]category if not exists.
             //    
@@ -1648,7 +1657,8 @@ class CommandUtilMagento
             _log($file_data);
             $this->loadFileData($file_data);
         }
-        elseif (array_key_exists('use-ftp', $options))
+        
+        if (array_key_exists('use-ftp', $options))
         { 
             $this->opt_ftp = array(
                 'server'    => getattr($options['ftp-server']),
@@ -1662,6 +1672,14 @@ class CommandUtilMagento
             _log(RED . "El archivo " . $file_data . " no se ha encontrado o no se puede acceder" . NC);
             exit(0);
         }
+
+        // store
+        
+        $_store_id = getattr($options['store'], STORE_ID);
+        $_website_id = getattr($options['website'], WEBSITE_ID);
+        $_category_id = getattr($options['category'], PARENT_ID);
+
+        $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
 
         $this->sync();
 
