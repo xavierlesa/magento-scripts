@@ -120,7 +120,6 @@ class ftp
         if ($this->conn = ftp_connect($url))
         {
             _log(_GREEN("Conectado al FTP: " . $this->conn));
-            ftp_pasv($this->conn, true);
         }
         else
         {
@@ -480,6 +479,7 @@ class CommandUtilMagento
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
+        echo $ftp->ftp_pasv($ftp->conn, true);
 
         $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
 
