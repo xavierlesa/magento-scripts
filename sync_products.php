@@ -479,7 +479,7 @@ class CommandUtilMagento
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
-        echo $ftp->ftp_pasv($ftp->conn, true);
+        echo $ftp->ftp_pasv(true);
 
         $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
 
