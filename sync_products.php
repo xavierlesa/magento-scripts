@@ -117,15 +117,16 @@ class ftp
 
     public function __construct($url)
     {
-        if (!$this->conn = ftp_connect($url))
-        {
-            die(_RED("Error al conectar al FTP:\r\n" . $url));
-        }
-        else
+        if ($this->conn = ftp_connect($url))
         {
             _log(_GREEN("Conectado al FTP: " . $this->conn));
             ftp_pasv($this->conn, true);
         }
+        else
+        {
+            die(_RED("Error al conectar al FTP:\r\n" . $url));
+        }
+
     }
 
     public function __call($func, $a)
