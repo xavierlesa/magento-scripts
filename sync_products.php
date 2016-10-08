@@ -572,6 +572,16 @@ class CommandUtilMagento
 
             if ( $_id && $product_model->load($_id) )
             {
+
+                // elimina las imagenes previas
+                $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+                $items = $mediaApi->items($product_model->getId());
+                foreach($items as $item)
+                {
+                    _log(_BROWN("Elimina la imagen actual " .  $item['file']));
+                    $mediaApi->remove($product_model->getId(), $item['file']);
+                }
+
                 $product_model->setMediaGallery(    // Media gallery initialization
                         array(
                             'images' => array(), 
