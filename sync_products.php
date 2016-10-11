@@ -488,7 +488,7 @@ class CommandUtilMagento
         $ftp_list = $this->getFileTree($ftp, $path_parts);
         _log(var_export($array_images_files, 1));
 
-        $fp = fopen('mapping_images.csv', 'w');
+        $fp = fopen('mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
         
         // HEADERS
         fputcsv($fp, array('product', 'color', 'path'));
@@ -562,7 +562,7 @@ class CommandUtilMagento
         fclose($fp_colors);
         
         //array('product', 'color', 'path');
-        $fp = fopen('mapping_images.csv', 'r');
+        $fp = fopen('mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
