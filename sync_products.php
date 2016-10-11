@@ -597,7 +597,7 @@ class CommandUtilMagento
                         ), false, false)
                     ->save();
 
-                _log(_CYAN("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\""));
+                _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\""));
             }
 
             //$attr = $product_model->getResource()->getAttribute('color');
@@ -1679,7 +1679,7 @@ class CommandUtilMagento
         }
         else 
         {
-            _log(RED . "El archivo " . $file_data . " no se ha encontrado o no se puede acceder" . NC);
+            _log(_RED("El archivo " . $file_data . " no se ha encontrado o no se puede acceder"));
             exit(0);
         }
 
