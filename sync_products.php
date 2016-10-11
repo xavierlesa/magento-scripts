@@ -21,17 +21,6 @@ define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 define('CONFIG_DEFAULT_SITE_NAME', 'urban');
 define('STORE_NAME', 'urban');
 
-$STORE_DATA = array(
-    // 'store_id' => '1',
-    // 'code' => 'default',
-    // 'website_id' => '1',
-    // 'group_id' => '1',
-    // 'name' => 'urbanstore.com.ar',
-    // 'sort_order' => '0',
-    // 'is_active' => '1',
-);
-
-
 // STORES
 $urban_store_id = 1;
 $oneill_store_id = 2;
@@ -172,6 +161,17 @@ class CommandUtilMagento
     var $row_category = 'linea';
     var $row_subcategory = 'familia';
     var $row_price = 'precio_vtas';
+
+
+    var $STORE_DATA = array(
+            // 'store_id' => '1',
+            // 'code' => 'default',
+            // 'website_id' => '1',
+            // 'group_id' => '1',
+            // 'name' => 'urbanstore.com.ar',
+            // 'sort_order' => '0',
+            // 'is_active' => '1',
+        );
 
 
     function __construct()
@@ -474,14 +474,14 @@ class CommandUtilMagento
 
     public function syncImages()
     {
-        global $STORE_DATA, $array_images_files;
+        $array_images_files;
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
         $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
         echo $ftp->ftp_pasv(true);
 
-        $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
+        $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
         _log("Busca imagenes en " . $path_parts);
 
@@ -523,8 +523,8 @@ class CommandUtilMagento
 
     public function getFileTree($ftp, $path)
     {
-        global $STORE_DATA, $array_images_files;
-        $path_parts = join(DS, array($this->opt_ftp['path'], $STORE_DATA['name'])); // category / sub_category / 
+        $array_images_files;
+        $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
         if ($ftp_list = $ftp->ftp_nlist($path))
         {
@@ -1691,9 +1691,9 @@ class CommandUtilMagento
 
         _log("Set STORE_ID con el ID: " . $_store_id);
 
-        global $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
+        $this->STORE_DATA = Mage::app()->getStore($_store_id)->getData();
 
-        _log(var_export($STORE_DATA, 1));
+        _log(var_export($this->STORE_DATA, 1));
 
         $this->sync();
 
@@ -1802,8 +1802,6 @@ function prompt($message, $choices = null)
 
 function boostrap()
 {
-
-    global $STORE_DATA;
     // init requires
     try 
     {
@@ -1843,7 +1841,7 @@ function boostrap()
     Mage::app('admin');
     Mage::register('isSecureArea', 1);
     Mage::app()->setCurrentStore(Mage_Core_Model_App::ADMIN_STORE_ID);
-    $STORE_DATA = Mage::app()->getStore(STORE_ID)->getData();
+    Mage::app()->getStore(STORE_ID)->getData();
 
     define('DEFAULT_ATTRIBUTES', 4); // default
     define('DEFAULT_PRODUCT_TYPE', Mage_Catalog_Model_Product_Type::TYPE_SIMPLE); // default product type
