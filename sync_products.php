@@ -483,7 +483,7 @@ class CommandUtilMagento
 
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
-        _log("Busca imagenes en " . $path_parts);
+        _log("Busca imagenes en " . $this->STORE_DATA['name'] . " -> " . $path_parts);
 
         $ftp_list = $this->getFileTree($ftp, $path_parts);
         _log(var_export($array_images_files, 1));
