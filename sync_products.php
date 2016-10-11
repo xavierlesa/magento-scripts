@@ -1693,7 +1693,7 @@ class CommandUtilMagento
 
         $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
 
-        _log($STORE_DATA);
+        _log(var_export($STORE_DATA, 1));
 
         $this->sync();
 
