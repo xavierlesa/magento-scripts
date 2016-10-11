@@ -1689,6 +1689,8 @@ class CommandUtilMagento
         $_website_id = getattr($options['website'], WEBSITE_ID);
         $_category_id = getattr($options['category'], PARENT_ID);
 
+        _log("Set STORE_ID con el ID: " . $_store_id);
+
         $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
 
         $this->sync();
