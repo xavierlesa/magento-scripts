@@ -474,7 +474,7 @@ class CommandUtilMagento
 
     public function syncImages()
     {
-        $array_images_files;
+        global $array_images_files;
         // Sincroniza las imagenes que se asociarán a los productos.
         echo "syncImages";
         $ftp = new ftp($this->opt_ftp['server']);
@@ -523,7 +523,7 @@ class CommandUtilMagento
 
     public function getFileTree($ftp, $path)
     {
-        $array_images_files;
+        global $array_images_files;
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
         if ($ftp_list = $ftp->ftp_nlist($path))
