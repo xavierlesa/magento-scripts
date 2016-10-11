@@ -1691,7 +1691,7 @@ class CommandUtilMagento
 
         _log("Set STORE_ID con el ID: " . $_store_id);
 
-        $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
+        global $STORE_DATA = Mage::app()->getStore($_store_id)->getData();
 
         _log(var_export($STORE_DATA, 1));
 
