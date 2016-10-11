@@ -1594,9 +1594,9 @@ class CommandUtilMagento
             "attribute-code",   // attribute code
             "attribute-label",  // attribute labels
             "attribute-values", // attribute values
-            "store",            // set Store ID
-            "website",          // set Website ID
-            "category",         // set Root Category ID
+            "store:",            // set Store ID
+            "website:",          // set Website ID
+            "category:",         // set Root Category ID
             "help",             // help
         );
 
