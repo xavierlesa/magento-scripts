@@ -3,7 +3,7 @@
  *
  */
 
-require_once dirname(__FILE__) . 'PHPExcel/Classes/PHPExcel.php';
+require_once dirname(__FILE__) . '/PHPExcel/Classes/PHPExcel.php';
 
 function parse_xlsx_as_array($file_data)
 {
