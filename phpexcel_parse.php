@@ -5,7 +5,7 @@
 
 require_once('PHPExcel/Classes/PHPExcel.php');
 
-public function parse_xlsx_as_array($file_data)
+function parse_xlsx_as_array($file_data)
 {
     // Carga un archivo .xsl[x] y devuelve su represetanción como un array
 
