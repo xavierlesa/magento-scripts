@@ -73,9 +73,9 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp')
              * It might be useful just to run this script without any code here, to watch
              * memory usage simply iterating over your spreadsheet.
              */
-        }
 
         $array_data[] = $row;
+        }
     }
 
     @unlink($dir);
