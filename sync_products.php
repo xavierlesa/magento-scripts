@@ -1706,7 +1706,8 @@ class CommandUtilMagento
             }
             catch(Exception $e)
             {
-                _log(_RED("ERROR Descargando el excel " . $the_file . "\r\n" . $e->getMessage()));
+                _log(_RED("ERROR Descargando el excel " . $the_file . " el archivo no existe o no es accesible."));
+                _log(_RED($e->getMessage()));
             }
 
         }
