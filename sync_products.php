@@ -130,6 +130,11 @@ class ftp
             die(_RED("$func is not a valid FTP function"));
         }
     }
+
+    public function close() 
+    {
+        ftp_close($this->conn);
+    }
 }
 
 /**
@@ -1699,16 +1704,21 @@ class CommandUtilMagento
             _log("Descargando el excel " . $the_file);
             try
             {
-                if ($ftp->ftp_get($local_file, $remote_file, FTP_BINARY))
+                if (!file_exists($local_file))
                 {
-                    _log($local_file);
-                    $this->loadFileData($local_file);
-                    $ftp->ftp_close();
+                    if ($ftp->ftp_get($local_file, $remote_file, FTP_BINARY))
+                    {
+                        _log("Archivo guardado en el local: " . $local_file);
+                        $ftp->close();
+                    }
+                    else
+                    {
+                        _log(_RED("ERROR parseando el excel " . $the_file));
+                    }
                 }
-                else
-                {
-                    _log(_RED("ERROR parseando el excel " . $the_file));
-                }
+
+                $this->loadFileData($local_file);
+
             }
             catch(Exception $e)
             {
