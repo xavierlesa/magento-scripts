@@ -788,7 +788,8 @@ class CommandUtilMagento
 
         if ($extension == 'xls' || $extension == 'xlsx') 
         {
-            require_once('phpexcel_parse.php');
+            //require_once('phpexcel_parse.php');
+            require_once('parse_xlsx.php');
             $array_data = parse_xlsx_as_array($file_data);
             $this->csv_array_header = array_map("mb_strtolower", array_keys($array_data[0]));
             $this->csv_array_data = $array_data;
