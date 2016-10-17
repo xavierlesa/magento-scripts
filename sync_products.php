@@ -1681,6 +1681,28 @@ class CommandUtilMagento
                 'pass'      => getattr($options['ftp-pass']),
                 'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
             );
+
+
+            $ftp = new ftp($this->opt_ftp['server']);
+            $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
+            echo $ftp->ftp_pasv(true);
+            
+            $the_file = "catalogo-".date("dmY").".xlsx";
+            $remote_file = join(DS, array($this->opt_ftp['path'], $the_file)); // category / sub_category / 
+            $local_file = "../tmp_media/" . $the_file;
+
+            _log("Descargando el excel " . $the_file);
+            if ($ftp->ftp_get($local_file, $remote_file, FTP_BINARY))
+            {
+                _log($local_file);
+                $this->loadFileData($local_file);
+            }
+            else
+            {
+                _log(_RED("ERROR Descargando el excel " . $the_file));
+            }
+
+            $ftp->ftp_close();
         }
 
         // store
