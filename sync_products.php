@@ -65,37 +65,63 @@ function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
 // HOMBRE -> HOMBRE
 // MUJER -> MUJER
 // UNISEX -> HOMBRE, MUJER
-// Si la LINEA es INDUMENTARIA o ACCESORIOS: usar LINEA como Subcategoria y GENERO como Categoria
+// Si la LINEA es INDUMENTARIA o ACCESORIOS: usar FAMILIA como Subcategoria y GENERO como Categoria
+
+// TREE
+// 
+// HOMBRE (GENERO) + LINEA INDUMENTARIA, ACCESORIOS
+//     (FAMILIA)
+//         (SUBFAMILIA)
+// 
+// MUJER (GENERO) + LINEA INDUMENTARIA, ACCESORIOS
+//     (FAMILIA)
+//         (SUBFAMILIA)
+// 
+// KIDS (GENERO) + LINEA INDUMENTARIA, ACCESORIOS
+//     (FAMILIA)
+//         (SUBFAMILIA)
+// 
+// CALZADO (LINEA)
+//     (NONE)
+// 
+// HARD (LINEA)
+//     (FAMILIA)
+// 
+// NEOPRENE (?)
+
 function mapping_categories($genero, $linea, $familia, $subfamilia='')
 {
-    // Genero	Linea	Familia
-    $_category = $linea;
-    $_subcategory = $familia;
+    // Genero   Familia Sub_Familia
+    $_root = $genero
+    $_category = $familia;
+    $_subcategory = $subfamilia;
 
-    if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA', 'AUDIO')))
+    if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA')))
     {
-        $_category = $genero;
+        $_root = $genero;
 
         if (in_array(mb_strtoupper($genero), array('BABY', 'JUNIOR', 'NIÑOS')))
         {
-            $_category = 'KIDS';
+            $_root = 'KIDS';
         }
         elseif (mb_strtoupper($genero) == 'UNISEX')
         {
-            $_category = array('HOMBRE', 'MUJER');
-        }
-
-        $_subcategory = $familia;
-
-        if ($linea == 'AUDIO') 
-        {
-            $_subcategory = 'ACCESORIOS';
+            $_root = array('HOMBRE', 'MUJER');
         }
 
     }
+    elseif (in_array(mb_strtoupper($linea), array('CALZADO', 'HARD', 'NEOPRENE')))
+    {
+        $_root = $linea;
 
-    return array($_category, $_subcategory);
+        if (mb_strtoupper($linea) != 'HARD')
+        {
+            $_category = null;
+            $_subcategory = null;
+        }
+    }
 
+    return array($_root, $_category, $_subcategory);
 }
 
 $array_images_files = array();
