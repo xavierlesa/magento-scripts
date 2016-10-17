@@ -794,7 +794,7 @@ class CommandUtilMagento
 
             $objReader = new PHPExcel();
             //$objPHPExcel = PHPExcel::load($file_data);
-            $objPHPExcel = $objReader->load($file_data);
+            $objPHPExcel = $objReader->load(dirname(__FILE__)."/".$file_data);
             $objWorksheet = $objPHPExcel->getActiveSheet();
 
             $highestRow = $objWorksheet->getHighestRow(); 
