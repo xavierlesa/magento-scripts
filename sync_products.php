@@ -532,12 +532,13 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?#";
+            $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?(?P<imgn>\d+)?#";
             preg_match($regex, $pimg, $campos); //producto_color, producto, color
             $producto = getattr($campos['producto'], '');
             $color = getattr($campos['color'], '');
+            $imgn = getattr($campos['imgn'], 0);
 
-            $local_file = "../tmp_media/".$producto."_".$color.".jpg";
+            $local_file = "../tmp_media/".$producto."_".$color."_".$imgn.".jpg";
 
             if ($ftp->ftp_get($local_file, $path_parts . $pimg, FTP_BINARY))
             {
