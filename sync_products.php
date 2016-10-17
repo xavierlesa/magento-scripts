@@ -796,8 +796,8 @@ class CommandUtilMagento
 
             require_once($module);
 
-            $objReader = new PHPExcel();
-            //$objPHPExcel = PHPExcel::load($file_data);
+            $objPHPExcel = new PHPExcel();
+            $objReader = PHPExcel_IOFactory::createReader("XLS");            
             $objPHPExcel = $objReader->load(dirname(__FILE__)."/".$file_data);
             $objWorksheet = $objPHPExcel->getActiveSheet();
 
