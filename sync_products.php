@@ -1667,6 +1667,11 @@ class CommandUtilMagento
             _log($file_data);
             $this->loadFileData($file_data);
         }
+        else 
+        {
+            _log(_RED("El archivo " . $file_data . " no se ha encontrado o no se puede acceder"));
+            exit(0);
+        }
         
         if (array_key_exists('use-ftp', $options))
         { 
@@ -1676,11 +1681,6 @@ class CommandUtilMagento
                 'pass'      => getattr($options['ftp-pass']),
                 'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
             );
-        }
-        else 
-        {
-            _log(_RED("El archivo " . $file_data . " no se ha encontrado o no se puede acceder"));
-            exit(0);
         }
 
         // store
