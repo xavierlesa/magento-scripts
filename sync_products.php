@@ -1691,17 +1691,24 @@ class CommandUtilMagento
             $local_file = "../tmp_media/" . $the_file;
 
             _log("Descargando el excel " . $the_file);
-            if ($ftp->ftp_get($local_file, $remote_file, FTP_BINARY))
+            try
             {
-                _log($local_file);
-                $this->loadFileData($local_file);
+                if ($ftp->ftp_get($local_file, $remote_file, FTP_BINARY))
+                {
+                    _log($local_file);
+                    $this->loadFileData($local_file);
+                    $ftp->ftp_close();
+                }
+                else
+                {
+                    _log(_RED("ERROR parseando el excel " . $the_file));
+                }
             }
-            else
+            catch(Exception $e)
             {
-                _log(_RED("ERROR Descargando el excel " . $the_file));
+                _log(_RED("ERROR Descargando el excel " . $the_file . "\r\n" . $e->getMessage()));
             }
 
-            $ftp->ftp_close();
         }
 
         // store
