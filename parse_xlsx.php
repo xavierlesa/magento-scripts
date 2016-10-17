@@ -62,20 +62,13 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp')
         
         // Assuming the first row are headers, stick them in the headers array
         if (count($headers) == 0) {
-            $headers = $arr;
+            $headers = array_map("mb_strtolower", $arr);
             print_r("Header XLS: \r\n" . var_export($headers, 1));
         } else {
             // Combine the row with the headers - make sure we have the same column count
             $values = array_pad($arr, count($headers), '');
             $row    = array_combine($headers, $values);
-            
-            /**
-             * Here, do whatever you like with the [header => value] assoc array in $row.
-             * It might be useful just to run this script without any code here, to watch
-             * memory usage simply iterating over your spreadsheet.
-             */
-
-        $array_data[] = $row;
+            $array_data[] = $row;
         }
     }
 
