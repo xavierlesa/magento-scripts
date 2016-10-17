@@ -63,6 +63,7 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp')
         // Assuming the first row are headers, stick them in the headers array
         if (count($headers) == 0) {
             $headers = $arr;
+            print_r("Header XLS: \r\n" . var_export($headers));
         } else {
             // Combine the row with the headers - make sure we have the same column count
             $values = array_pad($arr, count($headers), '');
