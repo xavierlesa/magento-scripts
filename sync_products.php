@@ -790,7 +790,11 @@ class CommandUtilMagento
         {
             //require_once('phpexcel_parse.php');
 
-            require_once(dirname(__FILE__) . '/Classes/PHPExcel.php');
+            $module = dirname(__FILE__) . '/Classes/PHPExcel.php';
+
+            _log("Load module " . $module);
+
+            require_once($module);
 
             $objReader = new PHPExcel();
             //$objPHPExcel = PHPExcel::load($file_data);
