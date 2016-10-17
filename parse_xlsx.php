@@ -32,6 +32,7 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp')
     $xlrows = $sheet->sheetData->row;
 
     $array_data = array();
+    $header = array();
 
     foreach ($xlrows as $xlrow) {
         $arr = array();
