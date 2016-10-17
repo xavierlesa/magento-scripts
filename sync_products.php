@@ -93,8 +93,8 @@ function mapping_categories($genero, $linea, $familia, $subfamilia='')
 {
     // Genero   Familia Sub_Familia
     $_root = $genero;
-    $_category = $familia;
-    $_subcategory = $subfamilia;
+    $_category = mb_strtoupper($familia);
+    $_subcategory = mb_strtoupper($subfamilia);
 
     if (in_array(mb_strtoupper($linea), array('ACCESORIOS', 'INDUMENTARIA')))
     {
