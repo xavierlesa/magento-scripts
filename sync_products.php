@@ -1713,8 +1713,12 @@ class CommandUtilMagento
                     }
                     else
                     {
-                        _log(_RED("ERROR parseando el excel " . $the_file));
+                        _log(_RED("ERROR descargando el excel " . $the_file));
                     }
+                }
+                else 
+                {
+                    _log(_GRAY("Carga el archivo desde el local: " . $local_file));
                 }
 
                 $this->loadFileData($local_file);
