@@ -3,14 +3,17 @@
  *
  */
 
-require_once(dirname(__FILE__) . '/Classes/PHPExcel.php');
+$module = dirname(__FILE__) . '/Classes/PHPExcel.php';
+echo("Load module " . $module);
+require_once($module);
 
 function parse_xlsx_as_array($file_data)
 {
     // Carga un archivo .xsl[x] y devuelve su represetanción como un array
 
-
-    $objPHPExcel = PHPExcel::load($file_data);
+    $objPHPExcel = new PHPExcel();
+    $objReader = PHPExcel_IOFactory::createReader("XLS");            
+    $objPHPExcel = $objReader->load(dirname(__FILE__)."/".$file_data);
     $objWorksheet = $objPHPExcel->getActiveSheet();
 
     $highestRow = $objWorksheet->getHighestRow(); 
@@ -24,6 +27,4 @@ function parse_xlsx_as_array($file_data)
             $rows[$col] = $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
         }
     }
-
-    return $rows;
 }

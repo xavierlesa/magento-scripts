@@ -788,32 +788,8 @@ class CommandUtilMagento
 
         if ($extension == 'xls' || $extension == 'xlsx') 
         {
-            //require_once('phpexcel_parse.php');
-
-            $module = dirname(__FILE__) . '/Classes/PHPExcel.php';
-
-            _log("Load module " . $module);
-
-            require_once($module);
-
-            $objPHPExcel = new PHPExcel();
-            $objReader = PHPExcel_IOFactory::createReader("XLS");            
-            $objPHPExcel = $objReader->load(dirname(__FILE__)."/".$file_data);
-            $objWorksheet = $objPHPExcel->getActiveSheet();
-
-            $highestRow = $objWorksheet->getHighestRow(); 
-            $highestColumn = $objWorksheet->getHighestColumn(); 
-
-            $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn); 
-
-            $rows = array();
-            for ($row = 0; $row <= $highestRow; ++$row) {
-                for ($col = 0; $col <= $highestColumnIndex; ++$col) {
-                    $rows[$col] = $objWorksheet->getCellByColumnAndRow($col, $row)->getValue();
-                }
-            }
-
-            $array_data = $rows; //parse_xlsx_as_array($file_data);
+            require_once('phpexcel_parse.php');
+            $array_data = parse_xlsx_as_array($file_data);
             $this->csv_array_header = array_map("mb_strtolower", array_keys($array_data[0]));
             $this->csv_array_data = $array_data;
 
