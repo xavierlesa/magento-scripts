@@ -66,7 +66,7 @@ function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
 // MUJER -> MUJER
 // UNISEX -> HOMBRE, MUJER
 // Si la LINEA es INDUMENTARIA o ACCESORIOS: usar LINEA como Subcategoria y GENERO como Categoria
-function mapping_categories($genero, $linea, $familia)
+function mapping_categories($genero, $linea, $familia, $subfamilia='')
 {
     // Genero	Linea	Familia
     $_category = $linea;
@@ -85,7 +85,7 @@ function mapping_categories($genero, $linea, $familia)
             $_category = array('HOMBRE', 'MUJER');
         }
 
-        $_subcategory = $linea;
+        $_subcategory = $familia;
 
         if ($linea == 'AUDIO') 
         {
@@ -158,8 +158,10 @@ class CommandUtilMagento
     var $row_attr_season = 'temporada';
     var $row_attr_gender = 'genero'; 
 
-    var $row_category = 'linea';
-    var $row_subcategory = 'familia';
+
+    var $row_line = 'linea';
+    var $row_category = 'familia';
+    var $row_subcategory = 'sub_familia';
     var $row_price = 'precio_vtas';
 
 
@@ -233,6 +235,7 @@ class CommandUtilMagento
             $this->row_sku, 
             $this->row_product_id, 
             $this->row_description, 
+            $this->row_line,
             $this->row_category,
             $this->row_subcategory,
             $this->row_price);
@@ -288,10 +291,11 @@ class CommandUtilMagento
                     $row[$this->row_attr_source], 
                     $row[$this->row_attr_season], 
                     $row[$this->row_attr_gender], 
+                    $row[$this->row_line],
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
-                    ucfirst(mb_strtolower($row[$this->row_category]))
+                    ucfirst(mb_strtolower($row[$this->row_line]))
                 );
             }
         }
@@ -339,10 +343,11 @@ class CommandUtilMagento
                     $row[$this->row_attr_source], 
                     $row[$this->row_attr_season], 
                     $row[$this->row_attr_gender], 
+                    $row[$this->row_line],
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
-                    ucfirst(mb_strtolower($row[$this->row_category])),
+                    ucfirst(mb_strtolower($row[$this->row_line])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
                     false); // NO COMMIT 
@@ -352,14 +357,14 @@ class CommandUtilMagento
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-                if (mb_strtolower($row[$this->row_category]) == 'indumentaria')
+                if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         $array_attribues['size_letter']->getId() => $array_attribues['size_letter']
                     );
                 } 
-                elseif (mb_strtolower($row[$this->row_category]) == 'calzado')
+                elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
@@ -430,10 +435,11 @@ class CommandUtilMagento
                         $row[$this->row_attr_source], 
                         $row[$this->row_attr_season], 
                         $row[$this->row_attr_gender], 
+                        $row[$this->row_line],
                         $row[$this->row_category],
                         $row[$this->row_subcategory], 
                         $row[$this->row_price],
-                        ucfirst(mb_strtolower($row[$this->row_category])),
+                        ucfirst(mb_strtolower($row[$this->row_line])),
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
                         true); // COMMIT 
@@ -855,7 +861,7 @@ class CommandUtilMagento
     // Methods
     public function createProduct($sku, $cod_product, $name, $description, 
         $cod_color, $color, $size, $manufacturer, $source, $season, $gender, 
-        $category, $subcategory, $price, $attribute_set=null, 
+        $line, $category, $subcategory, $price, $attribute_set=null, 
         $product_type=null, $product_visibility=null, $commit=true) 
     { 
         //
@@ -907,7 +913,7 @@ class CommandUtilMagento
         _log(_BROWN("Add category if does not exist"));
         //$array_categories = $this->getOrCreateCategories( array($category, $subcategory) );
 
-        $mapped_categories = mapping_categories($gender, $category, $subcategory);
+        $mapped_categories = mapping_categories($gender, $line, $category, $subcategory);
 
         if (is_array($mapped_categories[0])) 
         {
