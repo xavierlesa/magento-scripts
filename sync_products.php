@@ -92,7 +92,7 @@ function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
 function mapping_categories($genero, $linea, $familia, $subfamilia='')
 {
     // Genero   Familia Sub_Familia
-    $_root = $genero
+    $_root = $genero;
     $_category = $familia;
     $_subcategory = $subfamilia;
 
