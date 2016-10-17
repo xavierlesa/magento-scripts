@@ -74,7 +74,6 @@ function parse_xlsx_as_array($inputFile, $dir='/tmp')
 
     @unlink($dir);
     //@unlink($inputFile);
-
-    print_r(var_export($array_data, 1));
+    //print_r(var_export($array_data, 1));
     return $array_data;
 }
