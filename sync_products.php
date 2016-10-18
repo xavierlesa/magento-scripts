@@ -545,6 +545,9 @@ class CommandUtilMagento
         {
             
             $campos = $this->resolveImageName($pimg);
+            $producto = $campos['producto'];
+            $color = $campos['color'];
+            $imgn = $campos['imgn'];
 
             $local_file = "../tmp_media/".$producto."_".$color."_".$imgn.".jpg";
 
