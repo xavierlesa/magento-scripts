@@ -116,8 +116,7 @@ function mapping_categories($genero, $linea, $familia, $subfamilia='')
 
         if (mb_strtoupper($linea) != 'HARD')
         {
-            $_category = null;
-            $_subcategory = null;
+            return array($_root);
         }
     }
 
@@ -509,6 +508,18 @@ class CommandUtilMagento
     }
 
 
+    public function resolveImageName($strfile)
+    {
+        // devuelve el producto, color y numero de imagen en base al path
+        $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?(?P<imgn>\d+)?#";
+        preg_match($regex, $strfile, $campos); //producto_color, producto, color
+        $producto = getattr($campos['producto'], '');
+        $color = getattr($campos['color'], '');
+        $imgn = getattr($campos['imgn'], 0);
+        return $campos;
+    }
+
+
     public function syncImages()
     {
         global $array_images_files;
@@ -532,11 +543,8 @@ class CommandUtilMagento
 
         foreach($array_images_files as $pimg)
         {
-            $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?(?P<imgn>\d+)?#";
-            preg_match($regex, $pimg, $campos); //producto_color, producto, color
-            $producto = getattr($campos['producto'], '');
-            $color = getattr($campos['color'], '');
-            $imgn = getattr($campos['imgn'], 0);
+            
+            $campos = $this->resolveImageName($pimg);
 
             $local_file = "../tmp_media/".$producto."_".$color."_".$imgn.".jpg";
 
@@ -611,13 +619,23 @@ class CommandUtilMagento
             if ( $_id && $product_model->load($_id) )
             {
 
+                $orig_campos = $this->resolveImageName($row[2]);
+
                 // elimina las imagenes previas
                 $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
                 $items = $mediaApi->items($product_model->getId());
                 foreach($items as $item)
                 {
-                    _log(_BROWN("Elimina la imagen actual " .  $item['file']));
-                    $mediaApi->remove($product_model->getId(), $item['file']);
+                    $act_campos = $this->resolveImageName($item['file']);
+
+                    if($act_campos['producto'] == $orig_campos['producto'] 
+                        && $act_campos['color'] == $orig_campos['color'] 
+                        && $act_campos['imgn'] == $orig_campos['imgn']
+                        )
+                    {
+                        _log(_BROWN("Elimina la imagen actual " .  $item['file']));
+                        $mediaApi->remove($product_model->getId(), $item['file']);
+                    }
                 }
 
                 $product_model->setMediaGallery(    // Media gallery initialization
