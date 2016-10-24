@@ -653,8 +653,11 @@ class CommandUtilMagento
                             'image',
                             'thumbnail',
                             'small_image'
-                        ), false, false)
-                    ->save();
+                        ), 
+                        false, 
+                        false, 
+                        ucfirst(mb_strtolower(getattr($mapped_colors[$orig_campos['color']], ''))) // hay un hack que agregar un label en este metodo http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+                    )->save();
 
                 _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\""));
             }
