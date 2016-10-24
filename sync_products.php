@@ -485,9 +485,6 @@ class CommandUtilMagento
                 } 
                 catch(Exception $e) 
                 {
-
-                    _log(_RED("ERROR al guarar el producto configurable\r\n" . $e->getMessage() ) );
-
                     try 
                     {
                         _log("Try with getResource -> save");
@@ -651,7 +648,7 @@ class CommandUtilMagento
                 if(is_array($_m_color))
                 {
                     $label = ucfirst(mb_strtolower($_m_color["color"]));
-                    _log("(mapping " .$orig_campos['color']. ": ".var_export($_m_color, 1).")");
+                    //_log("(mapping " .$orig_campos['color']. ": ".var_export($_m_color, 1).")");
                 }
 
                 $product_model->setMediaGallery(    // Media gallery initialization
