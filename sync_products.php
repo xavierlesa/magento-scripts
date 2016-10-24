@@ -606,7 +606,11 @@ class CommandUtilMagento
         $mapped_colors = array();
         while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
         {
-            $mapped_colors[$datos[0]] = $datos[1];
+            $mapped_colors[$datos[0]] = array(
+                "description" => $datos[1], 
+                "code" => $datos[2], 
+                "color" => $datos[3]
+            );
         }
         fclose($fp_colors);
         
@@ -642,7 +646,13 @@ class CommandUtilMagento
                 }
                 
                 // hay un hack que agregar un label en este metodo http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-                $label = ucfirst(mb_strtolower(getattr($mapped_colors[$orig_campos['color']], '')));
+                $label = '';
+                $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+                if(is_array($_m_color))
+                {
+                    $label = ucfirst(mb_strtolower($_m_color["color"]));
+                }
+
                 $product_model->setMediaGallery(    // Media gallery initialization
                         array(
                             'images' => array(), 
