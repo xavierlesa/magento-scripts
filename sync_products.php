@@ -640,7 +640,9 @@ class CommandUtilMagento
                         $mediaApi->remove($product_model->getId(), $item['file']);
                     }
                 }
-
+                
+                // hay un hack que agregar un label en este metodo http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+                $label = ucfirst(mb_strtolower(getattr($mapped_colors[$orig_campos['color']], '')));
                 $product_model->setMediaGallery(    // Media gallery initialization
                         array(
                             'images' => array(), 
@@ -656,10 +658,10 @@ class CommandUtilMagento
                         ), 
                         false, 
                         false, 
-                        ucfirst(mb_strtolower(getattr($mapped_colors[$orig_campos['color']], ''))) // hay un hack que agregar un label en este metodo http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+                        $label
                     )->save();
 
-                _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\""));
+                _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"".$label."\""));
             }
 
             //$attr = $product_model->getResource()->getAttribute('color');
