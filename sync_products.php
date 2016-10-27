@@ -675,7 +675,7 @@ class CommandUtilMagento
                         $label
                     )->save();
 
-                _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"".$label."\""));
+                _log(_BLUE("Producto con sku: CONFIG-" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"".$label."\" y orden: \"" .$orig_campos['imgn']. "\""));
             }
 
             //$attr = $product_model->getResource()->getAttribute('color');
@@ -1839,14 +1839,14 @@ function pprint($str, $args=array())
     return $_str;
 }
 
-function slugify($text)
+function old_slugify($text)
 {
     // replace non letter or digits by -
     $text = preg_replace('~[^\pL\d]+~u', '-', $text);
     // transliterate
     $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
     // remove unwanted characters
-    $text = preg_replace('~[^-\w]+~', '', $text);
+    $text = preg_replace('~[^-\wñáéíóú]+~', '', $text);
     // trim
     $text = trim($text, '-');
     // remove duplicate -
@@ -1858,6 +1858,20 @@ function slugify($text)
         return $text;
     }
     return $text;
+}
+
+function slugify($string)
+{
+    return strtolower(
+        trim(
+            preg_replace('~[^0-9a-z]+~i', '-', 
+                preg_replace('~&([a-z]{1,2})(acute|cedil|circ|grave|lig|orn|ring|slash|th|tilde|uml);~i', '$1', 
+                    htmlentities($string, ENT_QUOTES, 'UTF-8')
+                )
+            ), 
+            ' '
+        )
+    );
 }
 
 function _log($message, $args=array(), $stdout = true)
