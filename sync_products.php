@@ -531,6 +531,7 @@ class CommandUtilMagento
         _log("Busca imagenes en " . $this->STORE_DATA['name'] . " -> " . $path_parts);
 
         $ftp_list = $this->getFileTree($ftp, $path_parts);
+
         _log(var_export($array_images_files, 1));
 
         $fp = fopen('mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
@@ -573,6 +574,8 @@ class CommandUtilMagento
         $path = str_replace($path, "\ ", " "); 
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
+        _log("Explora el path $path en busca de imagenes");
+
         if ($ftp_list = $ftp->ftp_nlist($path))
         {
             foreach($ftp_list as $dir)
@@ -583,7 +586,7 @@ class CommandUtilMagento
                     if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                     {
                         $_path = str_replace($path_parts, "", $path . DS . $dir);
-                        _log("Cargando en memoria $_path \r\n");
+                        _log("Cargando en memoria " . $_path);
                         $array_images_files[] = $_path;
                     }
                     else $this->getFileTree($ftp, $path . DS . $dir);
