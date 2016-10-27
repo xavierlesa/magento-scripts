@@ -571,10 +571,10 @@ class CommandUtilMagento
     public function getFileTree($ftp, $path)
     {
         global $array_images_files;
-        $path = str_replace(" ", "\\ ", $path); 
+        $path = str_replace(" ", "%20", $path); 
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
-        _log("Explora el path $path en busca de imagenes");
+        _log(_GRAY("Explora el path $path en busca de imagenes"));
 
         if ($ftp_list = $ftp->ftp_nlist($path))
         {
@@ -586,7 +586,7 @@ class CommandUtilMagento
                     if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                     {
                         $_path = str_replace($path_parts, "", $path . DS . $dir);
-                        _log("Cargando en memoria " . $_path);
+                        _log(_BLUE("Cargando en memoria " . $_path));
                         $array_images_files[] = $_path;
                     }
                     else $this->getFileTree($ftp, $path . DS . $dir);
@@ -595,7 +595,7 @@ class CommandUtilMagento
         }
         else
         {
-            _log(_GRAY("El listado del $path desde el FTP está vacio"));
+            _log(_BROWN("El listado del $path desde el FTP está vacio"));
         }
     }
 
