@@ -806,6 +806,7 @@ class CommandUtilMagento
             break;
 
         case '5':
+            $this->syncProducts();
             $this->syncCategories();
             break;
 
