@@ -572,7 +572,7 @@ class CommandUtilMagento
         global $array_images_files;
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
-        if ($ftp_list = $ftp->ftp_nlist($path))
+        if ($ftp_list = $ftp->ftp_nlist(escapeshellarg($path)))
         {
             foreach($ftp_list as $dir)
             {
