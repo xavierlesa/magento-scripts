@@ -340,7 +340,8 @@ class CommandUtilMagento
 
 
         // resuelve una sola vez los atributos posibles
-        $array_attr = array('color', 'size', 'size_letter');
+        //$array_attr = array('color', 'size', 'size_letter');
+        $array_attr = array('color', 'size');
         $array_attribues = [];
         foreach($array_attr as $code) 
         {
@@ -391,7 +392,8 @@ class CommandUtilMagento
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
-                        $array_attribues['size_letter']->getId() => $array_attribues['size_letter']
+                        //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
+                        $array_attribues['size']->getId() => $array_attribues['size']
                     );
                 } 
                 elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
@@ -534,7 +536,7 @@ class CommandUtilMagento
 
         _log(var_export($array_images_files, 1));
 
-        $fp = fopen('mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
+        $fp = fopen('../tmp_media/mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
         
         // HEADERS
         fputcsv($fp, array('product', 'color', 'path'));
@@ -595,7 +597,7 @@ class CommandUtilMagento
         }
         else
         {
-            _log(_BROWN("El listado del $path desde el FTP está vacio"));
+            _log(_BROWN("El listado del $path desde el FTP está vacio. \r\nADVERTENCIA: Si contiene espacios (incluso con \\ escape no lo explora)"));
         }
     }
 
@@ -603,7 +605,7 @@ class CommandUtilMagento
     {
 
         // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
-        $fp_colors = fopen('mapping_colors.csv', 'r');
+        $fp_colors = fopen('../tmp_media/mapping_colors.csv', 'r');
         $mapped_colors = array();
         while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
         {
@@ -616,7 +618,7 @@ class CommandUtilMagento
         fclose($fp_colors);
         
         //array('product', 'color', 'path');
-        $fp = fopen('mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
+        $fp = fopen('../tmp_media/mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
@@ -1015,15 +1017,18 @@ class CommandUtilMagento
             // set size attributes
             if ($size)
             {
-                if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu')
-                {
-                    _log(_BROWN("Add attribute size_letter: " . $size));
-                    $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
-                } 
-                else {
-                    _log(_BROWN("Add attribute size: " . $size));
-                    $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
-                }
+                //if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu')
+                //{
+                //    _log(_BROWN("Add attribute size_letter: " . $size));
+                //    $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
+                //} 
+                //else {
+                //    _log(_BROWN("Add attribute size: " . $size));
+                //    $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
+                //}
+
+                _log(_BROWN("Add attribute size: " . $size));
+                $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
             }
         }
 
@@ -1138,6 +1143,7 @@ class CommandUtilMagento
                 $product_model->setColor($attr_color);            // Color
                 if ($attr_cod_product)
                 {
+                    _log("try to add code " . $cod_product); 
                     $product_model->setCodProduct($cod_product);
                 }
                 if ($attr_size)
@@ -1145,11 +1151,11 @@ class CommandUtilMagento
                     _log("try to add size " . $attr_size); 
                     $product_model->setSize($attr_size);
                 } 
-                elseif ($attr_size_l)
-                {
-                    _log("try to add size_l " . $attr_size_l); 
-                    $product_model->setSizeLetter($attr_size_l);
-                }
+                //elseif ($attr_size_l)
+                //{
+                //    _log("try to add size_l " . $attr_size_l); 
+                //    $product_model->setSizeLetter($attr_size_l);
+                //}
 
             }
 
