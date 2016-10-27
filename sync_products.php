@@ -572,7 +572,7 @@ class CommandUtilMagento
     {
         global $array_images_files;
         //$path = str_replace(" ", " ", $path); 
-        $path = "\"".$path."\"";
+        $path = "'".$path."'";
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
         _log(_GRAY("Explora el path $path en busca de imagenes"));
