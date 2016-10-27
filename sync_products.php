@@ -570,9 +570,10 @@ class CommandUtilMagento
     public function getFileTree($ftp, $path)
     {
         global $array_images_files;
+        $path = escapeshellarg($path); 
         $path_parts = join(DS, array($this->opt_ftp['path'], $this->STORE_DATA['name'])); // category / sub_category / 
 
-        if ($ftp_list = $ftp->ftp_nlist(escapeshellarg($path)))
+        if ($ftp_list = $ftp->ftp_nlist($path))
         {
             foreach($ftp_list as $dir)
             {
