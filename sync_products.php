@@ -583,7 +583,7 @@ class CommandUtilMagento
                     if (preg_match('/\.(jpg|jpeg|png|gif)$/i', $dir))
                     {
                         $_path = str_replace($path_parts, "", $path . DS . $dir);
-                        #echo  $_path . "\r\n";
+                        _log("Cargando en memoria $_path \r\n");
                         $array_images_files[] = $_path;
                     }
                     else $this->getFileTree($ftp, $path . DS . $dir);
