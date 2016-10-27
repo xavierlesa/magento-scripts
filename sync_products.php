@@ -605,7 +605,7 @@ class CommandUtilMagento
     {
 
         // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
-        $fp_colors = fopen('../tmp_media/mapping_colors.csv', 'r');
+        $fp_colors = fopen('mapping_colors.csv', 'r');
         $mapped_colors = array();
         while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
         {
