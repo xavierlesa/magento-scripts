@@ -352,7 +352,7 @@ class CommandUtilMagento
 
         foreach( $this->csv_grouped_array_data as $key => $products )
         {
-            if(count($products) > 1 or true) // Hack horrible para poner siempre productos configurables
+            if(count($products) > 1) // Hack horrible para poner siempre productos configurables
             {
 
                 $row = $products[0];
