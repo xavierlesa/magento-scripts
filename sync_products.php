@@ -629,7 +629,7 @@ class CommandUtilMagento
 
            // ATTACH Al configurable. 
             $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
-            if ($$_id && $product_model->load($_id)) {
+            if ($_id && $product_model->load($_id)) {
 
                 $orig_campos = $this->resolveImageName($row[2]);
 
