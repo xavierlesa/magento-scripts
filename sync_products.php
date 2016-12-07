@@ -629,7 +629,7 @@ class CommandUtilMagento
 
             $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
             //$products = $product_model->getCollection()
-                    ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
+            //        ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
             //foreach ($products as $product) {
 
                 //if ($product && $product_model->load($product->getId())) {
