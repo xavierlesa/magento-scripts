@@ -627,12 +627,13 @@ class CommandUtilMagento
         {
             $product_model = Mage::getModel('catalog/product');
 
-            //$_id = $product_model->getIdBySku("CONFIG-".$row[0]);
-            $products = $product_model->getCollection()
+            $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
+            //$products = $product_model->getCollection()
                     ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
-            foreach ($products as $product) {
+            //foreach ($products as $product) {
 
-                if ($product && $product_model->load($product->getId())) {
+                //if ($product && $product_model->load($product->getId())) {
+                if ($_id && $product_model->load($_id)) {
 
                     $orig_campos = $this->resolveImageName($row[2]);
 
@@ -673,7 +674,7 @@ class CommandUtilMagento
 
                     _log(_BLUE("Producto con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
                 }
-            }
+            //}
             //$attr = $product_model->getResource()->getAttribute('color');
             //$collection = $product_model->getCollection();
             //$collection->addAttributeToSelect('cod_product');
