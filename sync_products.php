@@ -726,7 +726,11 @@ class CommandUtilMagento
                 }
             }
             $products = $product_model->getCollection()
-                    ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
+                ->addAttributeToFilter('cod_product', 
+                array(
+                    'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
+                ))
+                ->load();
 
             _log("Productos asociados : " . count($products));
 
