@@ -17,9 +17,10 @@
 
 // DEFINITIONS
 define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web');
-define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
-define('CONFIG_DEFAULT_SITE_NAME', 'urban');
-define('STORE_NAME', 'urban');
+//define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
+//define('CONFIG_DEFAULT_SITE_NAME', 'urban');
+//define('STORE_NAME', 'urban');
+define('MEDIA_STORAGE_POINT', '/mnt/media/');
 
 // STORES
 $urban_store_id = 1;
@@ -536,7 +537,7 @@ class CommandUtilMagento
 
         _log(var_export($array_images_files, 1));
 
-        $fp = fopen('../tmp_media/mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
+        $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'w');
         
         // HEADERS
         fputcsv($fp, array('product', 'color', 'path'));
@@ -549,7 +550,7 @@ class CommandUtilMagento
             $color = $campos['color'];
             $imgn = $campos['imgn'];
 
-            $local_file = "../tmp_media/".$producto."_".$color."_".$imgn.".jpg";
+            $local_file = MEDIA_STORAGE_POINT . $producto . '_' . $color . '_' . $imgn . '.jpg';
 
             if ($ftp->ftp_get($local_file, $path_parts . $pimg, FTP_BINARY))
             {
@@ -621,7 +622,7 @@ class CommandUtilMagento
         fclose($fp_colors);
         
         //array('product', 'color', 'path');
-        $fp = fopen('../tmp_media/mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
+        $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
@@ -1768,7 +1769,7 @@ class CommandUtilMagento
             
             $the_file = "catalogo-".date("dmY").".xlsx";
             $remote_file = join(DS, array($this->opt_ftp['path'], $the_file)); // category / sub_category / 
-            $local_file = "../tmp_media/" . $the_file;
+            $local_file = MEDIA_STORAGE_POINT . $the_file;
 
             _log("Descargando el excel " . $the_file);
             try
