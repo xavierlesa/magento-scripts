@@ -608,20 +608,6 @@ class CommandUtilMagento
 
         $orig_campos = $this->resolveImageName($row[2]);
 
-        // hay un hack que agregar un label en este metodo 
-        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-        $label = '';
-        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
-        if (is_array($_m_color)) {
-            $label = ucfirst(mb_strtolower($_m_color["color"]));
-        }
-
-        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && 
-            $product_model->getColor() == $label) {
-                _log("[SKIP] Es un producto " . $product_type . " con color " . $product_model->getColor() . " NO es " . $label);
-                return $this;
-            }
-
         // elimina las imagenes previas
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
         $items = $mediaApi->items($product_model->getId());
@@ -637,6 +623,22 @@ class CommandUtilMagento
                 $mediaApi->remove($product_model->getId(), $item['file']);
             }
         }
+
+
+        // hay un hack que agregar un label en este metodo 
+        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+        $label = '';
+        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+        if (is_array($_m_color)) {
+            $label = ucfirst(mb_strtolower($_m_color["color"]));
+        }
+
+        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && 
+            $product_model->getColor() == $label) {
+                _log("[SKIP] Es un producto " . $product_type . " con color " . $product_model->getColor() . " NO es " . $label);
+                return $this;
+            }
+
 
         $product_model->setMediaGallery(// Media gallery initialization
             array(
