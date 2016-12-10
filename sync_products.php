@@ -20,7 +20,7 @@ define('CONFIG_DEFAULT_FTP_PATH', 'Ecommerce/linea_web');
 //define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 //define('CONFIG_DEFAULT_SITE_NAME', 'urban');
 //define('STORE_NAME', 'urban');
-define('MEDIA_STORAGE_POINT', '/mnt/media/');
+define('MEDIA_STORAGE_POINT', '../tmp_media/');
 
 // STORES
 $urban_store_id = 1;
