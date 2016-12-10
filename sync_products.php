@@ -645,10 +645,10 @@ class CommandUtilMagento
             $color =  $product_model->getResource()->getAttribute('color')->getFrontend()->getValue($product_model);
 
             _log("SKU: " . $product_model->getSku() . " TYPE: " . $product_type . " SIZE: " . $size . " COLOR: " . $color);
-            //if($color != $label) {
+            if($color != $label) {
                 _log("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label);
                 return $this;
-            //}
+            }
         }
 
         // Calcula si ya tiene imagenes asociadas
