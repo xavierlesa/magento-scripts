@@ -16,7 +16,7 @@
  */
 
 // DEFINITIONS
-define('CONFIG_DEFAULT_FTP_PATH', 'ecommerce/linea_web');
+define('CONFIG_DEFAULT_FTP_PATH', 'Ecommerce/linea_web');
 //define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 //define('CONFIG_DEFAULT_SITE_NAME', 'urban');
 //define('STORE_NAME', 'urban');
@@ -176,6 +176,8 @@ class CommandUtilMagento
     var $_cached_category = []; // "category/subcategory" => ID
     var $_cached_attribute = []; // "attricube_code" => "attribute" => ID
 
+    var $mapped_colors = [];
+
     var $row_sku = 'sku';
     var $row_product_id = 'producto';
     var $row_name = 'descripcion'; 
@@ -189,12 +191,10 @@ class CommandUtilMagento
     var $row_attr_season = 'temporada';
     var $row_attr_gender = 'genero'; 
 
-
     var $row_line = 'linea';
     var $row_category = 'familia';
     var $row_subcategory = 'sub_familia';
     var $row_price = 'precio_vtas';
-
 
     var $STORE_DATA = array(
             // 'store_id' => '1',
@@ -550,7 +550,7 @@ class CommandUtilMagento
             $color = $campos['color'];
             $imgn = $campos['imgn'];
 
-            $local_file = MEDIA_STORAGE_POINT . $producto . '_' . $color . '_' . $imgn . '.jpg';
+            $local_file = MEDIA_STORAGE_POINT . $producto . '_' . $color . ($imgn=='' ? '' :  ('_' . $imgn)) . '.jpg';
 
             if ($ftp->ftp_get($local_file, $path_parts . $pimg, FTP_BINARY))
             {
@@ -561,10 +561,9 @@ class CommandUtilMagento
             }
             else
             {
-                _log(_RED("Error al guardar la imagen \"tmp_media/".$producto."_".$color.".jpg\""));
+                _log(_RED("Error al guardar la imagen \"".MEDIA_STORAGE_POINT.$producto."_".$color.".jpg\""));
             }
             
-
         }
 
         fclose($fp);
@@ -620,25 +619,37 @@ class CommandUtilMagento
             if ($act_campos['producto'] == $orig_campos['producto'] && 
                 $act_campos['color'] == $orig_campos['color'] && 
                 $act_campos['imgn'] == $orig_campos['imgn']) {
-                _log(_BROWN("Elimina la imagen actual " . $item['file']));
+                _log(_BROWN("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
                 $mediaApi->remove($product_model->getId(), $item['file']);
             }
         }
 
-
+        $mapped_colors = $this->mapColors();
         // hay un hack que agregar un label en este metodo 
         // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
         $label = '';
         $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+        //$_m_color = $mapped_colors[$orig_campos['color']];
+        
+        _log("Busca en mapped_colors el Codigo de Color: " . $orig_campos['color']);
+
         if (is_array($_m_color)) {
             $label = ucfirst(mb_strtolower($_m_color["color"]));
         }
+        else {
+            _log("El color mappeado es" . $_m_color . " de " . ($orig_campos['color'] ? $orig_campos['color'] : 'SIN COLOR'));
+        }
 
-        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && 
-            $product_model->getColor() == $label) {
-                _log("[SKIP] Es un producto " . $product_type . " con color " . $product_model->getColor() . " NO es " . $label);
+        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+            $size = $product_model->getResource()->getAttribute('size')->getFrontend()->getValue($product_model);
+            $color =  $product_model->getResource()->getAttribute('color')->getFrontend()->getValue($product_model);
+
+            _log("SKU: " . $product_model->getSku() . " TYPE: " . $product_type . " SIZE: " . $size . " COLOR: " . $color);
+            //if($color != $label) {
+                _log("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label);
                 return $this;
-            }
+            //}
+        }
 
 
         $product_model->setMediaGallery(// Media gallery initialization
@@ -659,25 +670,37 @@ class CommandUtilMagento
     }
 
     /**
+     * Mappea los colores en un array para uso futuro
+     */
+    public function mapColors()
+    {
+        if(count($this->mapped_colors) < 1) {
+            // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
+            $fp_colors = fopen('mapping_colors.csv', 'r');
+            $mapped_colors = array();
+            while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
+            {
+                $mapped_colors[$datos[0]] = array(
+                    "description" => $datos[1], 
+                    "code" => $datos[2], 
+                    "color" => $datos[3]
+                );
+                _log("Mapping color " . $datos[0] . " CODE: " . $datos[2] . " COLOR: " . $datos[3] );
+            }
+            fclose($fp_colors);
+
+            $this->mapped_colors = $mapped_colors;
+        }
+
+        return $this->mapped_colors;
+    }
+
+    /**
      * Descarga las imágenes de los productos para asociar a los productos simples
      * 
      */
     public function attachLocalMedia()
-    {
-
-        // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
-        $fp_colors = fopen('mapping_colors.csv', 'r');
-        $mapped_colors = array();
-        while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
-        {
-            $mapped_colors[$datos[0]] = array(
-                "description" => $datos[1], 
-                "code" => $datos[2], 
-                "color" => $datos[3]
-            );
-        }
-        fclose($fp_colors);
-        
+    {   
         //array('product', 'color', 'path');
         $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
@@ -1619,6 +1642,7 @@ class CommandUtilMagento
             "ftp-user:",        // ftp user
             "ftp-pass:",        // ftp pass
             "ftp-path:",        // ftp path
+            "file-date:",       // file date as ddmmYYYY
             "commit",           // create product
             "add-category",     // add category if not exists
             "add-attribute",    // add attribute selector
@@ -1649,6 +1673,7 @@ class CommandUtilMagento
                 "--ftp-user=user\r\n".
                 "--ftp-pass=mypass\r\n".
                 "--ftp-path=/route/to/path/\r\n".
+                "--file-date=ddmmYYYY\r\n".
                 "\r\n".
                 "Store, Website and Root category\r\n".
                 "\r\n".
@@ -1708,12 +1733,13 @@ class CommandUtilMagento
                 'path'      => getattr($options['ftp-path'], CONFIG_DEFAULT_FTP_PATH),
             );
 
+            $date = getattr($options['file-date'], date("dmY"));
 
             $ftp = new ftp($this->opt_ftp['server']);
             $ftp->ftp_login($this->opt_ftp['user'], $this->opt_ftp['pass']);
             echo $ftp->ftp_pasv(true);
             
-            $the_file = "catalogo-".date("dmY").".xlsx";
+            $the_file = "catalogo-".$date.".xlsx";
             $remote_file = join(DS, array($this->opt_ftp['path'], $the_file)); // category / sub_category / 
             $local_file = MEDIA_STORAGE_POINT . $the_file;
 
