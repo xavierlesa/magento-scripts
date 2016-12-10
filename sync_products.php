@@ -601,6 +601,61 @@ class CommandUtilMagento
             _log(_BROWN("El listado del $path desde el FTP está vacio. \r\nADVERTENCIA: Si contiene espacios (incluso con \\ escape no lo explora)"));
         }
     }
+
+    public function associateImageAndColor($product_model, $row, $color='')
+    {
+        
+        $product_type = $product_model->getTypeId();
+
+        $orig_campos = $this->resolveImageName($row[2]);
+
+        // hay un hack que agregar un label en este metodo 
+        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+        $label = '';
+        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+        if (is_array($_m_color)) {
+            $label = ucfirst(mb_strtolower($_m_color["color"]));
+        }
+
+        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && 
+            $product_model->getColor() == $label) {
+                _log("[SKIP] Es un producto " . $product_type . " con color " . $product_model->getColor() . " NO es " . $label);
+                return $this;
+            }
+
+        // elimina las imagenes previas
+        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+        $items = $mediaApi->items($product_model->getId());
+        
+        // Elimina las imagenes asociadas
+        foreach ($items as $item) {
+            $act_campos = $this->resolveImageName($item['file']);
+
+            if ($act_campos['producto'] == $orig_campos['producto'] && 
+                $act_campos['color'] == $orig_campos['color'] && 
+                $act_campos['imgn'] == $orig_campos['imgn']) {
+                _log(_BROWN("Elimina la imagen actual " . $item['file']));
+                $mediaApi->remove($product_model->getId(), $item['file']);
+            }
+        }
+
+        $product_model->setMediaGallery(// Media gallery initialization
+            array(
+                'images' => array(),
+                'values' => array()
+            )
+        )
+        ->addImageToMediaGallery(// Assigning image, thumb and small image to media gallery
+            $row[2], array(
+                'image',
+                'thumbnail',
+                'small_image'
+            ), false, false, $label
+        )->save();
+
+        _log(_BLUE("Producto con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
+    }
+
     /**
      * Descarga las imágenes de los productos para asociar a los productos simples
      * 
@@ -628,89 +683,21 @@ class CommandUtilMagento
         {
             $product_model = Mage::getModel('catalog/product');
 
-            //$_id = $product_model->getIdBySku("CONFIG-".$row[0]);
+           // ATTACH All images to configurable. 
+            $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
+
+            if($_id && $product_model->load($_id)) {
+                $this->associateImageAndColor($product_model, $row);
+            }
+
             $products = $product_model->getCollection()
                     ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
+
             foreach ($products as $product) {
-
                 if ($product && $product_model->load($product->getId())) {
-
-                    $orig_campos = $this->resolveImageName($row[2]);
-
-                    // elimina las imagenes previas
-                    $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-                    $items = $mediaApi->items($product_model->getId());
-                    foreach ($items as $item) {
-                        $act_campos = $this->resolveImageName($item['file']);
-
-                        if ($act_campos['producto'] == $orig_campos['producto'] && $act_campos['color'] == $orig_campos['color'] && $act_campos['imgn'] == $orig_campos['imgn']
-                        ) {
-                            _log(_BROWN("Elimina la imagen actual " . $item['file']));
-                            $mediaApi->remove($product_model->getId(), $item['file']);
-                        }
-                    }
-
-                    // hay un hack que agregar un label en este metodo http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-                    $label = '';
-                    $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
-                    if (is_array($_m_color)) {
-                        $label = ucfirst(mb_strtolower($_m_color["color"]));
-                        //_log("(mapping " .$orig_campos['color']. ": ".var_export($_m_color, 1).")");
-                    }
-
-                    $product_model->setMediaGallery(// Media gallery initialization
-                                    array(
-                                        'images' => array(),
-                                        'values' => array()
-                                    )
-                            )
-                            ->addImageToMediaGallery(// Assigning image, thumb and small image to media gallery
-                                    $row[2], array(
-                                'image',
-                                'thumbnail',
-                                'small_image'
-                                    ), false, false, $label
-                            )->save();
-
-                    _log(_BLUE("Producto con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
+                    $this->associateImageAndColor($product_model, $row);
                 }
             }
-            //$attr = $product_model->getResource()->getAttribute('color');
-            //$collection = $product_model->getCollection();
-            //$collection->addAttributeToSelect('cod_product');
-            //$collection->addAttributeToSelect('color');
-            //$collection->addAttributeToFilter('cod_product', $row[0]);
-
-            //if ($row[1] && $color = getattr($mapped_colors[$row[1]], null))
-            //{
-            //    if ($attr->usesSource()) {
-            //        $collection->addAttributeToFilter('color', $attr->getSource()->getOptionId($color));
-            //    }
-            //}
-
-            //_log(_PURPLE("Productos encontrados para el cod_product: " . $row[0] . " & color: ". $row[1] . " = " . count($collection)));
-
-            //$i = 0;
-            //foreach($collection as $product)
-            //{
-            //    _log($product->getID()); 
-            //    // http://stackoverflow.com/questions/8456954/magento-programmatically-add-product-image?answertab=votes#tab-top
-
-            //    $product->setMediaGallery(          // Media gallery initialization
-            //            array(
-            //                'images' => array(), 
-            //                'values' => array()
-            //            )
-            //        )
-            //        ->addImageToMediaGallery(       // Assigning image, thumb and small image to media gallery
-            //            $row[2], 
-            //            array(
-            //                'image',
-            //                'thumbnail',
-            //                'small_image'
-            //            ), false, false)
-            //        ->save();
-            //}
         }
 
         fclose($fp);
@@ -1015,16 +1002,6 @@ class CommandUtilMagento
             // set size attributes
             if ($size)
             {
-                //if ( !is_numeric( $size ) && trim(mb_strtolower($size)) != 'tu')
-                //{
-                //    _log(_BROWN("Add attribute size_letter: " . $size));
-                //    $attr_size_l = $this->getOrCreateAttributes('size_letter', 'Size Letter', $size);
-                //} 
-                //else {
-                //    _log(_BROWN("Add attribute size: " . $size));
-                //    $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
-                //}
-
                 _log(_BROWN("Add attribute size: " . $size));
                 $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
             }
@@ -1149,11 +1126,6 @@ class CommandUtilMagento
                     _log("try to add size " . $attr_size); 
                     $product_model->setSize($attr_size);
                 } 
-                //elseif ($attr_size_l)
-                //{
-                //    _log("try to add size_l " . $attr_size_l); 
-                //    $product_model->setSizeLetter($attr_size_l);
-                //}
 
             }
 
@@ -1263,22 +1235,6 @@ class CommandUtilMagento
             $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
             $this->_cached_attribute[$attr_code . "-" . $attr_value[0]] = $id;
         }
-
-        //for($i = 0; $i < $total_options; $i++)
-        //{
-        //    
-        //    _log(_GRAY(" . $i . " -> " . $_options[$i]['label']));
-
-        //    if ( $_options[$i]['label'] == $attr_value[0] )
-        //    {
-        //        _log("Attribute value exists, assign it to the product:\n" . $attr_value[0] . ": " . $_options[$i]['value']);
-        //        $id = $_options[$i]['value'];
-        //        break;
-        //    } 
-        //    else {
-        //        $id = $this->createAttribute($attr_code, $attr_label, $attr_options, -1, -1, $attr_value);
-        //    }
-        //}
 
         return $id;
 
@@ -1444,17 +1400,6 @@ class CommandUtilMagento
             }
         }
 
-        //try 
-        //{
-        //    // hack label
-        //    echo "Add AttributeLabel (" . $model->getAttributeLabel() . ") -> " . $labelText . "\n";
-        //    $model->setAttributeLabel($labelText);
-        //    $model->save();
-        //}
-        //catch(Exception $ex)
-        //{
-        //    echo $ex->getMessage()."\n";
-        //}
 
         $id = $model->getId();
 
@@ -1475,10 +1420,9 @@ class CommandUtilMagento
 
     public function addAttributeValue($arg_attribute, $arg_value) 
     {
-        $attribute_model        = Mage::getModel('eav/entity_attribute');
-
-        $attribute_code         = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
-        $attribute              = $attribute_model->load($attribute_code);
+        $attribute_model = Mage::getModel('eav/entity_attribute');
+        $attribute_code = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
+        $attribute  = $attribute_model->load($attribute_code);
 
         if(!$this->attributeValueExists($arg_attribute, $arg_value))
         {
@@ -1489,8 +1433,8 @@ class CommandUtilMagento
         }
 
         $attribute_options_model= Mage::getModel('eav/entity_attribute_source_table') ;
-        $attribute_table        = $attribute_options_model->setAttribute($attribute);
-        $options                = $attribute_options_model->getAllOptions(false);
+        $attribute_table = $attribute_options_model->setAttribute($attribute);
+        $options = $attribute_options_model->getAllOptions(false);
 
         foreach($options as $option)
         {
@@ -1505,14 +1449,14 @@ class CommandUtilMagento
 
     public function attributeValueExists($arg_attribute, $arg_value) 
     {
-        $attribute_model        = Mage::getModel('eav/entity_attribute');
-        $attribute_options_model= Mage::getModel('eav/entity_attribute_source_table') ;
+        $attribute_model = Mage::getModel('eav/entity_attribute');
+        $attribute_options_model = Mage::getModel('eav/entity_attribute_source_table') ;
 
-        $attribute_code         = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
-        $attribute              = $attribute_model->load($attribute_code);
+        $attribute_code = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
+        $attribute = $attribute_model->load($attribute_code);
 
-        $attribute_table        = $attribute_options_model->setAttribute($attribute);
-        $options                = $attribute_options_model->getAllOptions(false);
+        $attribute_table = $attribute_options_model->setAttribute($attribute);
+        $options = $attribute_options_model->getAllOptions(false);
 
         foreach($options as $option)
         {
