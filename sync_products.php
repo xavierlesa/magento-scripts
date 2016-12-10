@@ -725,10 +725,17 @@ class CommandUtilMagento
                     $this->associateImageAndColor($product_model, $row);
                 }
             }
+
+            $orig_campos = $this->resolveImageName($row[2]);
+
             $products = $product_model->getCollection()
                 ->addAttributeToFilter('cod_product', 
                 array(
                     'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
+                ))
+                ->addAttributeToFilter('color', 
+                array(
+                    'eq' => $orig_campos['color']
                 ))
                 ->load();
 
