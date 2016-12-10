@@ -733,10 +733,10 @@ class CommandUtilMagento
                 array(
                     'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
                 ))
-                ->addAttributeToFilter('color', 
-                array(
-                    'eq' => $orig_campos['color']
-                ))
+                //->addAttributeToFilter('color', 
+                //array(
+                //    'eq' => $orig_campos['color']
+                //))
                 ->load();
 
             _log("Productos asociados : " . count($products));
