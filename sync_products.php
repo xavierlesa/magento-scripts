@@ -655,6 +655,11 @@ class CommandUtilMagento
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
         $items = $mediaApi->items($product_model->getId());
 
+
+        if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
+            return $this;
+        }
+
         $mediaAttr = null;
         if(count($items)<=1) {
             $mediaAttr = array(
@@ -717,10 +722,9 @@ class CommandUtilMagento
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = false;
+            $attach_images_to_configurable = true;
             if($attach_images_to_configurable){
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
-
                 if($_id && $product_model->load($_id)) {
                     $this->associateImageAndColor($product_model, $row);
                 }
