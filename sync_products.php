@@ -716,13 +716,15 @@ class CommandUtilMagento
         {
             $product_model = Mage::getModel('catalog/product');
 
-           // ATTACH All images to configurable. 
-            $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
+            // ATTACH All images to configurable.
+            $attach_images_to_configurable = false;
+            if($attach_images_to_configurable){
+                $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
 
-            if($_id && $product_model->load($_id)) {
-                $this->associateImageAndColor($product_model, $row);
+                if($_id && $product_model->load($_id)) {
+                    $this->associateImageAndColor($product_model, $row);
+                }
             }
-
             $products = $product_model->getCollection()
                     ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
 
