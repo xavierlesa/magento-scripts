@@ -656,7 +656,7 @@ class CommandUtilMagento
         $items = $mediaApi->items($product_model->getId());
 
         $mediaAttr = null;
-        if(count($items)<1) {
+        if(count($items)<=1) {
             $mediaAttr = array(
                     'image',
                     'thumbnail',
