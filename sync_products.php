@@ -717,7 +717,7 @@ class CommandUtilMagento
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = false;
+            $attach_images_to_configurable = true;
             if($attach_images_to_configurable){
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
 
