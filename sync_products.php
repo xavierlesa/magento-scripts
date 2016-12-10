@@ -651,20 +651,28 @@ class CommandUtilMagento
             //}
         }
 
+        // Calcula si ya tiene imagenes asociadas
+        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+        $items = $mediaApi->items($product_model->getId());
 
-        $product_model->setMediaGallery(// Media gallery initialization
-            array(
-                'images' => array(),
-                'values' => array()
+        $mediaAttr = null;
+        if(count($items)<1) {
+            $mediaAttr = array(
+                    'image',
+                    'thumbnail',
+                    'small_image'
+                );
+        }
+
+        $product_model
+            ->setMediaGallery(
+                array(
+                    'images' => array(),
+                    'values' => array()
+                )
             )
-        )
-        ->addImageToMediaGallery(// Assigning image, thumb and small image to media gallery
-            $row[2], array(
-                'image',
-                'thumbnail',
-                'small_image'
-            ), false, false, $label
-        )->save();
+            ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
+            ->save();
 
         _log(_BLUE("Producto con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
     }
@@ -717,6 +725,8 @@ class CommandUtilMagento
 
             $products = $product_model->getCollection()
                     ->addAttributeToFilter('cod_product', array('like'=>$row[0]));
+
+            _log("Productos asociados : " . count($products));
 
             foreach ($products as $product) {
                 if ($product && $product_model->load($product->getId())) {
