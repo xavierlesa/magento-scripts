@@ -650,9 +650,9 @@ class CommandUtilMagento
 
         // Si es config y tiene asociados vuelve
         _log("Es un producto configurable? " . $product_type . ". Si es asi, salta. items " . count($items));
-        if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
-            return $this;
-        }
+        //if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
+        //    return $this;
+        //}
 
         // Elimina las imagenes asociadas SOLO si NO es un producto consfigurables
         if ($product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
@@ -776,6 +776,24 @@ class CommandUtilMagento
         }
 
         fclose($fp);
+
+        // Por ultimo busca todos los productos configurables y les asocia una imagen - TEST -
+        $configurable_products = $product_model
+            ->getCollection()
+            ->addAttributeToFilter('type_id', 
+                array(
+                    'eq' =>  Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE
+                ))
+            ->load();
+
+        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+
+        _log("Iterando entre los prouctos configurables y sus imagenes");
+        foreach ($configurable_products as $_c_product) {
+            $items = $mediaApi->items($_c_product->getId());
+            _log("Media items " . count($items));
+        }
+
     }
 
 
