@@ -488,7 +488,7 @@ class CommandUtilMagento
                     $configurableProductsData[$simpleProduct->getId()] = $simpleProduct;
                 }
 
-                _log("Asocia los " . count($configurableProductsData) . " productos simples al configurable COD: " . $this->row_product_id);
+                _log("Asocia los " . count($configurableProductsData) . " productos simples al configurable COD: " . $row[$this->row_product_id]);
                 $configProduct->setConfigurableProductsData($configurableProductsData); // asocia los productos simples al configurable
 
                 try 
