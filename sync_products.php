@@ -343,7 +343,7 @@ class CommandUtilMagento
     }/*}}}*/
 
 
-    public function syncConfigurableProducts()
+    public function syncConfigurableProducts()/*{{{*/
     {
         // Sincroniza los productos configurables.
         echo "syncConfigurableProducts\r\n";
@@ -518,7 +518,7 @@ class CommandUtilMagento
             }
         }
 
-    }
+    }/*}}}*/
 
 
     public function resolveImageName($strfile)
@@ -533,7 +533,7 @@ class CommandUtilMagento
     }
 
 
-    public function syncImages()
+    public function syncImages()/*{{{*/
     {
         global $array_images_files;
         // Sincroniza las imagenes que se asociarán a los productos.
@@ -580,10 +580,10 @@ class CommandUtilMagento
         }
 
         fclose($fp);
-    }
+    }/*}}}*/
 
 
-    public function getFileTree($ftp, $path)
+    public function getFileTree($ftp, $path)/*{{{*/
     {
         global $array_images_files;
         $path = str_replace(" ", "\ ", $path); 
@@ -612,7 +612,7 @@ class CommandUtilMagento
         {
             _log(_BROWN("El listado del $path desde el FTP está vacio. \r\nADVERTENCIA: Si contiene espacios (incluso con \\ escape no lo explora)"));
         }
-    }
+    }/*}}}*/
 
     public function associateImageAndColor($product_model, $row, $color='')
     {
@@ -643,7 +643,8 @@ class CommandUtilMagento
         //
         // 2- bien cargar todas las imagenes al configurable validando que los colores existen.
         
-        // TODO: Por alguna razón hay productos que no se asocian al configurable pero existen.
+        // TODO: Por alguna razón al asociar las iamgenes de algunos productos se borran los atributos configurables
+        // y la asociación se elimina del configurable.
         // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
         // SKU: ZAAI0005
 
@@ -745,7 +746,7 @@ class CommandUtilMagento
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = true;
+            $attach_images_to_configurable = false;
             if($attach_images_to_configurable){
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
@@ -1337,7 +1338,7 @@ class CommandUtilMagento
     }
 
 
-    public function createAttribute($attributeCode, $labelText = '', $values = -1, $productTypes = -1, $setInfo = -1, $options = -1) 
+    public function createAttribute($attributeCode, $labelText = '', $values = -1, $productTypes = -1, $setInfo = -1, $options = -1) /*{{{*/
     {
         //
         // Create an attribute.
@@ -1490,10 +1491,10 @@ class CommandUtilMagento
 
         //_log("Attr ID: {id}\n", array('id' => $_id)); 
         return $_id;
-    }
+    }/*}}}*/
 
 
-    public function addAttributeValue($arg_attribute, $arg_value) 
+    public function addAttributeValue($arg_attribute, $arg_value) /*{{{*/
     {
         $attribute_model = Mage::getModel('eav/entity_attribute');
         $attribute_code = $attribute_model->getIdByCode('catalog_product', $arg_attribute);
@@ -1519,10 +1520,10 @@ class CommandUtilMagento
             }
         }
         return false;
-    }
+    }/*}}}*/
 
 
-    public function attributeValueExists($arg_attribute, $arg_value) 
+    public function attributeValueExists($arg_attribute, $arg_value) /*{{{*/
     {
         $attribute_model = Mage::getModel('eav/entity_attribute');
         $attribute_options_model = Mage::getModel('eav/entity_attribute_source_table') ;
@@ -1542,10 +1543,10 @@ class CommandUtilMagento
         }
 
         return false;
-    }
+    }/*}}}*/
 
 
-    public function getOrCreateCategories($stringId, $parentId = null, $commit = true) 
+    public function getOrCreateCategories($stringId, $parentId = null, $commit = true) /*{{{*/
     {
         //
         //  Resolve categories from a string based categories splited by slash "/"
@@ -1610,10 +1611,10 @@ class CommandUtilMagento
         }
 
         return $_arrayIds;
-    }
+    }/*}}}*/
 
 
-    public function _categoryExists($name, $parentId) 
+    public function _categoryExists($name, $parentId) /*{{{*/
     {
         //
         // Check if category exists
@@ -1639,10 +1640,10 @@ class CommandUtilMagento
         }
 
         return false;
-    }
+    }/*}}}*/
 
 
-    public function _createCategory($name, $url, $parentId) 
+    public function _createCategory($name, $url, $parentId) /*{{{*/
     {
         //
         //  Try to create a new Category
@@ -1668,10 +1669,10 @@ class CommandUtilMagento
         }
 
         return false;
-    }
+    }/*}}}*/
 
 
-    public function getMenu() 
+    public function getMenu() /*{{{*/
     {
         // Options for command line
         $shortopts  = "";
@@ -1839,11 +1840,11 @@ class CommandUtilMagento
         $this->sync();
 
         exit(0);
-    }
+    }/*}}}*/
 
 }
 
-// UTILS
+// UTILS/*{{{*/
 function getattr(&$var, $default=null)
 {
     return isset($var) ? $var : $default;
@@ -1953,9 +1954,9 @@ function prompt($message, $choices = null)
 
     fclose($handle);
 
-}
+}/*}}}*/
 
-function boostrap()
+function boostrap()/*{{{*/
 {
     // init requires
     try 
@@ -2004,7 +2005,7 @@ function boostrap()
     define('DEFAULT_PRODUCT_VISIBILITY', Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH); // Catalog and Search visibility
 
 }
-
+/*}}}*/
 
 // Start
 $commands = new CommandUtilMagento;
