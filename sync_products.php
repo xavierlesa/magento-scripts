@@ -649,6 +649,7 @@ class CommandUtilMagento
         $items = $mediaApi->items($product_model->getId());
 
         // Si es config y tiene asociados vuelve
+        _log("Es un producto configurable? " . $product_type . " Si es asi, salta");
         if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
             return $this;
         }
