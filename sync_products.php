@@ -757,12 +757,12 @@ class CommandUtilMagento
         );
 
         $product_model
-            //->setMediaGallery(
-            //    array(
-            //        'images' => array(),
-            //        'values' => array()
-            //    )
-            //)
+            ->setMediaGallery(
+                array(
+                    'images' => array(),
+                    'values' => array()
+                )
+            )
             ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
             ->save();
 
