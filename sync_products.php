@@ -678,7 +678,7 @@ class CommandUtilMagento
         // SKU: ZAAI0005
 
         $mediaAttr = null;
-        if(count($items)<=1) {
+        if(count($items)<1) {
             $mediaAttr = array(
                     'image',
                     'thumbnail',
