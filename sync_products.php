@@ -617,14 +617,42 @@ class CommandUtilMagento
     public function associateImageAndColor($product_model, $row, $color='')
     {
         
+        $mapped_colors = $this->mapColors();
         $product_type = $product_model->getTypeId();
-
         $orig_campos = $this->resolveImageName($row[2]);
+        $size = $product_model->getResource()->getAttribute('size')->getFrontend()->getValue($product_model);
+        $color =  $product_model->getResource()->getAttribute('color')->getFrontend()->getValue($product_model);
+        $label = null;
+
+
+        // hay un hack que agregar un label en este metodo 
+        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+        //_log("Busca en mapped_colors el Codigo de Color: " . $orig_campos['color']);
+
+        if (is_array($_m_color)) {
+            $label = ucfirst(mb_strtolower($_m_color["color"]));
+        }
+        //else {
+        //    _log("El color mappeado es" . $_m_color . " de " . ($orig_campos['color'] ? $orig_campos['color'] : 'SIN COLOR'));
+        //}
+
+        // Si es un producto simple, deberia tener color y size, entonces me aseguro
+        // que asocie la imagen correspondiente al color.
+        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && $color != $label) {
+            _log("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label);
+            return $this;
+        }
 
         // elimina las imagenes previas
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
         $items = $mediaApi->items($product_model->getId());
-        
+
+        //// Calcula si ya tiene imagenes asociadas
+        //if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
+        //    return $this;
+        //}
+
         // Elimina las imagenes asociadas
         foreach ($items as $item) {
             $act_campos = $this->resolveImageName($item['file']);
@@ -632,57 +660,22 @@ class CommandUtilMagento
             if ($act_campos['producto'] == $orig_campos['producto'] && 
                 $act_campos['color'] == $orig_campos['color'] && 
                 $act_campos['imgn'] == $orig_campos['imgn']) {
+
                 _log(_BROWN("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
                 $mediaApi->remove($product_model->getId(), $item['file']);
             }
         }
 
-        // TODO: Hay dos caminos:
+        // TODO #1: Hay dos caminos:
         // 1- cargar solo las imagenes a los productos simples y luego
         // cargar la última? imagen del producto simple asociado y cargarla al configurable.
         //
         // 2- bien cargar todas las imagenes al configurable validando que los colores existen.
         
-        // TODO: Por alguna razón al asociar las iamgenes de algunos productos se borran los atributos configurables
+        // TODO #2: Por alguna razón al asociar las iamgenes de algunos productos se borran los atributos configurables
         // y la asociación se elimina del configurable.
         // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
         // SKU: ZAAI0005
-
-        $mapped_colors = $this->mapColors();
-        // hay un hack que agregar un label en este metodo 
-        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
-        $label = '';
-        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
-        //$_m_color = $mapped_colors[$orig_campos['color']];
-        
-        _log("Busca en mapped_colors el Codigo de Color: " . $orig_campos['color']);
-
-        if (is_array($_m_color)) {
-            $label = ucfirst(mb_strtolower($_m_color["color"]));
-        }
-        else {
-            _log("El color mappeado es" . $_m_color . " de " . ($orig_campos['color'] ? $orig_campos['color'] : 'SIN COLOR'));
-        }
-
-        if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
-            $size = $product_model->getResource()->getAttribute('size')->getFrontend()->getValue($product_model);
-            $color =  $product_model->getResource()->getAttribute('color')->getFrontend()->getValue($product_model);
-
-            _log("SKU: " . $product_model->getSku() . " TYPE: " . $product_type . " SIZE: " . $size . " COLOR: " . $color);
-            if($color != $label) {
-                _log("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label);
-                return $this;
-            }
-        }
-
-        // Calcula si ya tiene imagenes asociadas
-        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-        $items = $mediaApi->items($product_model->getId());
-
-
-        if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
-            return $this;
-        }
 
         $mediaAttr = null;
         if(count($items)<=1) {
@@ -741,16 +734,19 @@ class CommandUtilMagento
         //array('product', 'color', 'path');
         $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
+        $configurables = [];
+
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = false;
-            if($attach_images_to_configurable){
+            $attach_images_to_configurable = true;
+            if($attach_images_to_configurable && in_array("CONFIG-".$row[0], $configurables)){
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
                     $this->associateImageAndColor($product_model, $row);
+                    $configurables[] = "CONFIG-".$row[0];
                 }
             }
 
