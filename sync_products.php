@@ -789,9 +789,10 @@ class CommandUtilMagento
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
 
         _log("Iterando entre los prouctos configurables y sus imagenes");
+        $c = 0;
         foreach ($configurable_products as $_c_product) {
             $items = $mediaApi->items($_c_product->getId());
-            _log("Media items " . count($items));
+            _log("Media items para " . $_c_product->getSku() . " >> " . count($items));
         }
 
     }
