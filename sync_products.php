@@ -510,6 +510,10 @@ class CommandUtilMagento
                 }
 
                 _log(_GREEN("Producto configurable creado " . $configProduct->getId()));
+                
+                //$product = Mage::getModel('catalog/product')->load($_productID);
+                $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $configProduct);
+                _log("Productos comprobados asociados " . count($childProducts));
 
             }
         }
