@@ -812,7 +812,7 @@ class CommandUtilMagento
 
             // ATTACH All images to configurable.
             $attach_images_to_configurable = true;
-            if($attach_images_to_configurable && !in_array("CONFIG-".$row[0], $configurables)) {
+            if($attach_images_to_configurable /*&& !in_array("CONFIG-".$row[0], $configurables)*/ ) {
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
                     $this->associateImageAndColorForConfigurable($product_model, $row);
