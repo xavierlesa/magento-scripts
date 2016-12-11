@@ -699,7 +699,7 @@ class CommandUtilMagento
             ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
             ->save();
 
-        _log(_BLUE("Producto con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
+        _log(_BLUE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
     }
 
     /**
@@ -744,7 +744,7 @@ class CommandUtilMagento
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = true;
+            $attach_images_to_configurable = false;
             if($attach_images_to_configurable && !in_array("CONFIG-".$row[0], $configurables)){
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
