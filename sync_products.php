@@ -677,14 +677,20 @@ class CommandUtilMagento
         // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
         // SKU: ZAAI0005
 
-        $mediaAttr = array();
-        if(!count($items)) {
-            $mediaAttr = array(
-                    'image',
-                    'thumbnail',
-                    'small_image'
-                );
-        }
+        //$mediaAttr = array();
+        //if(!count($items)) {
+        //    $mediaAttr = array(
+        //            'image',
+        //            'thumbnail',
+        //            'small_image'
+        //        );
+        //}
+        
+        $mediaAttr = array(
+            'image',
+            'thumbnail',
+            'small_image'
+        );
 
         $product_model
             ->setMediaGallery(
