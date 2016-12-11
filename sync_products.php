@@ -653,16 +653,18 @@ class CommandUtilMagento
         //    return $this;
         //}
 
-        // Elimina las imagenes asociadas
-        foreach ($items as $item) {
-            $act_campos = $this->resolveImageName($item['file']);
+        // Elimina las imagenes asociadas SOLO si NO es un producto consfigurables
+        if ($product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
+            foreach ($items as $item) {
+                $act_campos = $this->resolveImageName($item['file']);
 
-            if ($act_campos['producto'] == $orig_campos['producto'] && 
-                $act_campos['color'] == $orig_campos['color'] && 
-                $act_campos['imgn'] == $orig_campos['imgn']) {
+                if ($act_campos['producto'] == $orig_campos['producto'] && 
+                    $act_campos['color'] == $orig_campos['color'] && 
+                    $act_campos['imgn'] == $orig_campos['imgn']) {
 
-                _log(_BROWN("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
-                $mediaApi->remove($product_model->getId(), $item['file']);
+                    _log(_BROWN("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
+                    $mediaApi->remove($product_model->getId(), $item['file']);
+                }
             }
         }
 
@@ -677,20 +679,14 @@ class CommandUtilMagento
         // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
         // SKU: ZAAI0005
 
-        //$mediaAttr = array();
-        //if(!count($items)) {
-        //    $mediaAttr = array(
-        //            'image',
-        //            'thumbnail',
-        //            'small_image'
-        //        );
-        //}
-        
-        $mediaAttr = array(
-            'image',
-            'thumbnail',
-            'small_image'
-        );
+        $mediaAttr = null;
+        if(count($items)<1) {
+            $mediaAttr = array(
+                    'image',
+                    'thumbnail',
+                    'small_image'
+                );
+        }
 
         $product_model
             ->setMediaGallery(
