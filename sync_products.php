@@ -513,7 +513,7 @@ class CommandUtilMagento
                 
                 //$product = Mage::getModel('catalog/product')->load($_productID);
                 $childProducts = Mage::getModel('catalog/product_type_configurable')->getUsedProducts(null, $configProduct);
-                _log("Productos comprobados asociados " . count($childProducts));
+                _log(_PURPLE("Productos comprobados asociados " . count($childProducts)));
 
             }
         }
