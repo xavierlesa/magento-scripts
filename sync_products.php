@@ -731,7 +731,7 @@ class CommandUtilMagento
         $items = $mediaApi->items($product_model->getId());
 
         // Elimina las imagenes asociadas que ya existen, para no duplicarlas
-        if ($count($items)) {
+        if (count($items)) {
             foreach ($items as $item) {
                 $act_campos = $this->resolveImageName($item['file']);
 
