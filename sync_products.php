@@ -648,10 +648,10 @@ class CommandUtilMagento
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
         $items = $mediaApi->items($product_model->getId());
 
-        //// Calcula si ya tiene imagenes asociadas
-        //if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
-        //    return $this;
-        //}
+        // Si es config y tiene asociados vuelve
+        if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
+            return $this;
+        }
 
         // Elimina las imagenes asociadas SOLO si NO es un producto consfigurables
         if ($product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
