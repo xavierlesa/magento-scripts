@@ -1,4 +1,4 @@
-<?php
+<?php // vim: fdm=marker foldenable sw=4 ts=4 sts=4 
 /*
     Syncroniza los productos, categorías, atributos e imagenes del catalogo completo.
 
@@ -15,31 +15,36 @@
     desde --ftp-path o CONFIG_DEFAULT_FTP_PATH / $STORE_DATA['name'] / category / sub_category /
  */
 
-// DEFINITIONS
+// DEFINITIONS {{{
+
+// STATICS {{{
 define('CONFIG_DEFAULT_FTP_PATH', 'Ecommerce/linea_web');
 //define('CONFIG_DEFAULT_EXCEL_NAME', 'catalogo-\d{2}\d{2}\d{4}.xls[x]');
 //define('CONFIG_DEFAULT_SITE_NAME', 'urban');
 //define('STORE_NAME', 'urban');
 define('MEDIA_STORAGE_POINT', '../tmp_media/');
+//}}}
 
-// STORES
+// STORES {{{
 $urban_store_id = 1;
 $oneill_store_id = 2;
+//}}}
 
-// WEBSITES
+// WEBSITES {{{
 $urban_website_id = 1;
 $oneill_website_id = 3;
+//}}}
 
-// ROOT CATEGORIES
+// ROOT CATEGORIES {{{
 $urban_parent_id = 2;
 $oneill_parent_id = 3;
 
 define('STORE_ID', $urban_store_id); // ID del STORE VIEW NAME
 define('WEBSITE_ID', $urban_website_id); // ID del STORE VIEW NAME
 define('PARENT_ID', $urban_parent_id); // ID del root category
+//}}}
 
-
-// SHELL AND LOGS
+// SHELL AND LOGS {{{
 //Black        0;30     Dark Gray     1;30
 //Red          0;31     Light Red     1;31
 //Green        0;32     Light Green   1;32
@@ -57,8 +62,9 @@ function _BLUE($w){ return "\033[34m" . $w . "\033[0m"; }
 function _PURPLE($w){ return "\033[35m" . $w . "\033[0m"; }
 function _CYAN($w){ return "\033[36m" . $w . "\033[0m"; }
 function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
+//}}}
 
-// CATEGORY MAPPING
+// CATEGORY MAPPING {{{
 //
 // ROOT -> GENDER 
 //
@@ -89,8 +95,11 @@ function _GRAY($w){ return "\033[37m" . $w . "\033[0m"; }
 //     (FAMILIA)
 // 
 // NEOPRENE (?)
+//}}}
 
-function mapping_categories($genero, $linea, $familia, $subfamilia='')
+//}}}
+
+function mapping_categories($genero, $linea, $familia, $subfamilia='')/*{{{*/
 {
     // Genero   Familia Sub_Familia
     $_root = $genero;
@@ -122,11 +131,11 @@ function mapping_categories($genero, $linea, $familia, $subfamilia='')
     }
 
     return array($_root, $_category, $_subcategory);
-}
+}/*}}}*/
 
 $array_images_files = array();
 
-class ftp
+class ftp/*{{{*/
 {
     public $conn;
 
@@ -161,7 +170,7 @@ class ftp
     {
         ftp_close($this->conn);
     }
-}
+}/*}}}*/
 
 /**
  * Commands Utils for Magento
@@ -169,7 +178,7 @@ class ftp
 class CommandUtilMagento
 {
 
-    var $csv_array_header = [];
+    var $csv_array_header = [];/*{{{*/
     var $csv_array_data = [];
     var $csv_grouped_array_data = [];
 
@@ -204,33 +213,33 @@ class CommandUtilMagento
             // 'name' => 'urbanstore.com.ar',
             // 'sort_order' => '0',
             // 'is_active' => '1',
-        );
+        );/*}}}*/
 
 
-    function __construct()
+    function __construct()/*{{{*/
     {
         boostrap();
-    }
+    }/*}}}*/
 
 
-    public function init()
+    public function init()/*{{{*/
     {
         /*
          *
          */ 
 
         $this->getMenu();
-    }
+    }/*}}}*/
 
 
-    public function syncAttributes()
+    public function syncAttributes()/*{{{*/
     {
         // Sincroniza los atributos.
         echo "syncAttributes";
-    }
+    }/*}}}*/
 
 
-    public function syncCategories()
+    public function syncCategories()/*{{{*/
     {
         // Sincroniza las categorías.
         echo "syncCategories\r\n";
@@ -254,10 +263,10 @@ class CommandUtilMagento
             $this->getOrCreateCategories(array($row[$col_category], $row[$col_subcategory]), null, $this->opt_commit);
         }
 
-    }
+    }/*}}}*/
 
 
-    public function syncProducts()
+    public function syncProducts()/*{{{*/
     {
         // Ejecuta el proceso de mapeo para poductos
         // Checkea que todas las key requeridas existan. (ref: http://stackoverflow.com/questions/13169588/how-to-check-if-multiple-array-keys-exists)
@@ -294,10 +303,10 @@ class CommandUtilMagento
         _log("Hay " . $_total_simple . " productos simples");
         _log("Hay " . $_total_config . " productos configurables");
 
-    }
+    }/*}}}*/
 
 
-    public function syncSimpleProducts()
+    public function syncSimpleProducts()/*{{{*/
     {
         // Sincroniza solo los productos simples.
         echo "syncSimpleProducts\r\n";
@@ -331,7 +340,7 @@ class CommandUtilMagento
             }
         }
 
-    }
+    }/*}}}*/
 
 
     public function syncConfigurableProducts()
@@ -348,7 +357,7 @@ class CommandUtilMagento
         {
             $attr = Mage::getModel('catalog/resource_eav_attribute')->loadByCode('catalog_product', $code);
             $array_attribues[$code] = $attr;
-            _log("array_attribues[".$code."] = ".var_export($attr,1));
+            //_log("array_attribues[".$code."] = ".var_export($attr,1));
         }
 
         foreach( $this->csv_grouped_array_data as $key => $products )
@@ -383,7 +392,6 @@ class CommandUtilMagento
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
                     false); // NO COMMIT 
-
 
                 // Configuracion de atributos
                 // indumentaria -> set indumentaria (color, size)
@@ -480,6 +488,7 @@ class CommandUtilMagento
                     $configurableProductsData[$simpleProduct->getId()] = $simpleProduct;
                 }
 
+                _log("Asocia los " . count($configurableProductsData) . " productos simples al configurable COD: " . $this->row_product_id);
                 $configProduct->setConfigurableProductsData($configurableProductsData); // asocia los productos simples al configurable
 
                 try 
@@ -490,7 +499,7 @@ class CommandUtilMagento
                 {
                     try 
                     {
-                        _log("Try with getResource -> save");
+                        //_log("Try with getResource -> save");
                         $configProduct->getResource()->save($configProduct);
                     }
                     catch(Exception $e)
@@ -623,6 +632,16 @@ class CommandUtilMagento
                 $mediaApi->remove($product_model->getId(), $item['file']);
             }
         }
+
+        // TODO: Hay dos caminos:
+        // 1- cargar solo las imagenes a los productos simples y luego
+        // cargar la última? imagen del producto simple asociado y cargarla al configurable.
+        //
+        // 2- bien cargar todas las imagenes al configurable validando que los colores existen.
+        
+        // TODO: Por alguna razón hay productos que no se asocian al configurable pero existen.
+        // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
+        // SKU: ZAAI0005
 
         $mapped_colors = $this->mapColors();
         // hay un hack que agregar un label en este metodo 
@@ -979,7 +998,7 @@ class CommandUtilMagento
         //
         
         // if first argument is an array try to convert to Product Model Object
-        _log("PRODUCT TYPE: " . $product_type);
+        //_log("PRODUCT TYPE: " . $product_type);
         
         $product_model = Mage::getModel('catalog/product');
         $_id = $product_model->getIdBySku($sku);
@@ -1001,12 +1020,12 @@ class CommandUtilMagento
                     _log("ERROR product_model\n" . $e->getMessage());
                     try 
                     {
-                        _log("Try with getResource -> save");
+                        //_log("Try with getResource -> save");
                         $product_model->getResource()->save($product_model);
                     }
                     catch(Exception $e)
                     {
-                        _log("ERROR product_model resource\n" . $e->getMessage());
+                        //_log("ERROR product_model resource\n" . $e->getMessage());
                     }
                 }
             }
@@ -1020,7 +1039,7 @@ class CommandUtilMagento
         $product_type = $product_type ? $product_type : DEFAULT_PRODUCT_TYPE;
 
         // add category if does not exist
-        _log(_BROWN("Add category if does not exist"));
+        //_log(_BROWN("Add category if does not exist"));
         //$array_categories = $this->getOrCreateCategories( array($category, $subcategory) );
 
         $mapped_categories = mapping_categories($gender, $line, $category, $subcategory);
@@ -1041,25 +1060,25 @@ class CommandUtilMagento
 
         $attr_color = '';
         $attr_size = '';
-        $attr_size_l = '';
+        //$attr_size_l = '';
 
         if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE)
         {
             // add attributes
             if ($color)
             {
-                _log(_BROWN("Add attribute color: " . $color));
+                //_log(_BROWN("Add attribute color: " . $color));
                 $attr_color = $this->getOrCreateAttributes('color', $color, $color);
             }
             // set size attributes
             if ($size)
             {
-                _log(_BROWN("Add attribute size: " . $size));
+                //_log(_BROWN("Add attribute size: " . $size));
                 $attr_size = $this->getOrCreateAttributes('size', 'Size', $size);
             }
         }
 
-        _log(_BROWN("Add attribute cod_product: " .$cod_product));
+        //_log(_BROWN("Add attribute cod_product: " .$cod_product));
         $attr_cod_product = $this->getOrCreateAttributes('cod_product', 'cod_product', $cod_product, array(
             'frontend_input' => 'text',
         ));
@@ -1070,7 +1089,7 @@ class CommandUtilMagento
             $attribute_set_id = DEFAULT_ATTRIBUTES;
         } 
 
-        _log(_BROWN("Add attribute manufacturer: " . $manufacturer));
+        //_log(_BROWN("Add attribute manufacturer: " . $manufacturer));
         $attr_manufacturer = $this->getOrCreateAttributes('manufacturer', $manufacturer, $manufacturer);
         $product_visibility = $product_visibility === null ? DEFAULT_PRODUCT_VISIBILITY : $product_visibility;
 
@@ -1087,7 +1106,7 @@ class CommandUtilMagento
                 ."Color ID: {color}\n"
                 ."Manufacturer ID: {manufacturer}\n"
                 ."Size: {size}\n"
-                ."Size Letter: {size_l}\n"
+                //."Size Letter: {size_l}\n"
                 ,
                 array(
                     "store_id" => STORE_ID,
@@ -1099,7 +1118,7 @@ class CommandUtilMagento
                     "color" => $attr_color, 
                     "manufacturer" => $attr_manufacturer, 
                     "size" => $attr_size, 
-                    "size_l" => $attr_size_l, 
+                    //"size_l" => $attr_size_l, 
                 )
             );
 
