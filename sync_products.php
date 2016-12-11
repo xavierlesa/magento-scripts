@@ -614,7 +614,7 @@ class CommandUtilMagento
         }
     }/*}}}*/
 
-    public function associateImageAndColor($product_model, $row, $color='')
+    public function associateImageAndColor($product_model, $row, $color='')/*{{{*/
     {
         
         $mapped_colors = $this->mapColors();
@@ -700,6 +700,73 @@ class CommandUtilMagento
             ->save();
 
         _log(_BLUE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
+    }/*}}}*/
+
+
+    public function associateImageAndColorForConfigurable($product_model, $row, $color='')
+    {
+        
+        $mapped_colors = $this->mapColors();
+        $product_type = $product_model->getTypeId();
+        $orig_campos = $this->resolveImageName($row[2]);
+        $size = $product_model->getResource()->getAttribute('size')->getFrontend()->getValue($product_model);
+        $color =  $product_model->getResource()->getAttribute('color')->getFrontend()->getValue($product_model);
+        $label = null;
+
+
+        // hay un hack que agregar un label en este metodo 
+        // http://stackoverflow.com/questions/7215105/magento-set-product-image-label-during-import
+        $_m_color = getattr($mapped_colors[$orig_campos['color']], '');
+        //_log("Busca en mapped_colors el Codigo de Color: " . $orig_campos['color']);
+
+        if (is_array($_m_color)) {
+            $label = ucfirst(mb_strtolower($_m_color["color"]));
+        }
+        //else {
+        //    _log("El color mappeado es" . $_m_color . " de " . ($orig_campos['color'] ? $orig_campos['color'] : 'SIN COLOR'));
+        //}
+
+        // elimina las imagenes previas
+        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+        $items = $mediaApi->items($product_model->getId());
+
+        // Elimina las imagenes asociadas que ya existen, para no duplicarlas
+        if ($count($items)) {
+            foreach ($items as $item) {
+                $act_campos = $this->resolveImageName($item['file']);
+
+                if ($act_campos['producto'] == $orig_campos['producto'] && 
+                    $act_campos['color'] == $orig_campos['color'] && 
+                    $act_campos['imgn'] == $orig_campos['imgn']) {
+
+                    _log(_BROWN("Elimina la imagen actual SKU: " 
+                        . $orig_campos['producto'] . " COLOR: " 
+                        . $orig_campos['color'] . " FILE: " 
+                        . $item['file']));
+
+                    $mediaApi->remove($product_model->getId(), $item['file']);
+                }
+            }
+        }
+
+
+        $mediaAttr = array(
+            'image',
+            'thumbnail',
+            'small_image'
+        );
+
+        $product_model
+            //->setMediaGallery(
+            //    array(
+            //        'images' => array(),
+            //        'values' => array()
+            //    )
+            //)
+            ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
+            ->save();
+
+        _log(_BLUE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
     }
 
     /**
@@ -744,56 +811,56 @@ class CommandUtilMagento
             $product_model = Mage::getModel('catalog/product');
 
             // ATTACH All images to configurable.
-            $attach_images_to_configurable = false;
-            if($attach_images_to_configurable && !in_array("CONFIG-".$row[0], $configurables)){
+            $attach_images_to_configurable = true;
+            if($attach_images_to_configurable && !in_array("CONFIG-".$row[0], $configurables)) {
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
-                    $this->associateImageAndColor($product_model, $row);
+                    $this->associateImageAndColorForConfigurable($product_model, $row);
                     $configurables[] = "CONFIG-".$row[0];
                 }
             }
 
-            $orig_campos = $this->resolveImageName($row[2]);
+            //$orig_campos = $this->resolveImageName($row[2]);
 
-            $products = $product_model->getCollection()
-                ->addAttributeToFilter('cod_product', 
-                array(
-                    'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
-                ))
-                //->addAttributeToFilter('color', 
-                //array(
-                //    'eq' => $orig_campos['color']
-                //))
-                ->load();
+            //$products = $product_model->getCollection()
+            //    ->addAttributeToFilter('cod_product', 
+            //    array(
+            //        'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
+            //    ))
+            //    //->addAttributeToFilter('color', 
+            //    //array(
+            //    //    'eq' => $orig_campos['color']
+            //    //))
+            //    ->load();
 
-            _log("Productos asociados : " . count($products));
+            //_log("Productos asociados : " . count($products));
 
-            foreach ($products as $product) {
-                if ($product && $product_model->load($product->getId())) {
-                    $this->associateImageAndColor($product_model, $row);
-                }
-            }
+            //foreach ($products as $product) {
+            //    if ($product && $product_model->load($product->getId())) {
+            //        $this->associateImageAndColor($product_model, $row);
+            //    }
+            //}
         }
 
         fclose($fp);
 
-        // Por ultimo busca todos los productos configurables y les asocia una imagen - TEST -
-        $configurable_products = $product_model
-            ->getCollection()
-            ->addAttributeToFilter('type_id', 
-                array(
-                    'eq' =>  Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE
-                ))
-            ->load();
+        //// Por ultimo busca todos los productos configurables y les asocia una imagen - TEST -
+        //$configurable_products = $product_model
+        //    ->getCollection()
+        //    ->addAttributeToFilter('type_id', 
+        //        array(
+        //            'eq' =>  Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE
+        //        ))
+        //    ->load();
 
-        $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
+        //$mediaApi = Mage::getModel("catalog/product_attribute_media_api");
 
-        _log("Iterando entre los prouctos configurables y sus imagenes");
-        $c = 0;
-        foreach ($configurable_products as $_c_product) {
-            $items = $mediaApi->items($_c_product->getId());
-            _log("Media items para " . $_c_product->getSku() . " >> " . count($items));
-        }
+        //_log("Iterando entre los prouctos configurables y sus imagenes");
+        //$c = 0;
+        //foreach ($configurable_products as $_c_product) {
+        //    $items = $mediaApi->items($_c_product->getId());
+        //    _log("Media items para " . $_c_product->getSku() . " >> " . count($items));
+        //}
 
     }
 
