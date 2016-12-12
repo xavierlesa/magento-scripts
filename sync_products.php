@@ -671,7 +671,7 @@ class CommandUtilMagento
                     $act_campos['imgn'] == $orig_campos['imgn']) {
 
                     _log(_RED("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
-                    $mediaApi->remove($product_model->getId(), $item['file']);
+                    $mediaApi->remove($id, $item['file']);
                 }
             }
         }
@@ -679,40 +679,37 @@ class CommandUtilMagento
         _log(_GRAY("TEST original color: " . $o_color . " || origina size " . $o_size));
 
 
-        $newImage = array(
-            'file' => array(
-                'content' => base64_encode(file_get_contents($row[2])),
-                'mime'    => 'image/jpeg',
-                'name'    => $row[2],
-            ),
-            'label'    => $label,
-            'types'    => array('image', 'small_image', 'thumbnail'),
-            'exclude'  => 0
+        //$newImage = array(
+        //    'file' => array(
+        //        'content' => base64_encode(file_get_contents($row[2])),
+        //        'mime'    => 'image/jpeg',
+        //        'name'    => $row[2],
+        //    ),
+        //    'label'    => $label,
+        //    'types'    => array('image', 'small_image', 'thumbnail'),
+        //    'exclude'  => 0
+        //);
+        //$mediaApi->create($id, $newImage);
+
+
+
+        $mediaAttr = array(
+            'image',
+            'thumbnail',
+            'small_image'
         );
-        $mediaApi->create($id, $newImage);
 
-
-
-        ////$mediaAttr = null;
-        ////if(count($items)<1) {
-        //    $mediaAttr = array(
-        //            'image',
-        //            'thumbnail',
-        //            'small_image'
-        //        );
-        ////}
-
-        //$product_model
-        //    ->setColor($o_color)
-        //    ->setSize($o_size)
-        //    ->setMediaGallery(
-        //        array(
-        //            'images' => array(),
-        //            'values' => array()
-        //        )
-        //    )
-        //    ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
-        //    ->save();
+        $product_model
+            ->setMediaGallery(
+                array(
+                    'images' => array(),
+                    'values' => array()
+                )
+            )
+            ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
+            ->setColor($o_color)
+            ->setSize($o_size)
+            ->save();
 
         _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
     }/*}}}*/
