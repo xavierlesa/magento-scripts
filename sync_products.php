@@ -193,8 +193,11 @@ class CommandUtilMagento
     var $row_name = 'descripcion'; 
     var $row_description = 'descripcion'; 
 
+    var $row_attr_orig_cod_color = 'cod_color'; 
+    var $row_attr_orig_color = 'color'; 
     var $row_attr_cod_color = 'cod_fam_col'; 
     var $row_attr_color = 'fam_color'; 
+
     var $row_attr_size = 'talle'; 
     var $row_attr_manufacture = 'marca';
     var $row_attr_source = 'origen'; 
@@ -847,8 +850,28 @@ class CommandUtilMagento
                 _log("Mapping color " . $datos[0] . " CODE: " . $datos[2] . " COLOR: " . $datos[3] );
             }
             fclose($fp_colors);
-
             $this->mapped_colors = $mapped_colors;
+
+            $mapped_colors_xls = array();
+            foreach($this->csv_array_data as $row) {
+
+                $row_attr_orig_cod_color = 'cod_color'; 
+                $row_attr_orig_color = 'color'; 
+                $row_attr_cod_color = 'cod_fam_col'; 
+                $row_attr_color = 'fam_color'; 
+
+                $mapped_colors_xls[$row[$this->row_attr_orig_cod_color]] = array(
+                    "description" => $row[$this->row_attr_orig_color], 
+                    "code" => $row[$this->row_attr_cod_color], 
+                    "color" => $row[$this->row_attr_color]
+                );
+
+            }
+
+            $this->mapped_colors = $mapped_colors_xls;
+
+            print($mapped_colors_xls);
+            print($mapped_colors);
         }
 
         return $this->mapped_colors;
