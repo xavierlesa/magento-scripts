@@ -837,20 +837,20 @@ class CommandUtilMagento
     public function mapColors()
     {
         if(count($this->mapped_colors) < 1) {
-            // GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
-            $fp_colors = fopen('mapping_colors.csv', 'r');
-            $mapped_colors = array();
-            while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
-            {
-                $mapped_colors[$datos[0]] = array(
-                    "description" => $datos[1], 
-                    "code" => $datos[2], 
-                    "color" => $datos[3]
-                );
-                _log("Mapping color " . $datos[0] . " CODE: " . $datos[2] . " COLOR: " . $datos[3] );
-            }
-            fclose($fp_colors);
-            $this->mapped_colors = $mapped_colors;
+            //// GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
+            //$fp_colors = fopen('mapping_colors.csv', 'r');
+            //$mapped_colors = array();
+            //while (($datos = fgetcsv($fp_colors, 1000, ",")) !== false) 
+            //{
+            //    $mapped_colors[$datos[0]] = array(
+            //        "description" => $datos[1], 
+            //        "code" => $datos[2], 
+            //        "color" => $datos[3]
+            //    );
+            //    _log("Mapping color " . $datos[0] . " CODE: " . $datos[2] . " COLOR: " . $datos[3] );
+            //}
+            //fclose($fp_colors);
+            //$this->mapped_colors = $mapped_colors;
 
             $mapped_colors_xls = array();
             foreach($this->csv_array_data as $row) {
@@ -870,8 +870,6 @@ class CommandUtilMagento
 
             $this->mapped_colors = $mapped_colors_xls;
 
-            print(var_export($mapped_colors_xls, 1));
-            print(var_export($mapped_colors, 1));
         }
 
         return $this->mapped_colors;
