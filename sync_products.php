@@ -618,6 +618,7 @@ class CommandUtilMagento
     {
         
         $mapped_colors = $this->mapColors();
+        $sku = $product_model->getSku();
         $product_type = $product_model->getTypeId();
         $orig_campos = $this->resolveImageName($row[2]);
         $size = $product_model->getResource()->getAttribute('size')->getFrontend()->getValue($product_model);
@@ -687,7 +688,7 @@ class CommandUtilMagento
             'types'    => array('image', 'small_image', 'thumbnail'),
             'exclude'  => 0
         );
-        $mediaApi->create($orig_campos['producto'], $newImage);
+        $mediaApi->create($sku, $newImage);
 
 
 
