@@ -820,7 +820,7 @@ class CommandUtilMagento
 
             $products = $product_model->getCollection()
                 ->addAttributeToSelect('color')
-                ->addAttributeToSelect('size');                
+                ->addAttributeToSelect('size')
                 ->addAttributeToFilter('cod_product', 
                 array(
                     'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
