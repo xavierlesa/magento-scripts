@@ -644,7 +644,7 @@ class CommandUtilMagento
         // que asocie la imagen correspondiente al color.
         if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && $color != $label) {
             _log(_CYAN("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label));
-            $this->message_errors[] = "Es un producto " . $sku . " con color " . $color . " no tiene mapeado ningún color label = " . $label;
+            $this->message_errors[] = "Es un producto " . $sku . " con color " . $color . " no tiene mapeado ningún color_code = " . $orig_campos['color'];
             return $this;
         }
 
