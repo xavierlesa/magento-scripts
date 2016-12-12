@@ -186,6 +186,7 @@ class CommandUtilMagento
     var $_cached_attribute = []; // "attricube_code" => "attribute" => ID
 
     var $mapped_colors = [];
+    var $message_errors = [];
 
     var $row_sku = 'sku';
     var $row_product_id = 'producto';
@@ -642,7 +643,8 @@ class CommandUtilMagento
         // Si es un producto simple, deberia tener color y size, entonces me aseguro
         // que asocie la imagen correspondiente al color.
         if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && $color != $label) {
-            _log(_BROWN("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label));
+            _log(_CYAN("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label));
+            $this->message_errors[] = "Es un producto " . $sku . " con color " . $color . " no tiene mapeado ningún color label = " . $label;
             return $this;
         }
 
@@ -859,6 +861,7 @@ class CommandUtilMagento
     public function attachLocalMedia()
     {   
         //array('product', 'color', 'path');
+        $this->message_errors = [];
         $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
         $configurables = [];
@@ -902,6 +905,8 @@ class CommandUtilMagento
         }
 
         fclose($fp);
+
+        _log(var_export($this->message_errors, 1));
 
         //// Por ultimo busca todos los productos configurables y les asocia una imagen - TEST -
         //$configurable_products = $product_model
