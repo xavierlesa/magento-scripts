@@ -817,7 +817,7 @@ class CommandUtilMagento
         //array('product', 'color', 'path');
         $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
-        $consfigurables = []
+        $consfigurables = [];
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
