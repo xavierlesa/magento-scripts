@@ -406,15 +406,15 @@ class CommandUtilMagento
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-                if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
+                if (mb_strtolower($row[$this->row_attr_size]) == 'tu')
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
                         //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
-                        $array_attribues['size']->getId() => $array_attribues['size']
+                        //$array_attribues['size']->getId() => $array_attribues['size']
                     );
                 } 
-                elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
+                else //if (mb_strtolower($row[$this->row_line]) == 'calzado')
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color'], 
@@ -422,12 +422,12 @@ class CommandUtilMagento
                     );
 
                 } 
-                else 
-                {
-                    $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color']
-                    );
-                }
+                //else 
+                //{
+                //    $_attributes = array(
+                //        $array_attribues['color']->getId() => $array_attribues['color']
+                //    );
+                //}
 
                 $_attributes_ids = array_keys($_attributes);
 
