@@ -647,6 +647,7 @@ class CommandUtilMagento
         // elimina las imagenes previas
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
         $items = $mediaApi->items($product_model->getId());
+        
 
         // Si es config y tiene asociados vuelve
         //_log("Es un producto configurable? " . $product_type . ". Si es asi, salta. items " . count($items));
@@ -674,26 +675,42 @@ class CommandUtilMagento
         }
 
         _log(_GRAY("TEST original color: " . $o_color . " || origina size " . $o_size));
-        //$mediaAttr = null;
-        //if(count($items)<1) {
-            $mediaAttr = array(
-                    'image',
-                    'thumbnail',
-                    'small_image'
-                );
-        //}
 
-        $product_model
-            ->setColor($o_color)
-            ->setSize($o_size)
-            //->setMediaGallery(
-            //    array(
-            //        'images' => array(),
-            //        'values' => array()
-            //    )
-            //)
-            ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
-            ->save();
+
+        $newImage = array(
+            'file' => array(
+                'content' => base64_encode(file_get_contents($row[2])),
+                'mime'    => 'image/jpeg',
+                'name'    => $row[2],
+            ),
+            'label'    => $label,
+            'types'    => array('image', 'small_image', 'thumbnail'),
+            'exclude'  => 0
+        );
+        $mediaApi->create($orig_campos['producto'], $newImage);
+
+
+
+        ////$mediaAttr = null;
+        ////if(count($items)<1) {
+        //    $mediaAttr = array(
+        //            'image',
+        //            'thumbnail',
+        //            'small_image'
+        //        );
+        ////}
+
+        //$product_model
+        //    ->setColor($o_color)
+        //    ->setSize($o_size)
+        //    ->setMediaGallery(
+        //        array(
+        //            'images' => array(),
+        //            'values' => array()
+        //        )
+        //    )
+        //    ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
+        //    ->save();
 
         _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
     }/*}}}*/
@@ -800,23 +817,23 @@ class CommandUtilMagento
         //array('product', 'color', 'path');
         $fp = fopen(MEDIA_STORAGE_POINT . 'mapping_images-'. $this->STORE_DATA['name'] .'.csv', 'r');
 
-        $configurables = [];
+        $consfigurables = []
 
         while (($row = fgetcsv($fp, 1000, ",")) !== false)
         {
+            $orig_campos = $this->resolveImageName($row[2]);
             $product_model = Mage::getModel('catalog/product');
+            $_updated_config = "CONFIG-".$row[0]."-".$orig_campos['color'];
 
             // ATTACH All images to configurable.
             $attach_images_to_configurable = true;
-            if($attach_images_to_configurable /*&& !in_array("CONFIG-".$row[0], $configurables)*/ ) {
+            if($attach_images_to_configurable && !in_array($_updated_config, $configurables)) {
                 $_id = $product_model->getIdBySku("CONFIG-".$row[0]);
                 if($_id && $product_model->load($_id)) {
                     $this->associateImageAndColorForConfigurable($product_model, $row);
-                    $configurables[] = "CONFIG-".$row[0];
+                    $configurables[] = $_updated_config;
                 }
             }
-
-            $orig_campos = $this->resolveImageName($row[2]);
 
             $products = $product_model->getCollection()
                 ->addAttributeToSelect('color')
