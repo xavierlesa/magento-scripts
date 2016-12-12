@@ -744,14 +744,17 @@ class CommandUtilMagento
         _log($o_size);
         _log(var_export($loaded_sizes, 1));
 
-        //$product_model
-        //    ->setColor($o_color)
-        //    ->setSize($o_size)
-        //    ->save();
 
-        _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
+        $currentProduct = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
+
+        $currentProduct
+            ->setColor($o_color)
+            ->setSize($o_size)
+            ->save();
+
+        _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $currentProduct->getColor() . " size: " . $currentProduct->getSize()));
         
-        if(!$product_model->getColor() || !$product_model->getSize()) throw new Exception('NO COLOR AND NO SIZE');
+        if(!$currentProduct->getColor() || !$currentProduct->getSize()) throw new Exception('NO COLOR AND NO SIZE');
         
 
     }/*}}}*/
