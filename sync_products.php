@@ -657,7 +657,6 @@ class CommandUtilMagento
         $o_color = $product_model->getColor();
         $o_size = $product_model->getSize();
 
-        _log(_GRAY("TEST original color: " . $o_color . " || origina size " . $o_size));
 
         // Elimina las imagenes asociadas SOLO si NO es un producto consfigurables
         if ($product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
@@ -674,6 +673,7 @@ class CommandUtilMagento
             }
         }
 
+        _log(_GRAY("TEST original color: " . $o_color . " || origina size " . $o_size));
         //$mediaAttr = null;
         //if(count($items)<1) {
             $mediaAttr = array(
