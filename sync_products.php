@@ -429,7 +429,7 @@ class CommandUtilMagento
                 else 
                 {
                     $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color']
+                        $array_attribues['color']->getId() => $array_attribues['color'],
                         $array_attribues['size']->getId() => $array_attribues['size']
                     );
                 }
