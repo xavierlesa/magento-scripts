@@ -208,7 +208,7 @@ class CommandUtilMagento
     var $row_category = 'familia';
     var $row_subcategory = 'sub_familia';
     var $row_price = 'precio_vtas';
-    var $row_stock = 'srock';
+    var $row_stock = 'stock';
 
     var $STORE_DATA = array(
             // 'store_id' => '1',
