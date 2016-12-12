@@ -707,6 +707,9 @@ class CommandUtilMagento
                 )
             )
             ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
+            ->save();
+
+        $product_model
             ->setColor($o_color)
             ->setSize($o_size)
             ->save();
