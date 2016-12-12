@@ -618,6 +618,7 @@ class CommandUtilMagento
     {
         
         $mapped_colors = $this->mapColors();
+        $id = $product_model->getId();
         $sku = $product_model->getSku();
         $product_type = $product_model->getTypeId();
         $orig_campos = $this->resolveImageName($row[2]);
@@ -647,7 +648,7 @@ class CommandUtilMagento
 
         // elimina las imagenes previas
         $mediaApi = Mage::getModel("catalog/product_attribute_media_api");
-        $items = $mediaApi->items($product_model->getId());
+        $items = $mediaApi->items($id);
         
 
         // Si es config y tiene asociados vuelve
@@ -688,7 +689,7 @@ class CommandUtilMagento
             'types'    => array('image', 'small_image', 'thumbnail'),
             'exclude'  => 0
         );
-        $mediaApi->create($sku, $newImage);
+        $mediaApi->create($id, $newImage);
 
 
 
