@@ -669,17 +669,6 @@ class CommandUtilMagento
             }
         }
 
-        // TODO #1: Hay dos caminos:
-        // 1- cargar solo las imagenes a los productos simples y luego
-        // cargar la última? imagen del producto simple asociado y cargarla al configurable.
-        //
-        // 2- bien cargar todas las imagenes al configurable validando que los colores existen.
-        
-        // TODO #2: Por alguna razón al asociar las iamgenes de algunos productos se borran los atributos configurables
-        // y la asociación se elimina del configurable.
-        // http://urbancshop.devlinkb.com.ar/calzado/zapatilla-ntx-9470.html
-        // SKU: ZAAI0005
-
         $mediaAttr = null;
         if(count($items)<1) {
             $mediaAttr = array(
@@ -820,26 +809,26 @@ class CommandUtilMagento
                 }
             }
 
-            //$orig_campos = $this->resolveImageName($row[2]);
+            $orig_campos = $this->resolveImageName($row[2]);
 
-            //$products = $product_model->getCollection()
-            //    ->addAttributeToFilter('cod_product', 
-            //    array(
-            //        'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
-            //    ))
-            //    //->addAttributeToFilter('color', 
-            //    //array(
-            //    //    'eq' => $orig_campos['color']
-            //    //))
-            //    ->load();
+            $products = $product_model->getCollection()
+                ->addAttributeToFilter('cod_product', 
+                array(
+                    'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
+                ))
+                //->addAttributeToFilter('color', 
+                //array(
+                //    'eq' => $orig_campos['color']
+                //))
+                ->load();
 
-            //_log("Productos asociados : " . count($products));
+            _log("Productos asociados : " . count($products));
 
-            //foreach ($products as $product) {
-            //    if ($product && $product_model->load($product->getId())) {
-            //        $this->associateImageAndColor($product_model, $row);
-            //    }
-            //}
+            foreach ($products as $product) {
+                if ($product && $product_model->load($product->getId())) {
+                    $this->associateImageAndColor($product_model, $row);
+                }
+            }
         }
 
         fclose($fp);
