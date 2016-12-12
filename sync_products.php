@@ -711,7 +711,11 @@ class CommandUtilMagento
 
 
         $color_attribute = Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', 'color');
+        $size_attribute = Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', 'size');
+
         $loaded_colors = array();
+        $loaded_sizes = array();
+        
         
         $valuesCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
             ->setAttributeFilter($color_attribute->getId())
@@ -722,9 +726,23 @@ class CommandUtilMagento
             $loaded_colors[strtolower($item->getValue())] = $item->getId();
         }
 
+        $valuesCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
+            ->setAttributeFilter($size_attribute->getId())
+            ->setStoreFilter(Mage_Core_Model_App::ADMIN_STORE_ID, false)
+            ->load();   
+
+        foreach ($valuesCollection as $item) {
+            $loaded_sizes[strtolower($item->getValue())] = $item->getId();
+        }
+
         $product_model->setColor($o_color);
         _log($o_color);
         _log(var_export($loaded_colors, 1));
+
+
+        $product_model->setSize($o_size);
+        _log($o_size);
+        _log(var_export($loaded_sizes, 1));
 
         //$product_model
         //    ->setColor($o_color)
