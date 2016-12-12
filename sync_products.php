@@ -722,7 +722,7 @@ class CommandUtilMagento
             $loaded_colors[strtolower($item->getValue())] = $item->getId();
         }
 
-        $product_model->setColor($loaded_colors[$csv_products[$i]['color']]);
+        $product_model->setColor($loaded_colors[$label]);
 
         //$product_model
         //    ->setColor($o_color)
