@@ -693,6 +693,11 @@ class CommandUtilMagento
             ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
             ->save();
 
+        $product_model
+            ->setColor($o_color)
+            ->setSize($o_size)
+            ->save();
+
         _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
     }/*}}}*/
 
