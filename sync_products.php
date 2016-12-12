@@ -208,6 +208,7 @@ class CommandUtilMagento
     var $row_category = 'familia';
     var $row_subcategory = 'sub_familia';
     var $row_price = 'precio_vtas';
+    var $row_stock = 'srock';
 
     var $STORE_DATA = array(
             // 'store_id' => '1',
@@ -282,7 +283,9 @@ class CommandUtilMagento
             $this->row_line,
             $this->row_category,
             $this->row_subcategory,
-            $this->row_price);
+            $this->row_price,
+            $this->row_stock
+        );
 
         if (count(array_intersect($required, $this->csv_array_header)) !== count($required)) 
         {
@@ -401,26 +404,33 @@ class CommandUtilMagento
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-                if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
+                //if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
+                //{
+                //    $_attributes = array(
+                //        $array_attribues['color']->getId() => $array_attribues['color'], 
+                //        //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
+                //        $array_attribues['size']->getId() => $array_attribues['size']
+                //    );
+                //} 
+                //elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
+                //{
+                //    $_attributes = array(
+                //        $array_attribues['color']->getId() => $array_attribues['color'], 
+                //        $array_attribues['size']->getId() => $array_attribues['size']
+                //    );
+                //} 
+                
+                if (mb_strtolower($row[$this->row_attr_size]) == 'tu')
                 {
                     $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color'], 
-                        //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
-                        $array_attribues['size']->getId() => $array_attribues['size']
+                        $array_attribues['color']->getId() => $array_attribues['color']
                     );
-                } 
-                elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
-                {
-                    $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color'], 
-                        $array_attribues['size']->getId() => $array_attribues['size']
-                    );
-
-                } 
+                }
                 else 
                 {
                     $_attributes = array(
                         $array_attribues['color']->getId() => $array_attribues['color']
+                        $array_attribues['size']->getId() => $array_attribues['size']
                     );
                 }
 
@@ -1165,7 +1175,7 @@ class CommandUtilMagento
     // Methods
     public function createProduct($sku, $cod_product, $name, $description, 
         $cod_color, $color, $size, $manufacturer, $source, $season, $gender, 
-        $line, $category, $subcategory, $price, $attribute_set=null, 
+        $line, $category, $subcategory, $price, $stock, $attribute_set=null, 
         $product_type=null, $product_visibility=null, $commit=true) 
     { 
         //
@@ -1330,7 +1340,7 @@ class CommandUtilMagento
                         'min_sale_qty' => 1,                // Minimum Qty Allowed in Shopping Cart
                         'max_sale_qty' => 9,                // Maximum Qty Allowed in Shopping Cart
                         'is_in_stock' => 1,                 // Stock Availability
-                        'qty' => 999                        // qty
+                        'qty' => $stock                     // qty
                     )
                 )
 
