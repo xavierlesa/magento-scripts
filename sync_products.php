@@ -736,13 +736,13 @@ class CommandUtilMagento
         }
 
         $product_model->setColor($o_color);
-        _log($o_color);
-        _log(var_export($loaded_colors, 1));
+        //_log($o_color);
+        //_log(var_export($loaded_colors, 1));
 
 
         $product_model->setSize($o_size);
-        _log($o_size);
-        _log(var_export($loaded_sizes, 1));
+        //_log($o_size);
+        //_log(var_export($loaded_sizes, 1));
 
 
         $currentProduct = Mage::getModel('catalog/product')->loadByAttribute('sku',$sku);
