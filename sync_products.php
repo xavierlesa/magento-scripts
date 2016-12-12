@@ -208,7 +208,7 @@ class CommandUtilMagento
     var $row_category = 'familia';
     var $row_subcategory = 'sub_familia';
     var $row_price = 'precio_vtas';
-    var $row_stock = 'stock';
+    var $row_stock = 'srock';
 
     var $STORE_DATA = array(
             // 'store_id' => '1',
@@ -404,33 +404,26 @@ class CommandUtilMagento
                 // indumentaria -> set indumentaria (color, size)
                 // calzado -> set calzado (color, number)
 
-                //if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
-                //{
-                //    $_attributes = array(
-                //        $array_attribues['color']->getId() => $array_attribues['color'], 
-                //        //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
-                //        $array_attribues['size']->getId() => $array_attribues['size']
-                //    );
-                //} 
-                //elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
-                //{
-                //    $_attributes = array(
-                //        $array_attribues['color']->getId() => $array_attribues['color'], 
-                //        $array_attribues['size']->getId() => $array_attribues['size']
-                //    );
-                //} 
-                
-                if (mb_strtolower($row[$this->row_attr_size]) == 'tu')
+                if (mb_strtolower($row[$this->row_line]) == 'indumentaria')
                 {
                     $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color']
+                        $array_attribues['color']->getId() => $array_attribues['color'], 
+                        //$array_attribues['size_letter']->getId() => $array_attribues['size_letter']
+                        $array_attribues['size']->getId() => $array_attribues['size']
                     );
-                }
+                } 
+                elseif (mb_strtolower($row[$this->row_line]) == 'calzado')
+                {
+                    $_attributes = array(
+                        $array_attribues['color']->getId() => $array_attribues['color'], 
+                        $array_attribues['size']->getId() => $array_attribues['size']
+                    );
+
+                } 
                 else 
                 {
                     $_attributes = array(
-                        $array_attribues['color']->getId() => $array_attribues['color'],
-                        $array_attribues['size']->getId() => $array_attribues['size']
+                        $array_attribues['color']->getId() => $array_attribues['color']
                     );
                 }
 
