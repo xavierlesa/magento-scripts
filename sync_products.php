@@ -640,7 +640,7 @@ class CommandUtilMagento
         // Si es un producto simple, deberia tener color y size, entonces me aseguro
         // que asocie la imagen correspondiente al color.
         if ($product_type !== Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && $color != $label) {
-            _log("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label);
+            _log(_BROWN("[SKIP] Es un producto " . $product_type . " con color " . $color . " NO es " . $label));
             return $this;
         }
 
