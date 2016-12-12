@@ -819,6 +819,8 @@ class CommandUtilMagento
             $orig_campos = $this->resolveImageName($row[2]);
 
             $products = $product_model->getCollection()
+                ->addAttributeToSelect('color')
+                ->addAttributeToSelect('size');                
                 ->addAttributeToFilter('cod_product', 
                 array(
                     'eq' => $row[0] //eq, nep, like, nlike, in, nin, gt, lt, etc..
