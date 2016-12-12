@@ -649,7 +649,7 @@ class CommandUtilMagento
         $items = $mediaApi->items($product_model->getId());
 
         // Si es config y tiene asociados vuelve
-        _log("Es un producto configurable? " . $product_type . ". Si es asi, salta. items " . count($items));
+        //_log("Es un producto configurable? " . $product_type . ". Si es asi, salta. items " . count($items));
         //if ($product_type == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
         //    return $this;
         //}
@@ -663,7 +663,7 @@ class CommandUtilMagento
                     $act_campos['color'] == $orig_campos['color'] && 
                     $act_campos['imgn'] == $orig_campos['imgn']) {
 
-                    _log(_BROWN("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
+                    _log(_RED("Elimina la imagen actual SKU: " . $orig_campos['producto'] . " COLOR: " . $orig_campos['color'] . " FILE: " . $item['file']));
                     $mediaApi->remove($product_model->getId(), $item['file']);
                 }
             }
@@ -688,7 +688,7 @@ class CommandUtilMagento
             ->addImageToMediaGallery($row[2], $mediaAttr, false, false, $label)
             ->save();
 
-        _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" => ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
+        _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
     }/*}}}*/
 
 
