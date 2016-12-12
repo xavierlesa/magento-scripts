@@ -342,6 +342,7 @@ class CommandUtilMagento
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
+                    $row[$this->row_stock],
                     ucfirst(mb_strtolower($row[$this->row_line]))
                 );
             }
@@ -395,6 +396,7 @@ class CommandUtilMagento
                     $row[$this->row_category],
                     $row[$this->row_subcategory], 
                     $row[$this->row_price],
+                    $row[$this->row_stock],
                     ucfirst(mb_strtolower($row[$this->row_line])),
                     Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE,
                     Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH,
@@ -487,6 +489,7 @@ class CommandUtilMagento
                         $row[$this->row_category],
                         $row[$this->row_subcategory], 
                         $row[$this->row_price],
+                        $row[$this->row_stock],
                         ucfirst(mb_strtolower($row[$this->row_line])),
                         Mage_Catalog_Model_Product_Type::TYPE_SIMPLE,
                         Mage_Catalog_Model_Product_Visibility::VISIBILITY_NOT_VISIBLE,
