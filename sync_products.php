@@ -722,7 +722,9 @@ class CommandUtilMagento
             $loaded_colors[strtolower($item->getValue())] = $item->getId();
         }
 
-        $product_model->setColor($loaded_colors[$label]);
+        $product_model->setColor($o_color);
+        _log($o_color);
+        _log(var_export($loaded_colors, 1));
 
         //$product_model
         //    ->setColor($o_color)
