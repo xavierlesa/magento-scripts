@@ -710,6 +710,7 @@ class CommandUtilMagento
             ->save();
 
 
+        $color_attribute = Mage::getModel('eav/entity_attribute')->loadByCode('catalog_product', 'color');
         $loaded_colors = array();
         
         $valuesCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
