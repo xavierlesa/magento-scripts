@@ -654,6 +654,11 @@ class CommandUtilMagento
         //    return $this;
         //}
 
+        $o_color = $product_model->getColor();
+        $o_size = $product_model->getSize();
+
+        _log(_GRAY("TEST original color: " . $o_color . " || origina size " . $o_size));
+
         // Elimina las imagenes asociadas SOLO si NO es un producto consfigurables
         if ($product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE && count($items)) {
             foreach ($items as $item) {
@@ -728,7 +733,7 @@ class CommandUtilMagento
                     $act_campos['color'] == $orig_campos['color'] && 
                     $act_campos['imgn'] == $orig_campos['imgn']) {
 
-                    _log(_BROWN("Elimina la imagen actual SKU: " 
+                    _log(_RED("Elimina la imagen actual SKU: " 
                         . $orig_campos['producto'] . " COLOR: " 
                         . $orig_campos['color'] . " FILE: " 
                         . $item['file']));
