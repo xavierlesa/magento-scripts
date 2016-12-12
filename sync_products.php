@@ -730,6 +730,10 @@ class CommandUtilMagento
         //    ->save();
 
         _log(_PURPLE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\" || ATTRS: color: " . $product_model->getColor() . " size: " . $product_model->getSize()));
+        
+        if(!$product_model->getColor() || !$product_model->getSize()) throw new Exception('NO COLOR AND NO SIZE');
+        
+
     }/*}}}*/
 
 
