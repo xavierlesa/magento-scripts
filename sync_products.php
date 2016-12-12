@@ -870,8 +870,8 @@ class CommandUtilMagento
 
             $this->mapped_colors = $mapped_colors_xls;
 
-            print($mapped_colors_xls);
-            print($mapped_colors);
+            print(var_export($mapped_colors_xls, 1));
+            print(var_export($mapped_colors, 1));
         }
 
         return $this->mapped_colors;
