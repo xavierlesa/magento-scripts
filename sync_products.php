@@ -370,7 +370,8 @@ class CommandUtilMagento
 
         foreach( $this->csv_grouped_array_data as $key => $products )
         {
-            if(count($products) > 1) // Hack horrible para poner siempre productos configurables
+	    _log("Product items " . count($products) . " ID: " . $products[0][$this->row_product_id]);
+            if(count($products)) // >= 1 Hack horrible para poner siempre productos configurables
             {
 
                 $row = $products[0];
@@ -467,10 +468,18 @@ class CommandUtilMagento
 
                 $configurableProductsData = array();
 
-                _log("Crea los " . (count($products) - 1) . " productos asociados al configurable\r\n".
+                _log("Crea los " . (count($products)) . " productos asociados al configurable\r\n".
                     "================================================================================\r\n");
 
-                foreach(array_slice($products, 1) as $row)
+                // HACK un solo producto, igual crea su configurable.
+                //if(count($products) == 1) { 
+		//    array_push($products, $products[0]);
+		//    _log("Es un solo producto y atacha el segundo " . var_export($products, 1));
+		//}
+
+                //foreach(array_slice($products, 1) as $row)
+
+                foreach($products as $row)
                 {
                     // Create product instances
                     $simpleProduct = $this->createProduct(
@@ -531,7 +540,7 @@ class CommandUtilMagento
     }/*}}}*/
 
 
-    public function resolveImageName($strfile)
+    public function resolveImageName($strfile)/*{{{*/
     {
         // devuelve el producto, color y numero de imagen en base al path
         $regex = "#.*\/+(?P<producto>[^/_.\-]+)_?(?P<color>[a-zA-Z]+)?(?P<imgn>\d+)?#";
@@ -540,7 +549,7 @@ class CommandUtilMagento
         $color = getattr($campos['color'], '');
         $imgn = getattr($campos['imgn'], 0);
         return $campos;
-    }
+    }/*}}}*/
 
 
     public function syncImages()/*{{{*/
@@ -771,7 +780,7 @@ class CommandUtilMagento
     }/*}}}*/
 
 
-    public function associateImageAndColorForConfigurable($product_model, $row, $color='')
+    public function associateImageAndColorForConfigurable($product_model, $row, $color='')/*{{{*/
     {
         
         $mapped_colors = $this->mapColors();
@@ -835,12 +844,12 @@ class CommandUtilMagento
             ->save();
 
         _log(_BLUE("Producto " . $product_type . " con sku:" . $row[0] . ", tiene una nueva imagen \"" . $row[2] . "\" con label/color: \"" . $label . "\" y orden: \"" . $orig_campos['imgn'] . "\""));
-    }
+    }/*}}}*/
 
     /**
      * Mappea los colores en un array para uso futuro
      */
-    public function mapColors()
+    public function mapColors()/*{{{*/
     {
         if(count($this->mapped_colors) < 1) {
             //// GUARDA en un archivo el mappging de codigo_producto+codigo_color => /path/del/ftp/codigo_producto+codigo_color.jpg
@@ -879,13 +888,13 @@ class CommandUtilMagento
         }
 
         return $this->mapped_colors;
-    }
+    }/*}}}*/
 
     /**
      * Descarga las imágenes de los productos para asociar a los productos simples
      * 
      */
-    public function attachLocalMedia()
+    public function attachLocalMedia()/*{{{*/
     {   
         //array('product', 'color', 'path');
         $this->message_errors = [];
@@ -953,10 +962,10 @@ class CommandUtilMagento
         //    _log("Media items para " . $_c_product->getSku() . " >> " . count($items));
         //}
 
-    }
+    }/*}}}*/
 
 
-    public function reindex()
+    public function reindex()/*{{{*/
     {
         // reindexa el catalogo
         _log("Reindexando catalogo de Productos...");
@@ -970,10 +979,10 @@ class CommandUtilMagento
         }
 
         _log(_GREEN("Reindexado completo"));
-    }
+    }/*}}}*/
 
 
-    public function deleteAllProducts()
+    public function deleteAllProducts()/*{{{*/
     {
         // borra todos los productos
         set_time_limit(3600);
@@ -999,7 +1008,7 @@ class CommandUtilMagento
                 }
             }
         }
-    }
+    }/*}}}*/
 
 
     public function sync()
@@ -2078,6 +2087,7 @@ function _log($message, $args=array(), $stdout = true)
     if ($stdout)
     {
         echo "[DEBUG] " . $message . "\r\n";
+        Mage::log($message, null, 'sync_products.log');
     }
     else 
     {
