@@ -130,6 +130,15 @@ function mapping_categories($genero, $linea, $familia, $subfamilia='')/*{{{*/
         }
     }
 
+    // HACK categorias mal escritas
+    if (mb_strtoupper($_category) == 'T BAÑO') {
+        $_category = 'TRAJES DE BAÑO';
+    }
+
+    if (preg_match("/^T\s+BAÑO/", $_subcategory)) {
+	$_subcategory = preg_replace("/^T\s+BAÑO\s+/", "", $_subcategory);
+    }
+
     return array($_root, $_category, $_subcategory);
 }/*}}}*/
 
